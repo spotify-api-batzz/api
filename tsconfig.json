@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "baseUrl": ".",
-    "rootDir": ".",
-    "outDir": "dist"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["./node_modules/*"]
+    "baseUrl": "src/",
+    "rootDir": "src/",
+    "outDir": "./dist",
+    "module": "commonjs",
+    "target": "ES6",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+  }
 }
