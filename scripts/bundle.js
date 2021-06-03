@@ -25,7 +25,7 @@ async function main() {
   await esbuild.build({
     entryPoints: [`src/app.ts`],
     bundle: true,
-    target: "esm",
+    target: "node12",
     outfile: "dist/esbuild-main.js",
     ...extraArgs,
     sourcemap: true,

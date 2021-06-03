@@ -1,9 +1,11 @@
 {
   "dependencies": {
+    "@types/joi": "^17.2.3",
     "@types/sequelize": "^4.28.9",
     "body-parser": "^1.19.0",
     "concurrently": "^6.1.0",
     "express": "^4.17.1",
+    "joi": "^17.4.0",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.3",
     "querystring": "^0.2.1",
@@ -16,7 +18,7 @@
     "bundle:dev": "node scripts/bundle.js watch",
     "start:dev": "nodemon dist/esbuild-main.js",
     "make:models": "sequelize-auto -d spotify -h 192.168.0.27 -u test -x 123 -p 5432 -e postgres -l ts",
-    "watch": "concurrently 'yarn:build:dev' 'yarn:bundle:dev' 'yarn:start:dev'"
+    "watch": "concurrently 'yarn:bundle:dev' 'yarn:start:dev'"
   },
   "devDependencies": {
     "@types/express": "^4.17.12",
