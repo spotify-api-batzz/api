@@ -664,6 +664,6 @@
       res.send(items);
     });
   });
-  app.listen(3e3);
+  app.listen(3e3, "0.0.0.0");
 })();
 //# sourceMappingURL=esbuild-main.js.map
