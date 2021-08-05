@@ -67,9 +67,13 @@ Object.keys(models).forEach((key) => {
 
     console.log(parseIncludes(req.query.joins as string));
 
+    const settings = {
+      limit: req.query?.limit || 200,
+      offset: req.query.offset,
+    };
+
     let items = await models[key].findAll({
-      ...pick(["limit", "offset"], req.query),
-      // hmm assertion
+      ...settings,
       ...parseIncludes(req.query.joins as string),
     });
 
