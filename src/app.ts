@@ -47,6 +47,14 @@ const schema = Joi.object({
   joins: Joi.array().items(Joi.string().valid(...Object.keys(models))),
 });
 
+interface modelMeta {
+  limit: number;
+  offset: number;
+  joins: string[];
+}
+
+const meta = (settings: Partial<modelMeta>) => {};
+
 Object.keys(models).forEach((key) => {
   app.get(`/${key}`, async (req, res) => {
     const joins = req.query.joins
@@ -65,20 +73,18 @@ Object.keys(models).forEach((key) => {
       return;
     }
 
-    console.log(parseIncludes(req.query.joins as string));
-
     const settings = {
       limit: req.query?.limit || 200,
       offset: req.query.offset,
+      includes: parseIncludes(req.query.joins as string),
     };
 
     let items = await models[key].findAll({
       ...settings,
-      ...parseIncludes(req.query.joins as string),
     });
 
-    res.send(items);
+    res.send({ meta: settings, data: items });
   });
 });
 
-app.listen(3001, "0.0.0.0");
+app.listen(3000, "0.0.0.0");
