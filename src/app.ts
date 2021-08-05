@@ -62,6 +62,9 @@ Object.keys(models).forEach((key) => {
       return;
     }
 
+    console.log(req.query.joins);
+    console.log(parseIncludes(req.query.joins as string));
+
     const settings = {
       limit: req.query?.limit || 200,
       offset: req.query.offset,
