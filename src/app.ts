@@ -1,18 +1,7 @@
 import { ConnectToDB, instance } from "./db";
-import express, { query } from "express";
+import express from "express";
 import { initModels } from "models/init-models";
-import {
-  isNil,
-  omit,
-  pick,
-  pipe,
-  map,
-  reduce,
-  hasPath,
-  assoc,
-  assocPath,
-  unnest,
-} from "ramda";
+import { omit, assocPath, unnest } from "ramda";
 import Joi from "joi";
 
 var app = express();
@@ -78,6 +67,8 @@ Object.keys(models).forEach((key) => {
       offset: req.query.offset,
       includes: parseIncludes(req.query.joins as string),
     };
+
+    console.log(settings);
 
     let items = await models[key].findAll({
       ...settings,
