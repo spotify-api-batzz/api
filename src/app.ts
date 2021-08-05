@@ -83,7 +83,7 @@ Object.keys(models).forEach((key) => {
       ...settings,
     });
 
-    res.send({ meta: settings, data: items });
+    res.send({ data: items, meta: settings });
   });
 });
 
