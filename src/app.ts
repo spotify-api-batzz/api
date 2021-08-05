@@ -55,8 +55,6 @@ Object.keys(models).forEach((key) => {
         )
       : [];
 
-    console.log(joins);
-
     const { error, warning } = schema.validate({
       ...omit(["joins"], req.query),
       joins,
@@ -79,4 +77,4 @@ Object.keys(models).forEach((key) => {
   });
 });
 
-app.listen(3000, "0.0.0.0");
+app.listen(3001, "0.0.0.0");
