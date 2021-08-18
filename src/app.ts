@@ -1,10 +1,12 @@
 import { ConnectToDB, instance } from "./db";
 import express from "express";
 import { initModels } from "models/init-models";
-import { omit, assocPath, unnest } from "ramda";
+import { omit, assocPath, unnest, clamp } from "ramda";
 import Joi from "joi";
+import cors from "cors";
 
 var app = express();
+app.use(cors());
 
 ConnectToDB("postgres://test:123@192.168.0.27:5432/spotify");
 let models = initModels(instance);
@@ -62,13 +64,10 @@ Object.keys(models).forEach((key) => {
       return;
     }
 
-    console.log(req.query.joins);
-    console.log(parseIncludes(req.query.joins as string));
-
     const settings = {
-      limit: req.query?.limit || 200,
+      limit: clamp(1, 500, parseInt(req.query?.limit as string) || 200),
       offset: req.query.offset,
-      includes: parseIncludes(req.query.joins as string),
+      ...parseIncludes(req.query.joins as string),
     };
 
     console.log(settings);
@@ -81,4 +80,4 @@ Object.keys(models).forEach((key) => {
   });
 });
 
-app.listen(3000, "0.0.0.0");
+app.listen(3001, "0.0.0.0");
