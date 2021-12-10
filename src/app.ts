@@ -4,11 +4,22 @@ import { initModels } from "models/init-models";
 import { omit, assocPath, unnest, clamp } from "ramda";
 import Joi from "joi";
 import cors from "cors";
+import { config } from "dotenv";
+import { mustGetEnv } from "./util";
+
+config();
 
 var app = express();
 app.use(cors());
 
-ConnectToDB("postgres://test:123@192.168.0.27:5432/spotify");
+const dbIp = mustGetEnv("DB_IP");
+const dbName = mustGetEnv("DB_NAME");
+const dbPass = mustGetEnv("DB_PASS");
+const dbPort = mustGetEnv("DB_PORT");
+const dbUser = mustGetEnv("DB_USER");
+const authKey = mustGetEnv("AUTH_HEADER");
+
+ConnectToDB(`postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbName}`);
 let models = initModels(instance);
 
 const parseIncludes = (joinString: string) => {
@@ -48,6 +59,12 @@ const meta = (settings: Partial<modelMeta>) => {};
 
 Object.keys(models).forEach((key) => {
   app.get(`/${key}`, async (req, res) => {
+    const auth = req.header("authorization");
+    if (!auth || auth !== authKey) {
+      res.statusCode = 403;
+      res.send("Invalid auth header");
+      return;
+    }
     const joins = req.query.joins
       ? unnest(
           (req.query.joins as string).split(",").map((join) => join.split("."))
@@ -78,6 +95,11 @@ Object.keys(models).forEach((key) => {
 
     res.send({ data: items, meta: settings });
   });
+});
+
+app.get("/health", (req, res) => {
+  res.statusCode = 200;
+  res.send("ok");
 });
 
 app.listen(3000, "0.0.0.0");
