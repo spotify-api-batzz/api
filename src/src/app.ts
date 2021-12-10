@@ -13,13 +13,13 @@ var app = express();
 app.use(cors());
 
 const dbIp = mustGetEnv("DB_IP");
-const dbName = mustGetEnv("DB_NAME");
+const dbTable = mustGetEnv("DB_TABLE");
 const dbPass = mustGetEnv("DB_PASS");
 const dbPort = mustGetEnv("DB_PORT");
 const dbUser = mustGetEnv("DB_USER");
 const authKey = mustGetEnv("AUTH_HEADER");
 
-ConnectToDB(`postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbName}`);
+ConnectToDB(`postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`);
 let models = initModels(instance);
 
 const parseIncludes = (joinString: string) => {
