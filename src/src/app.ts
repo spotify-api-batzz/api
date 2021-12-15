@@ -16,7 +16,8 @@ const limiter = rateLimit({
   handler: (req, res, next, options) => {
     const auth = req.header("authorization");
     if (auth === authKey) {
-      res.next();
+      next();
+      return;
     }
     res.status(options.statusCode).send(options.message);
   },
