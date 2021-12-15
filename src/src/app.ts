@@ -12,7 +12,14 @@ config();
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1, // limit each IP to 100 requests per windowMs
+  max: 250, // limit each IP to 100 requests per windowMs
+  handler: (req, res, next, options) => {
+    const auth = req.header("authorization");
+    if (!auth || auth !== authKey) {
+      res.next();
+    }
+    res.status(options.statusCode).send(options.message);
+  },
 });
 
 var app = express();
@@ -66,12 +73,6 @@ const meta = (settings: Partial<modelMeta>) => {};
 
 Object.keys(models).forEach((key) => {
   app.get(`/${key}`, async (req, res) => {
-    const auth = req.header("authorization");
-    if (!auth || auth !== authKey) {
-      res.statusCode = 403;
-      res.send("Invalid auth header");
-      return;
-    }
     const joins = req.query.joins
       ? unnest(
           (req.query.joins as string).split(",").map((join) => join.split("."))
