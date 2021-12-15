@@ -15,10 +15,9 @@ const limiter = rateLimit({
   max: 1, // limit each IP to 100 requests per windowMs
 });
 
-app.use(limiter);
-
 var app = express();
 app.use(cors());
+app.use(limiter);
 
 const dbIp = mustGetEnv("DB_IP");
 const dbTable = mustGetEnv("DB_TABLE");
