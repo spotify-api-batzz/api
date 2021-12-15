@@ -6,8 +6,16 @@ import Joi from "joi";
 import cors from "cors";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
+import rateLimit from "express-rate-limit";
 
 config();
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1, // limit each IP to 100 requests per windowMs
+});
+
+app.use(limiter);
 
 var app = express();
 app.use(cors());
