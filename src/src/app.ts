@@ -7,11 +7,8 @@ import cors from "cors";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
 import rateLimit from "express-rate-limit";
-import { s3Handler } from "./aws/s3";
 
 config();
-
-const s3 = new s3Handler();
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -71,16 +68,6 @@ interface modelMeta {
   offset: number;
   joins: string[];
 }
-
-app.get("/resizeImage", async (req, res) => {
-  const imageName = req.query.imageName as string;
-  if (!imageName) {
-    res.send("No image name provided");
-    return;
-  }
-  const convertImageResponse = await s3.convertImage(imageName);
-  res.send(convertImageResponse);
-});
 
 Object.keys(models).forEach((key) => {
   app.get(`/${key}`, async (req, res) => {
