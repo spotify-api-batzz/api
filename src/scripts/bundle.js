@@ -26,6 +26,7 @@ async function main() {
     entryPoints: [`src/app.ts`],
     bundle: true,
     target: "node12",
+    platform: "node",
     outfile: "dist/esbuild-main.js",
     ...extraArgs,
     sourcemap: true,

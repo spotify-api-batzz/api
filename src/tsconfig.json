@@ -8,5 +8,6 @@
     "sourceMap": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "lib":[ "es2021"]
   }
 }

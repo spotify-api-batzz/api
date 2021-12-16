@@ -7,12 +7,15 @@ import cors from "cors";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
 import rateLimit from "express-rate-limit";
+import { s3Handler } from "./aws/s3";
 
 config();
 
+const s3 = new s3Handler();
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per windowMs
   handler: (req, res, next, options) => {
     const auth = req.header("authorization");
     if (auth === authKey) {
@@ -36,7 +39,6 @@ const authKey = mustGetEnv("AUTH_HEADER");
 
 ConnectToDB(`postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`);
 let models = initModels(instance);
-
 const parseIncludes = (joinString: string) => {
   if (!joinString) return {};
   let joins = joinString.split(",");
@@ -70,7 +72,15 @@ interface modelMeta {
   joins: string[];
 }
 
-const meta = (settings: Partial<modelMeta>) => {};
+app.get("/resizeImage", async (req, res) => {
+  const imageName = req.query.imageName as string;
+  if (!imageName) {
+    res.send("No image name provided");
+    return;
+  }
+  const convertImageResponse = await s3.convertImage(imageName);
+  res.send(convertImageResponse);
+});
 
 Object.keys(models).forEach((key) => {
   app.get(`/${key}`, async (req, res) => {
