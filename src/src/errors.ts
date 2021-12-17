@@ -1,0 +1,1 @@
+class APIError extends Error {}

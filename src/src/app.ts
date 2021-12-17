@@ -6,11 +6,26 @@ import Joi from "joi";
 import cors from "cors";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
+import rateLimit from "express-rate-limit";
 
 config();
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  handler: (req, res, next, options) => {
+    const auth = req.header("authorization");
+    if (auth === authKey) {
+      next();
+      return;
+    }
+    res.status(options.statusCode).send(options.message);
+  },
+});
+
 var app = express();
 app.use(cors());
+app.use(limiter);
 
 const dbIp = mustGetEnv("DB_IP");
 const dbTable = mustGetEnv("DB_TABLE");
@@ -21,7 +36,6 @@ const authKey = mustGetEnv("AUTH_HEADER");
 
 ConnectToDB(`postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`);
 let models = initModels(instance);
-
 const parseIncludes = (joinString: string) => {
   if (!joinString) return {};
   let joins = joinString.split(",");
@@ -55,16 +69,8 @@ interface modelMeta {
   joins: string[];
 }
 
-const meta = (settings: Partial<modelMeta>) => {};
-
 Object.keys(models).forEach((key) => {
   app.get(`/${key}`, async (req, res) => {
-    const auth = req.header("authorization");
-    if (!auth || auth !== authKey) {
-      res.statusCode = 403;
-      res.send("Invalid auth header");
-      return;
-    }
     const joins = req.query.joins
       ? unnest(
           (req.query.joins as string).split(",").map((join) => join.split("."))

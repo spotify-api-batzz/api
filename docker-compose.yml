@@ -1,0 +1,28 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  spotify_api:
+    container_name: spotify_api
+    build: ./
+    networks:
+      - default 
+      - web
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PORT=${DB_PORT}
+      - DB_IP=${DB_IP}
+      - DB_TABLE=${DB_TABLE}
+      - DB_PASS=${DB_PASS}
+      - AUTH_HEADER=${AUTH_HEADER}
+    labels:
+      - traefik.http.routers.spotify_api.rule=Host(`spotify-api.batzz.io`)
+      - traefik.http.routers.spotify_api.tls=true
+      - traefik.http.routers.spotify_api.tls.certresolver=lets-encrypt
+    ports:
+      - 3000:3000
+
+networks:
+  web:
+     external: true
+  default:
+    external:
+      name: database
