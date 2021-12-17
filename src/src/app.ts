@@ -88,12 +88,17 @@ Object.keys(models).forEach((key) => {
     };
 
     console.log(settings);
+    try {
+      let items = await models[key].findAll({
+        ...settings,
+      });
 
-    let items = await models[key].findAll({
-      ...settings,
-    });
-
-    res.send({ data: items, meta: settings });
+      res.send({ data: items, meta: settings });
+    } catch (e) {
+      if (e.name === "EagerLoadingError") {
+        res.send(`Trying to load an invalid relation - ${e.message}`);
+      }
+    }
   });
 });
 
