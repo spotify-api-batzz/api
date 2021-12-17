@@ -7,6 +7,9 @@ import cors from "cors";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
 import rateLimit from "express-rate-limit";
+import sequelize from "sequelize";
+import { InvalidRelation } from "errors";
+sequelize.DatabaseError;
 
 config();
 
@@ -70,7 +73,7 @@ interface modelMeta {
 }
 
 Object.keys(models).forEach((key) => {
-  app.get(`/${key}`, async (req, res) => {
+  app.get(`/${key}`, async (req, res, next) => {
     const joins = req.query.joins
       ? unnest(
           (req.query.joins as string).split(",").map((join) => join.split("."))
@@ -93,21 +96,13 @@ Object.keys(models).forEach((key) => {
       ...parseIncludes(req.query.joins as string),
     };
 
-    console.log(settings);
     try {
       let items = await models[key].findAll({
         ...settings,
       });
-
       res.send({ data: items, meta: settings });
     } catch (e) {
-      if (e.name === "SequelizeEagerLoadingError") {
-        res.send(`Trying to load an invalid relation - ${e.message}`);
-        return;
-      }
-      console.error(e);
-      console.log(e.name);
-      res.send("Unknown error");
+      next(e);
     }
   });
 });
@@ -118,3 +113,24 @@ app.get("/health", (req, res) => {
 });
 
 app.listen(3000, "0.0.0.0");
+
+app.use((e, req, res, next) => {
+  // const realError = serializeAPIError(
+  //   new InvalidRelation(`Trying to load an invalid relation - ${e.message}`)
+  // )
+  console.log(typeof e);
+  console.log(Object.keys(e));
+
+  // if (e.name === "SequelizeEagerLoadingError") {
+  //   res.send(
+
+  //   );
+  //   return;
+  // }
+  // return { message: "Unknown error occured" };
+});
+
+// export const serializeAPIError = (e: APIError) => ({
+//   error: e.name,
+//   message: e.message,
+// });
