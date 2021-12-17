@@ -8,7 +8,7 @@ import { config } from "dotenv";
 import { mustGetEnv } from "./util";
 import rateLimit from "express-rate-limit";
 import sequelize from "sequelize";
-import { InvalidRelation } from "errors";
+import { APIError, InvalidRelation, UnknownError } from "errors";
 sequelize.DatabaseError;
 
 config();
@@ -115,22 +115,21 @@ app.get("/health", (req, res) => {
 app.listen(3000, "0.0.0.0");
 
 app.use((e, req, res, next) => {
-  // const realError = serializeAPIError(
-  //   new InvalidRelation(`Trying to load an invalid relation - ${e.message}`)
-  // )
-  console.log(typeof e);
-  console.log(Object.keys(e));
-
-  // if (e.name === "SequelizeEagerLoadingError") {
-  //   res.send(
-
-  //   );
-  //   return;
-  // }
-  // return { message: "Unknown error occured" };
+  let realError: APIError;
+  switch (e.name) {
+    case "SequelizeEagerLoadingError":
+      realError = new InvalidRelation(
+        `Trying to load an invalid relation - ${e.message}`
+      );
+      break;
+    default:
+      realError = new UnknownError();
+  }
+  res.statusCode = realError.statusCode;
+  res.send(serializeAPIError(realError));
 });
 
-// export const serializeAPIError = (e: APIError) => ({
-//   error: e.name,
-//   message: e.message,
-// });
+export const serializeAPIError = (e: APIError) => ({
+  error: e.name,
+  message: e.message,
+});

@@ -19,7 +19,7 @@ export class InvalidRelation extends APIError {
   }
 }
 
-export class UnknownErorr extends APIError {
+export class UnknownError extends APIError {
   constructor() {
     super("Unknown error occured", 500);
   }
