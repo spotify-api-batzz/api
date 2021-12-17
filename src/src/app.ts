@@ -103,6 +103,7 @@ Object.keys(models).forEach((key) => {
     } catch (e) {
       if (e.name === "SequelizeEagerLoadingError") {
         res.send(`Trying to load an invalid relation - ${e.message}`);
+        return;
       }
       console.error(e);
       console.log(e.name);
