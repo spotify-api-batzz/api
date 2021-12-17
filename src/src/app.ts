@@ -104,6 +104,9 @@ Object.keys(models).forEach((key) => {
       if (e.name === "EagerLoadingError") {
         res.send(`Trying to load an invalid relation - ${e.message}`);
       }
+      console.error(e);
+      console.log(e.name);
+      res.send("Unknown error");
     }
   });
 });
