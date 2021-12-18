@@ -7,10 +7,9 @@ import cors from "cors";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
 import rateLimit from "express-rate-limit";
-import sequelize from "sequelize";
+import sequelize, { FindOptions, Model } from "sequelize";
 import { APIError, InvalidRelation, UnknownError } from "errors";
 import camelcase from "camelcase";
-sequelize.DatabaseError;
 
 config();
 
@@ -26,6 +25,8 @@ const limiter = rateLimit({
     res.status(options.statusCode).send(options.message);
   },
 });
+type Constructor<T> = Function & { prototype: T };
+type ModelType<T extends Model<T>> = Constructor<T> & typeof Model;
 
 var app = express();
 app.use(cors());
@@ -40,6 +41,7 @@ const authKey = mustGetEnv("AUTH_HEADER");
 
 ConnectToDB(`postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`);
 let models = initModels(instance);
+
 const parseIncludes = (joinString: string) => {
   if (!joinString) return {};
   let joins = joinString.split(",");
@@ -72,7 +74,6 @@ interface modelMeta {
   offset: number;
   joins: string[];
 }
-
 Object.keys(models).forEach((key) => {
   app.get(`/${camelcase(key)}`, async (req, res, next) => {
     const joins = req.query.joins
@@ -90,12 +91,17 @@ Object.keys(models).forEach((key) => {
       res.send(error);
       return;
     }
+    console.log(req.query);
 
-    const settings = {
+    const offset = parseInt(req.query.offset as string);
+
+    const settings: FindOptions = {
       limit: clamp(1, 500, parseInt(req.query?.limit as string) || 200),
-      offset: req.query.offset,
+      offset,
       ...parseIncludes(req.query.joins as string),
     };
+
+    const model = models[key].findAll();
 
     try {
       let items = await models[key].findAll({
