@@ -9,6 +9,7 @@ import { mustGetEnv } from "./util";
 import rateLimit from "express-rate-limit";
 import sequelize from "sequelize";
 import { APIError, InvalidRelation, UnknownError } from "errors";
+import camelcase from "camelcase";
 sequelize.DatabaseError;
 
 config();
@@ -73,7 +74,7 @@ interface modelMeta {
 }
 
 Object.keys(models).forEach((key) => {
-  app.get(`/${key}`, async (req, res, next) => {
+  app.get(`/${camelcase(key)}`, async (req, res, next) => {
     const joins = req.query.joins
       ? unnest(
           (req.query.joins as string).split(",").map((join) => join.split("."))
