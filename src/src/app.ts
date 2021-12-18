@@ -60,6 +60,7 @@ const parseIncludes = (joinString: string) => {
     });
     include.push(baseInclude);
   });
+  console.log({ include });
   return { include };
 };
 
