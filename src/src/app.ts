@@ -92,6 +92,13 @@ const schemas: Schema[] = Object.keys(models).map((key) => ({
   ),
 }));
 
+const objToSequelizeOrder = (obj: Record<string, "ASC" | "DESC">) => {
+  return Object.keys(obj).reduce(
+    (prev, curr) => [...prev, [curr, obj[curr]]],
+    []
+  );
+};
+
 schemas.forEach(({ model, attribSchema }) => {
   app.get(`/${camelcase(model.name)}`, async (req, res, next) => {
     console.log(typeof model);
@@ -113,19 +120,23 @@ schemas.forEach(({ model, attribSchema }) => {
     }
 
     if (req.query.order) {
-      // for (const key in req.query.order as Record<string, any>) {
       let { error } = attribSchema.validate(req.query.order);
       if (error) {
         res.send(error);
         return;
       }
-      // }
     }
+    console.log(
+      objToSequelizeOrder(req.query.order as Record<string, "ASC" | "DESC">)
+    );
 
     const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
     const settings: FindOptions = {
       limit: clamp(1, 500, parseInt(req.query?.limit as string) || 200),
       offset,
+      order: objToSequelizeOrder(
+        req.query.order as Record<string, "ASC" | "DESC">
+      ),
       ...parseIncludes(req.query.joins as string),
     };
 
