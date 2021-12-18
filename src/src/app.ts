@@ -78,6 +78,7 @@ interface modelMeta {
 }
 Object.keys(models).forEach((key) => {
   app.get(`/${camelcase(key)}`, async (req, res, next) => {
+    console.log("Wt");
     const joins = req.query.joins
       ? unnest(
           (req.query.joins as string).split(",").map((join) => join.split("."))
@@ -88,6 +89,7 @@ Object.keys(models).forEach((key) => {
       ...omit(["joins", "order"], req.query),
       joins,
     });
+    console.log("Wffft");
 
     if (error) {
       res.send(error);
@@ -97,6 +99,7 @@ Object.keys(models).forEach((key) => {
 
     const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
 
+    console.log("Waaat");
     console.log(offset);
     console.log(offset);
     console.log(offset);
