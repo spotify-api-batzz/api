@@ -130,8 +130,10 @@ export function initModels(sequelize: Sequelize) {
   recent_listens.hasMany(recent_listen_data, {
     foreignKey: "recent_listen_id",
   });
-  recent_listens.belongsTo(songs);
   recent_listens.belongsTo(users);
+
+  // recent_listen_data
+  recent_listen_data.belongsTo(songs);
 
   // users
   users.hasMany(recent_listens, { foreignKey: "user_id" });
