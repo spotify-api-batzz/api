@@ -101,6 +101,7 @@ Object.keys(models).forEach((key) => {
       ...parseIncludes(req.query.joins as string),
     };
 
+    console.log(Object.keys(models[key]));
     console.log(models[key]._attributes);
 
     try {
