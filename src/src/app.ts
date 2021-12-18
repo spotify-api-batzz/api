@@ -101,6 +101,12 @@ Object.keys(models).forEach((key) => {
 
     const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
 
+    console.log(offset);
+    console.log(offset);
+    console.log(offset);
+    console.log(offset);
+    console.log(offset);
+
     const settings: FindOptions = {
       limit: clamp(1, 500, parseInt(req.query?.limit as string) || 200),
       offset,
