@@ -102,7 +102,7 @@ Object.keys(models).forEach((key) => {
     };
 
     console.log(Object.keys(models[key]));
-    console.log(models[key]._attributes);
+    console.log(models[key].tableAttributes);
 
     try {
       let items = await models[key].findAll({
