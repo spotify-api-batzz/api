@@ -90,6 +90,8 @@ Object.keys(models).forEach((key) => {
     });
 
     console.log(models[key]._attributes);
+    console.log(models[key]._attributes);
+    console.log(models[key]._attributes);
 
     if (error) {
       res.send(error);
@@ -97,7 +99,7 @@ Object.keys(models).forEach((key) => {
     }
     console.log(req.query);
 
-    const offset = parseInt(req.query.offset as string);
+    const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
 
     const settings: FindOptions = {
       limit: clamp(1, 500, parseInt(req.query?.limit as string) || 200),
