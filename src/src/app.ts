@@ -1,7 +1,7 @@
 import { ConnectToDB, instance } from "./db";
 import express from "express";
 import { initModels, ModelTypes } from "models/init-models";
-import { omit, assocPath, unnest, clamp } from "ramda";
+import { omit, assocPath, unnest, clamp, without } from "ramda";
 import Joi from "joi";
 import cors from "cors";
 import { config } from "dotenv";
@@ -100,6 +100,17 @@ const objToSequelizeOrder = (obj: Record<string, "ASC" | "DESC">) => {
   );
 };
 
+const aggregateAttribErrors = (queries: string[], schema: Joi.ObjectSchema): null |Joi.ValidationError[] => {
+  const errs = []
+  for(const query of queries){
+  let { error } = schema.validate(query);
+  if (error) {
+    errs.push(error)
+  }
+}
+return errs.length === 0 ? null : errs
+}
+
 schemas.forEach(({ model, attribSchema }) => {
   app.get(`/${camelcase(model.name)}`, async (req, res, next) => {
     console.log(typeof model);
@@ -120,24 +131,21 @@ schemas.forEach(({ model, attribSchema }) => {
       return;
     }
 
-    if (req.query.order) {
-      let { error } = attribSchema.validate(req.query.order);
-      if (error) {
-        res.send(error);
-        return;
-      }
+    const errors = aggregateAttribErrors(without([null, undefined], [req.query.order as string, req.query.filter as string]), attribSchema)
+
+    if(errors){
+      res.send(errors)
+      return;
     }
-    console.log(
-      objToSequelizeOrder(req.query.order as Record<string, "ASC" | "DESC">)
-    );
 
     const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
     const settings: FindOptions = {
       limit: clamp(1, 500, parseInt(req.query?.limit as string) || 200),
       offset,
-      order: objToSequelizeOrder(
-        req.query.order as Record<string, "ASC" | "DESC">
-      ),
+      order: req.query.order
+        ? objToSequelizeOrder(req.query.order as Record<string, "ASC" | "DESC">)
+        : undefined,
+      where: ,
       ...parseIncludes(req.query.joins as string),
     };
 
