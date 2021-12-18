@@ -82,7 +82,20 @@ export type {
   usersCreationAttributes,
 };
 
-export function initModels(sequelize: Sequelize) {
+export type ModelTypes =
+  | typeof albums
+  | typeof artists
+  | typeof recent_listen_data
+  | typeof recent_listens
+  | typeof songs
+  | typeof thumbnails
+  | typeof top_artist_data
+  | typeof top_artists
+  | typeof top_song_data
+  | typeof top_songs
+  | typeof songs;
+
+export function initModels(sequelize: Sequelize): Record<string, ModelTypes> {
   albums.initModel(sequelize);
   artists.initModel(sequelize);
   recent_listen_data.initModel(sequelize);

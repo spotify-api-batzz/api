@@ -1,6 +1,6 @@
 import { ConnectToDB, instance } from "./db";
 import express from "express";
-import { initModels } from "models/init-models";
+import { initModels, ModelTypes } from "models/init-models";
 import { omit, assocPath, unnest, clamp } from "ramda";
 import Joi from "joi";
 import cors from "cors";
@@ -63,7 +63,7 @@ const parseIncludes = (joinString: string) => {
   return { include };
 };
 
-const schema = Joi.object({
+const sequelizeSettingsSchema = Joi.object({
   limit: Joi.number(),
   offset: Joi.number(),
   joins: Joi.array().items(Joi.string().valid(...Object.keys(models))),
@@ -76,15 +76,30 @@ interface modelMeta {
   offset: number;
   joins: string[];
 }
-Object.keys(models).forEach((key) => {
-  app.get(`/${camelcase(key)}`, async (req, res, next) => {
+
+interface Schema {
+  model: ModelTypes;
+  attribSchema: Joi.ArraySchema;
+}
+
+const schemas: Schema[] = Object.keys(models).map((key) => ({
+  model: models[key],
+  attribSchema: Joi.array().items(
+    Joi.string().valid(...Object.keys(models[key].rawAttributes))
+  ),
+}));
+
+schemas.forEach(({ model, attribSchema }) => {
+  app.get(`/${camelcase(model.name)}`, async (req, res, next) => {
+    console.log(typeof model);
+
     const joins = req.query.joins
       ? unnest(
           (req.query.joins as string).split(",").map((join) => join.split("."))
         )
       : [];
 
-    const { error, warning } = schema.validate({
+    let { error } = sequelizeSettingsSchema.validate({
       ...omit(["joins", "order"], req.query),
       joins,
     });
@@ -94,6 +109,16 @@ Object.keys(models).forEach((key) => {
       return;
     }
 
+    if (req.query.order) {
+      for (const key in req.query.order as Record<string, any>) {
+        let { error } = attribSchema.validate(key);
+        if (error) {
+          res.send(error);
+          return;
+        }
+      }
+    }
+
     const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
     const settings: FindOptions = {
       limit: clamp(1, 500, parseInt(req.query?.limit as string) || 200),
@@ -101,11 +126,12 @@ Object.keys(models).forEach((key) => {
       ...parseIncludes(req.query.joins as string),
     };
 
-    console.log(Object.keys(models[key]));
-    Object.keys(models[key].tableAttributes);
+    // console.log(Object.keys(models[key]));
+    // Object.keys(models[key].tableAttributes);
 
     try {
-      let items = await models[key].findAll({
+      //@ts-ignore
+      let items = await model.findAll({
         ...settings,
       });
       res.send({ data: items, meta: settings });
