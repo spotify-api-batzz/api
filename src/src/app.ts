@@ -100,16 +100,19 @@ const objToSequelizeOrder = (obj: Record<string, "ASC" | "DESC">) => {
   );
 };
 
-const aggregateAttribErrors = (queries: string[], schema: Joi.ObjectSchema): null |Joi.ValidationError[] => {
-  const errs = []
-  for(const query of queries){
-  let { error } = schema.validate(query);
-  if (error) {
-    errs.push(error)
+const aggregateAttribErrors = (
+  queries: string[],
+  schema: Joi.ObjectSchema
+): null | Joi.ValidationError[] => {
+  const errs = [];
+  for (const query of queries) {
+    let { error } = schema.validate(query);
+    if (error) {
+      errs.push(error);
+    }
   }
-}
-return errs.length === 0 ? null : errs
-}
+  return errs.length === 0 ? null : errs;
+};
 
 schemas.forEach(({ model, attribSchema }) => {
   app.get(`/${camelcase(model.name)}`, async (req, res, next) => {
@@ -131,10 +134,15 @@ schemas.forEach(({ model, attribSchema }) => {
       return;
     }
 
-    const errors = aggregateAttribErrors(without([null, undefined], [req.query.order as string, req.query.filter as string]), attribSchema)
-
-    if(errors){
-      res.send(errors)
+    const errors = aggregateAttribErrors(
+      without(
+        [null, undefined],
+        [req.query.order as string, req.query.filter as string]
+      ),
+      attribSchema
+    );
+    if (errors) {
+      res.send(errors);
       return;
     }
 
@@ -145,7 +153,7 @@ schemas.forEach(({ model, attribSchema }) => {
       order: req.query.order
         ? objToSequelizeOrder(req.query.order as Record<string, "ASC" | "DESC">)
         : undefined,
-      where: ,
+      // where: ,
       ...parseIncludes(req.query.joins as string),
     };
 
