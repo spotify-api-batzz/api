@@ -110,13 +110,13 @@ schemas.forEach(({ model, attribSchema }) => {
     }
 
     if (req.query.order) {
-      for (const key in req.query.order as Record<string, any>) {
-        let { error } = attribSchema.validate(key);
-        if (error) {
-          res.send(error);
-          return;
-        }
+      // for (const key in req.query.order as Record<string, any>) {
+      let { error } = attribSchema.validate(Object.keys(req.query.order));
+      if (error) {
+        res.send(error);
+        return;
       }
+      // }
     }
 
     const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
