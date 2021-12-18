@@ -79,13 +79,16 @@ interface modelMeta {
 
 interface Schema {
   model: ModelTypes;
-  attribSchema: Joi.ArraySchema;
+  attribSchema: Joi.ObjectSchema;
 }
 
 const schemas: Schema[] = Object.keys(models).map((key) => ({
   model: models[key],
-  attribSchema: Joi.array().items(
-    Joi.string().valid(...Object.keys(models[key].rawAttributes))
+  attribSchema: Joi.object(
+    Object.keys(models[key].rawAttributes).reduce(
+      (prev, curr) => ({ ...prev, [curr]: Joi.string().valid("ASC", "DESC") }),
+      {}
+    )
   ),
 }));
 
@@ -111,7 +114,7 @@ schemas.forEach(({ model, attribSchema }) => {
 
     if (req.query.order) {
       // for (const key in req.query.order as Record<string, any>) {
-      let { error } = attribSchema.validate(Object.keys(req.query.order));
+      let { error } = attribSchema.validate(req.query.order);
       if (error) {
         res.send(error);
         return;
