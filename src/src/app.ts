@@ -69,6 +69,8 @@ const schema = Joi.object({
   joins: Joi.array().items(Joi.string().valid(...Object.keys(models))),
 });
 
+let a: Model;
+
 interface modelMeta {
   limit: number;
   offset: number;
@@ -86,6 +88,8 @@ Object.keys(models).forEach((key) => {
       ...omit(["joins", "order"], req.query),
       joins,
     });
+
+    console.log(models[key]._attributes);
 
     if (error) {
       res.send(error);
