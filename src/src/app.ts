@@ -89,10 +89,6 @@ Object.keys(models).forEach((key) => {
       joins,
     });
 
-    console.log(models[key]._attributes);
-    console.log(models[key]._attributes);
-    console.log(models[key]._attributes);
-
     if (error) {
       res.send(error);
       return;
