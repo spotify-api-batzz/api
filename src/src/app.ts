@@ -125,7 +125,7 @@ schemas.forEach(({ model, attribSchema }) => {
       : [];
 
     let { error } = sequelizeSettingsSchema.validate({
-      ...omit(["joins", "order"], req.query),
+      ...omit(["joins", "order", "filter"], req.query),
       joins,
     });
 
