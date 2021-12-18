@@ -126,6 +126,12 @@ export function initModels(sequelize: Sequelize) {
   songs.belongsTo(artists);
   songs.belongsTo(albums);
 
+  // recent_listens
+  recent_listens.hasMany(recent_listen_data);
+
+  // users
+  users.hasMany(recent_listens);
+
   return {
     albums: albums,
     artists: artists,
