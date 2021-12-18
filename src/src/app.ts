@@ -126,6 +126,7 @@ app.use((e, req, res, next) => {
     default:
       realError = new UnknownError();
   }
+  console.error(e);
   res.statusCode = realError.statusCode;
   res.send(serializeAPIError(realError));
 });
