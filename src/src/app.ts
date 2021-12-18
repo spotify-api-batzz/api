@@ -83,7 +83,7 @@ Object.keys(models).forEach((key) => {
       : [];
 
     const { error, warning } = schema.validate({
-      ...omit(["joins"], req.query),
+      ...omit(["joins", "order"], req.query),
       joins,
     });
 
