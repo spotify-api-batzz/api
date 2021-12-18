@@ -78,7 +78,6 @@ interface modelMeta {
 }
 Object.keys(models).forEach((key) => {
   app.get(`/${camelcase(key)}`, async (req, res, next) => {
-    console.log("Wt");
     const joins = req.query.joins
       ? unnest(
           (req.query.joins as string).split(",").map((join) => join.split("."))
@@ -89,30 +88,20 @@ Object.keys(models).forEach((key) => {
       ...omit(["joins", "order"], req.query),
       joins,
     });
-    console.log("Wffft");
 
     if (error) {
       res.send(error);
       return;
     }
-    console.log(req.query);
 
     const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
-
-    console.log("Waaat");
-    console.log(offset);
-    console.log(offset);
-    console.log(offset);
-    console.log(offset);
-    console.log(offset);
-
     const settings: FindOptions = {
       limit: clamp(1, 500, parseInt(req.query?.limit as string) || 200),
       offset,
       ...parseIncludes(req.query.joins as string),
     };
 
-    const model = models[key].findAll();
+    console.log(models[key]._attributes);
 
     try {
       let items = await models[key].findAll({
