@@ -172,7 +172,7 @@ schemas.forEach(({ model, schemas }) => {
               req.query.order as Record<string, "ASC" | "DESC">
             )
           : undefined,
-        // where: ,
+        where: req.query.filter as Record<string, any>,
         ...parseIncludes(req.query.joins as string),
       };
 
