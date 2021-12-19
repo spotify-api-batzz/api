@@ -102,12 +102,15 @@ const schemas: Schema[] = Object.keys(models).map((key) => ({
       Object.keys(models[key].rawAttributes).reduce(
         (prev, curr) => ({
           ...prev,
-          [curr]: Joi.custom((value, helpers) =>
-            typeof value === models[key].rawAttributes[key].type
-              ? value
-              : helpers.error(
-                  `type of ${key} must be ${models[key].rawAttributes[curr].type}`
-                )
+          [curr]: Joi.custom(
+            (value, helpers) => {
+              console.log(models[key].rawAttributes[curr]);
+            }
+            // typeof value === models[key].rawAttributes[key].type
+            //   ? value
+            //   : helpers.error(
+            //       `type of ${key} must be ${models[key].rawAttributes[curr].type}`
+            //     )
           ),
         }),
         {}
