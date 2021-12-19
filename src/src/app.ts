@@ -15,6 +15,7 @@ import {
   ValidationError,
 } from "errors";
 import camelcase from "camelcase";
+import postgraphile from "postgraphile";
 
 config();
 
@@ -44,151 +45,17 @@ const dbPort = mustGetEnv("DB_PORT");
 const dbUser = mustGetEnv("DB_USER");
 const authKey = mustGetEnv("AUTH_HEADER");
 
-ConnectToDB(`postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`);
-let models = initModels(instance);
-
-const parseIncludes = (joinString: string) => {
-  if (!joinString) return {};
-  let joins = joinString.split(",");
-  if (joins.length === 0) return {};
-  let include = [];
-  joins.forEach((join) => {
-    let modelList = join.split(".");
-    let baseInclude = {};
-    if (modelList.length === 0) return "";
-    modelList.forEach((item, i) => {
-      baseInclude = assocPath(
-        new Array(i).fill(1).map((i) => "include"),
-        { model: models[modelList[i]] },
-        baseInclude
-      );
-    });
-    include.push(baseInclude);
-  });
-  console.log({ include });
-  return { include };
-};
-
-const sequelizeSettingsSchema = Joi.object({
-  limit: Joi.number(),
-  offset: Joi.number(),
-  joins: Joi.array().items(Joi.string().valid(...Object.keys(models))),
-});
-
-let a: Model;
-
-interface modelMeta {
-  limit: number;
-  offset: number;
-  joins: string[];
-}
-
-interface Schema {
-  model: ModelTypes;
-  schemas: {
-    order: Joi.ObjectSchema;
-    filter: Joi.ObjectSchema;
-  };
-}
-
-const schemas: Schema[] = Object.keys(models).map((key) => ({
-  model: models[key],
-  schemas: {
-    order: Joi.object(
-      Object.keys(models[key].rawAttributes).reduce(
-        (prev, curr) => ({
-          ...prev,
-          [curr]: Joi.string().valid("ASC", "DESC"),
-        }),
-        {}
-      )
-    ),
-    filter: Joi.object(
-      Object.keys(models[key].rawAttributes).reduce(
-        (prev, curr) => ({
-          ...prev,
-          [curr]: Joi.any(),
-        }),
-        {}
-      )
-    ),
-  },
-}));
-
-const objToSequelizeOrder = (obj: Record<string, "ASC" | "DESC">) => {
-  return Object.keys(obj).reduce(
-    (prev, curr) => [...prev, [curr, obj[curr]]],
-    []
-  );
-};
-
-const runSchemaChecks = (
-  checks: Record<string, { schema: Joi.Schema; value: any }>
-): null | Joi.ValidationError[] => {
-  const errs = [];
-  for (const key in checks) {
-    if (!checks[key].value) continue;
-    let { error } = checks[key].schema.validate(checks[key].value);
-    if (error) {
-      errs.push({ key: key, error });
+app.use(
+  postgraphile(
+    `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`,
+    "public",
+    {
+      watchPg: true,
+      graphiql: true,
+      enhanceGraphiql: true,
     }
-  }
-  return errs.length === 0 ? null : errs;
-};
-
-schemas.forEach(({ model, schemas }) => {
-  app.get(`/${camelcase(model.name)}`, async (req, res, next) => {
-    try {
-      const joins = req.query.joins
-        ? unnest(
-            (req.query.joins as string)
-              .split(",")
-              .map((join) => join.split("."))
-          )
-        : [];
-
-      let { error } = sequelizeSettingsSchema.validate({
-        ...omit(["joins", "order", "filter"], req.query),
-        joins,
-      });
-
-      const errors = runSchemaChecks({
-        order: { schema: schemas.order, value: req.query.order },
-        filter: { schema: schemas.filter, value: req.query.filter },
-      });
-
-      if (errors) {
-        throw new ValidationError(errors);
-      }
-
-      const offset = req.query.offset
-        ? parseInt(req.query.offset as string)
-        : 0;
-      const settings: FindOptions = {
-        limit: clamp(1, 500, parseInt(req.query?.limit as string) || 200),
-        offset,
-        order: req.query.order
-          ? objToSequelizeOrder(
-              req.query.order as Record<string, "ASC" | "DESC">
-            )
-          : undefined,
-        where: req.query.filter as Record<string, any>,
-        ...parseIncludes(req.query.joins as string),
-      };
-
-      // console.log(Object.keys(models[key]));
-      // Object.keys(models[key].tableAttributes);
-
-      //@ts-ignore
-      let items = await model.findAll({
-        ...settings,
-      });
-      res.send({ data: items, meta: settings });
-    } catch (e) {
-      next(e);
-    }
-  });
-});
+  )
+);
 
 app.get("/health", (req, res) => {
   res.statusCode = 200;

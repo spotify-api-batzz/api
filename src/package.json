@@ -12,6 +12,7 @@
     "joi": "^17.4.0",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.3",
+    "postgraphile": "^4.12.5",
     "querystring": "^0.2.1",
     "ramda": "^0.27.1",
     "sequelize": "^6.6.2"
