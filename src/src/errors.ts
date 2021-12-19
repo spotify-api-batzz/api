@@ -3,9 +3,11 @@ import Joi from "joi";
 
 export class APIError extends Error {
   public statusCode: number;
-  constructor(message: string, statusCode: number) {
+  public body?: Record<string, any>;
+  constructor(message: string, statusCode: number, body?: Record<string, any>) {
     super(message);
     this.statusCode = statusCode;
+    this.body = body;
 
     Object.setPrototypeOf(this, new.target.prototype);
 
@@ -29,7 +31,7 @@ export class UnknownError extends APIError {
 export class ValidationError extends APIError {
   public errors: Joi.ValidationError[];
   constructor(errors: Joi.ValidationError[]) {
-    super("Malformed body input", 400);
+    super("Malformed body input", 400, errors);
     this.errors = errors;
   }
 }

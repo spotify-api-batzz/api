@@ -1,7 +1,7 @@
 import { ConnectToDB, instance } from "./db";
 import express from "express";
 import { initModels, ModelTypes } from "models/init-models";
-import { omit, assocPath, unnest, clamp } from "ramda";
+import { omit, assocPath, unnest, clamp, reject, equals } from "ramda";
 import Joi from "joi";
 import cors from "cors";
 import { config } from "dotenv";
@@ -211,7 +211,9 @@ app.use((e, req, res, next) => {
   res.send(serializeAPIError(realError));
 });
 
-export const serializeAPIError = (e: APIError) => ({
-  error: e.name,
-  message: e.message,
-});
+export const serializeAPIError = (e: APIError) =>
+  reject(equals(undefined))({
+    error: e.name,
+    message: e.message,
+    data: e?.body,
+  });
