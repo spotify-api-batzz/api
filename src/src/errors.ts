@@ -1,4 +1,5 @@
 import { SequelizeScopeError } from "sequelize/types";
+import Joi from "joi";
 
 export class APIError extends Error {
   public statusCode: number;
@@ -22,5 +23,13 @@ export class InvalidRelation extends APIError {
 export class UnknownError extends APIError {
   constructor() {
     super("Unknown error occured", 500);
+  }
+}
+
+export class ValidationError extends APIError {
+  public errors: Joi.ValidationError[];
+  constructor(errors: Joi.ValidationError[]) {
+    super("Malformed body input", 400);
+    this.errors = errors;
   }
 }

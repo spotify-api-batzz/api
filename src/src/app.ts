@@ -2,7 +2,7 @@ import { ConnectToDB, instance } from "./db";
 import express from "express";
 import { initModels, ModelTypes } from "models/init-models";
 import { omit, assocPath, unnest, clamp, without } from "ramda";
-import Joi from "joi";
+import Joi, { string } from "joi";
 import cors from "cors";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
@@ -80,17 +80,40 @@ interface modelMeta {
 
 interface Schema {
   model: ModelTypes;
-  attribSchema: Joi.ObjectSchema;
+  schemas: {
+    order: Joi.ObjectSchema;
+    filter: Joi.ObjectSchema;
+  };
 }
 
 const schemas: Schema[] = Object.keys(models).map((key) => ({
   model: models[key],
-  attribSchema: Joi.object(
-    Object.keys(models[key].rawAttributes).reduce(
-      (prev, curr) => ({ ...prev, [curr]: Joi.string().valid("ASC", "DESC") }),
-      {}
-    )
-  ),
+  schemas: {
+    order: Joi.object(
+      Object.keys(models[key].rawAttributes).reduce(
+        (prev, curr) => ({
+          ...prev,
+          [curr]: Joi.string().valid("ASC", "DESC"),
+        }),
+        {}
+      )
+    ),
+    filter: Joi.object(
+      Object.keys(models[key].rawAttributes).reduce(
+        (prev, curr) => ({
+          ...prev,
+          lol: Joi.custom((value, helpers) =>
+            typeof value === models[key].rawAttributes[key].type
+              ? value
+              : helpers.error(
+                  `type of ${key} must be ${models[key].rawAttributes[key].type}`
+                )
+          ),
+        }),
+        {}
+      )
+    ),
+  },
 }));
 
 const objToSequelizeOrder = (obj: Record<string, "ASC" | "DESC">) => {
@@ -100,67 +123,63 @@ const objToSequelizeOrder = (obj: Record<string, "ASC" | "DESC">) => {
   );
 };
 
-const aggregateAttribErrors = (
-  queries: string[],
-  schema: Joi.ObjectSchema
+const runSchemaChecks = (
+  checks: Record<string, { schema: Joi.Schema; value: any }>
 ): null | Joi.ValidationError[] => {
   const errs = [];
-  for (const query of queries) {
-    let { error } = schema.validate(query);
+  for (const key in checks) {
+    if (!checks[key].value) continue;
+    let { error } = checks[key].schema.validate(checks[key].value);
     if (error) {
-      errs.push(error);
+      errs.push({ key: key, error });
     }
   }
   return errs.length === 0 ? null : errs;
 };
 
-schemas.forEach(({ model, attribSchema }) => {
+schemas.forEach(({ model, schemas }) => {
   app.get(`/${camelcase(model.name)}`, async (req, res, next) => {
-    console.log(typeof model);
-
-    const joins = req.query.joins
-      ? unnest(
-          (req.query.joins as string).split(",").map((join) => join.split("."))
-        )
-      : [];
-
-    let { error } = sequelizeSettingsSchema.validate({
-      ...omit(["joins", "order", "filter"], req.query),
-      joins,
-    });
-
-    if (error) {
-      res.send(error);
-      return;
-    }
-
-    const errors = aggregateAttribErrors(
-      without(
-        [null, undefined],
-        [req.query.order as string, req.query.filter as string]
-      ),
-      attribSchema
-    );
-    if (errors) {
-      res.send(errors);
-      return;
-    }
-
-    const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
-    const settings: FindOptions = {
-      limit: clamp(1, 500, parseInt(req.query?.limit as string) || 200),
-      offset,
-      order: req.query.order
-        ? objToSequelizeOrder(req.query.order as Record<string, "ASC" | "DESC">)
-        : undefined,
-      // where: ,
-      ...parseIncludes(req.query.joins as string),
-    };
-
-    // console.log(Object.keys(models[key]));
-    // Object.keys(models[key].tableAttributes);
-
     try {
+      const joins = req.query.joins
+        ? unnest(
+            (req.query.joins as string)
+              .split(",")
+              .map((join) => join.split("."))
+          )
+        : [];
+
+      let { error } = sequelizeSettingsSchema.validate({
+        ...omit(["joins", "order", "filter"], req.query),
+        joins,
+      });
+
+      const errors = runSchemaChecks({
+        order: { schema: schemas.order, value: req.query.order },
+        filter: { schema: schemas.filter, value: req.query.filter },
+      });
+      if (errors) {
+        res.send(errors);
+        return;
+      }
+
+      const offset = req.query.offset
+        ? parseInt(req.query.offset as string)
+        : 0;
+      const settings: FindOptions = {
+        limit: clamp(1, 500, parseInt(req.query?.limit as string) || 200),
+        offset,
+        order: req.query.order
+          ? objToSequelizeOrder(
+              req.query.order as Record<string, "ASC" | "DESC">
+            )
+          : undefined,
+        // where: ,
+        ...parseIncludes(req.query.joins as string),
+      };
+
+      // console.log(Object.keys(models[key]));
+      // Object.keys(models[key].tableAttributes);
+
       //@ts-ignore
       let items = await model.findAll({
         ...settings,
