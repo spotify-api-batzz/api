@@ -53,6 +53,7 @@ app.use(
       watchPg: true,
       graphiql: true,
       enhanceGraphiql: true,
+      exportGqlSchemaPath: "schema.graphql",
     }
   )
 );
