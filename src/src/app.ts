@@ -1,20 +1,10 @@
-import { ConnectToDB, instance } from "./db";
 import express from "express";
-import { initModels, ModelTypes } from "models/init-models";
-import { omit, assocPath, unnest, clamp, reject, equals } from "ramda";
-import Joi from "joi";
+import { reject, equals } from "ramda";
 import cors from "cors";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
 import rateLimit from "express-rate-limit";
-import { FindOptions, Model } from "sequelize";
-import {
-  APIError,
-  InvalidRelation,
-  UnknownError,
-  ValidationError,
-} from "errors";
-import camelcase from "camelcase";
+import { APIError, InvalidRelation, UnknownError } from "errors";
 import postgraphile from "postgraphile";
 
 config();
@@ -31,8 +21,6 @@ const limiter = rateLimit({
     res.status(options.statusCode).send(options.message);
   },
 });
-type Constructor<T> = Function & { prototype: T };
-type ModelType<T extends Model<T>> = Constructor<T> & typeof Model;
 
 var app = express();
 app.use(cors());
