@@ -1,14 +1,19 @@
 import { ConnectToDB, instance } from "./db";
 import express from "express";
 import { initModels, ModelTypes } from "models/init-models";
-import { omit, assocPath, unnest, clamp, without } from "ramda";
-import Joi, { string } from "joi";
+import { omit, assocPath, unnest, clamp } from "ramda";
+import Joi from "joi";
 import cors from "cors";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
 import rateLimit from "express-rate-limit";
-import sequelize, { FindOptions, Model } from "sequelize";
-import { APIError, InvalidRelation, UnknownError } from "errors";
+import { FindOptions, Model } from "sequelize";
+import {
+  APIError,
+  InvalidRelation,
+  UnknownError,
+  ValidationError,
+} from "errors";
 import camelcase from "camelcase";
 
 config();
@@ -102,16 +107,7 @@ const schemas: Schema[] = Object.keys(models).map((key) => ({
       Object.keys(models[key].rawAttributes).reduce(
         (prev, curr) => ({
           ...prev,
-          [curr]: Joi.custom(
-            (value, helpers) => {
-              console.log(Object.keys(models[key].rawAttributes[curr].type));
-            }
-            // typeof value === models[key].rawAttributes[key].type
-            //   ? value
-            //   : helpers.error(
-            //       `type of ${key} must be ${models[key].rawAttributes[curr].type}`
-            //     )
-          ),
+          [curr]: Joi.any(),
         }),
         {}
       )
@@ -160,9 +156,9 @@ schemas.forEach(({ model, schemas }) => {
         order: { schema: schemas.order, value: req.query.order },
         filter: { schema: schemas.filter, value: req.query.filter },
       });
+
       if (errors) {
-        res.send(errors);
-        return;
+        throw new ValidationError(errors);
       }
 
       const offset = req.query.offset
@@ -202,15 +198,13 @@ app.get("/health", (req, res) => {
 app.listen(3000, "0.0.0.0");
 
 app.use((e, req, res, next) => {
-  let realError: APIError;
+  let realError: APIError = e instanceof APIError ? e : new UnknownError();
   switch (e.name) {
     case "SequelizeEagerLoadingError":
       realError = new InvalidRelation(
         `Trying to load an invalid relation - ${e.message}`
       );
       break;
-    default:
-      realError = new UnknownError();
   }
   console.error(e);
   res.statusCode = realError.statusCode;
