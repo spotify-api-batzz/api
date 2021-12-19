@@ -104,7 +104,7 @@ const schemas: Schema[] = Object.keys(models).map((key) => ({
           ...prev,
           [curr]: Joi.custom(
             (value, helpers) => {
-              console.log(models[key].rawAttributes[curr].type);
+              console.log(Object.keys(models[key].rawAttributes[curr].type));
             }
             // typeof value === models[key].rawAttributes[key].type
             //   ? value
