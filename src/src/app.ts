@@ -41,8 +41,10 @@ const tags = {
   config: {
     attribute: {
       "public.thumbnails.entity_type": {
-        description:
-          "E'@isPolymorphic\n@polymorphicTo Album\n@polymorphicTo Artist'",
+        tags: {
+          isPolymorphic: true,
+          polyMorphicTo: ["Album", "Artist"],
+        },
       },
     },
   },
@@ -53,7 +55,7 @@ app.use("/songs", (req, res) => {
     "This page has moved, check out https://spotify-api.batzz.io/graphiql!"
   );
 });
-
+console.log(makeJSONPgSmartTagsPlugin(tags).toString());
 app.use(
   postgraphile(
     `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`,
