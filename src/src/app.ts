@@ -40,7 +40,7 @@ const tags = {
   version: 1,
   config: {
     attribute: {
-      ["public.thumbnails.entity_type"]: {
+      "public.thumbnails.entity_type": {
         description:
           "E'@isPolymorphic\n@polymorphicTo Album\n@polymorphicTo Artist'",
       },
