@@ -6,6 +6,9 @@ import { mustGetEnv } from "./util";
 import rateLimit from "express-rate-limit";
 import { APIError, InvalidRelation, UnknownError } from "errors";
 import postgraphile from "postgraphile";
+import { JSONPgSmartTags, makeJSONPgSmartTagsPlugin } from "graphile-utils";
+import PgConnectionFilterPlugin from "postgraphile-plugin-connection-filter";
+import { postgraphilePolyRelationCorePlugin } from "postgraphile-polymorphic-relation-plugin";
 
 config();
 
@@ -33,6 +36,19 @@ const dbPort = mustGetEnv("DB_PORT");
 const dbUser = mustGetEnv("DB_USER");
 const authKey = mustGetEnv("AUTH_HEADER");
 
+const tags = {
+  version: 1,
+  config: {
+    attribute: {
+      // comment on column taggs.taggable_type is E'@isPolymorphic\n@polymorphicTo User';
+      ["public.thumbnails.entity_id"]: {
+        description: "E'@isPolymorphic\n@polymorphicTo artists'",
+      },
+      // [ "public.thumbnails.entity_id"]: {description: "E'@isPolymorphic\n@polymorphicTo artists'"}
+    },
+  },
+} as JSONPgSmartTags;
+
 app.use(
   postgraphile(
     `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`,
@@ -42,6 +58,15 @@ app.use(
       graphiql: true,
       enhanceGraphiql: true,
       exportGqlSchemaPath: "schema.graphql",
+      appendPlugins: [
+        makeJSONPgSmartTagsPlugin(tags),
+        PgConnectionFilterPlugin,
+        postgraphilePolyRelationCorePlugin,
+      ],
+      graphileBuildOptions: {
+        connectionFilterPolymorphicForward: true,
+        connectionFilterPolymorphicBackward: true,
+      },
     }
   )
 );

@@ -11,7 +11,10 @@
     "pg-hstore": "^2.3.3",
     "postgraphile": "^4.12.5",
     "querystring": "^0.2.1",
-    "ramda": "^0.27.1"
+    "ramda": "^0.27.1",
+    "graphile-utils": "^4.12.2",
+    "postgraphile-plugin-connection-filter": "^2.2.2",
+    "postgraphile-polymorphic-relation-plugin": "^1.1.6"
   },
   "scripts": {
     "bundle": "node scripts/bundle.js",
