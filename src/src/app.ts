@@ -40,11 +40,10 @@ const tags = {
   version: 1,
   config: {
     attribute: {
-      // comment on column taggs.taggable_type is E'@isPolymorphic\n@polymorphicTo User';
-      ["public.thumbnails.entity_id"]: {
-        description: "E'@isPolymorphic\n@polymorphicTo artists'",
+      ["public.thumbnails.entity_type"]: {
+        description:
+          "E'@isPolymorphic\n@polymorphicTo Album\n@polymorphicTo Artist'",
       },
-      // [ "public.thumbnails.entity_id"]: {description: "E'@isPolymorphic\n@polymorphicTo artists'"}
     },
   },
 } as JSONPgSmartTags;
@@ -65,7 +64,7 @@ app.use(
       enhanceGraphiql: true,
       exportGqlSchemaPath: "schema.graphql",
       appendPlugins: [
-        // makeJSONPgSmartTagsPlugin(tags),
+        makeJSONPgSmartTagsPlugin(tags),
         PgConnectionFilterPlugin,
         postgraphilePolyRelationCorePlugin,
       ],
