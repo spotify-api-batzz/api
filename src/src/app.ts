@@ -71,6 +71,7 @@ app.use(
       graphileBuildOptions: {
         connectionFilterPolymorphicForward: true,
         connectionFilterPolymorphicBackward: true,
+        connectionFilterRelations: true,
       },
     }
   )
