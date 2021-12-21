@@ -49,6 +49,12 @@ const tags = {
   },
 } as JSONPgSmartTags;
 
+app.use("/songs", (req, res) => {
+  res.send(
+    "This page has moved, check out https://spotify-api.batzz.io/graphiql!"
+  );
+});
+
 app.use(
   postgraphile(
     `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`,
