@@ -43,7 +43,7 @@ const tags = {
       "public.thumbnails.entity_type": {
         tags: {
           isPolymorphic: true,
-          polyMorphicTo: ["Album", "Artist"],
+          polymorphicTo: ["Album", "Artist"],
         },
       },
     },
