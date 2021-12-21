@@ -59,7 +59,7 @@ app.use(
       enhanceGraphiql: true,
       exportGqlSchemaPath: "schema.graphql",
       appendPlugins: [
-        makeJSONPgSmartTagsPlugin(tags),
+        // makeJSONPgSmartTagsPlugin(tags),
         PgConnectionFilterPlugin,
         postgraphilePolyRelationCorePlugin,
       ],
