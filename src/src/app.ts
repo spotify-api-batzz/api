@@ -55,7 +55,7 @@ app.use("/songs", (req, res) => {
     "This page has moved, check out https://spotify-api.batzz.io/graphiql!"
   );
 });
-console.log(makeJSONPgSmartTagsPlugin(tags).toString());
+
 app.use(
   postgraphile(
     `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`,
