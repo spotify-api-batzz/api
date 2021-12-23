@@ -74,6 +74,9 @@ app.use(
         connectionFilterPolymorphicForward: true,
         connectionFilterPolymorphicBackward: true,
         connectionFilterRelations: true,
+        connectionFilterComputedColumns: false,
+        connectionFilterSetofFunctions: false,
+        connectionFilterArrays: false,
       },
     }
   )
