@@ -9,6 +9,7 @@ import postgraphile from "postgraphile";
 import { JSONPgSmartTags, makeJSONPgSmartTagsPlugin } from "graphile-utils";
 import PgConnectionFilterPlugin from "postgraphile-plugin-connection-filter";
 import { postgraphilePolyRelationCorePlugin } from "postgraphile-polymorphic-relation-plugin";
+import PgAggregatesPlugin from "@graphile/pg-aggregates";
 
 config();
 
@@ -52,7 +53,7 @@ const tags = {
 
 app.use("/songs", (req, res) => {
   res.send(
-    "This page has moved, check out https://spotify-api.batzz.io/graphiql!"
+    "This page has moved, check out https://spotify-api.batzz.io/graphiql !"
   );
 });
 
@@ -68,6 +69,7 @@ app.use(
       appendPlugins: [
         makeJSONPgSmartTagsPlugin(tags),
         PgConnectionFilterPlugin,
+        PgAggregatesPlugin,
         postgraphilePolyRelationCorePlugin,
       ],
       graphileBuildOptions: {
