@@ -11,6 +11,7 @@ import PgConnectionFilterPlugin from "postgraphile-plugin-connection-filter";
 import { postgraphilePolyRelationCorePlugin } from "postgraphile-polymorphic-relation-plugin";
 import PgAggregatesPlugin from "@graphile/pg-aggregates";
 import PgSimplifyInflector from "@graphile-contrib/pg-simplify-inflector";
+import qs from "query-string";
 
 config();
 
@@ -89,8 +90,12 @@ const postGraphile = postgraphile(
 const hackReq =
   (fn): RequestHandler =>
   (req, res, next) => {
-    console.log(postGraphile.graphqlRoute);
-    if (req.method === "GET" && req.originalUrl === postGraphile.graphqlRoute) {
+    console.log(req.originalUrl.split("?")[0]);
+
+    if (
+      req.method === "GET" &&
+      req.originalUrl.split("?")[0] === postGraphile.graphqlRoute
+    ) {
       req.method = "POST";
       const payload = {
         query: req.query.query,
