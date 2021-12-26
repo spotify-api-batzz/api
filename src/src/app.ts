@@ -57,6 +57,7 @@ app.use("/songs", (req, res) => {
     "This page has moved, check out https://spotify-api.batzz.io/graphiql !"
   );
 });
+console.log(`postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`);
 
 const postGraphile = postgraphile(
   `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`,
