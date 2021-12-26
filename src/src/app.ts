@@ -5,7 +5,7 @@ import { config } from "dotenv";
 import { mustGetEnv } from "./util";
 import rateLimit from "express-rate-limit";
 import { APIError, InvalidRelation, UnknownError } from "errors";
-import postgraphile from "postgraphile";
+import postgraphile, { PostGraphileResponseNode } from "postgraphile";
 import { JSONPgSmartTags, makeJSONPgSmartTagsPlugin } from "graphile-utils";
 import PgConnectionFilterPlugin from "postgraphile-plugin-connection-filter";
 import { postgraphilePolyRelationCorePlugin } from "postgraphile-polymorphic-relation-plugin";
@@ -83,6 +83,20 @@ const postGraphile = postgraphile(
     },
   }
 );
+
+app.get("/graphql", (req, res, next) => {
+  req.method = "POST";
+  req.method = "POST";
+  req.url = "/graphql ";
+  const payload = {
+    query: req.query.query,
+    operationName: req.query.operationName,
+    variables: req.query.variables,
+  };
+  const originalBody = req.body;
+  req.body = payload;
+  next();
+});
 
 app.use(postGraphile);
 
