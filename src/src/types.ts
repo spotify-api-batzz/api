@@ -6,6 +6,7 @@ export enum Endpoints {
   users = "users",
   recentListens = "recentListens",
   topSongs = "topSongs",
+  topArtists = "topArtists",
 }
 
 interface CacheInformation {
