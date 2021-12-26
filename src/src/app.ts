@@ -1,5 +1,5 @@
 import express, { RequestHandler } from "express";
-import { reject, equals } from "ramda";
+import { reject, equals, ap } from "ramda";
 import cors from "cors";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
@@ -85,30 +85,32 @@ const postGraphile = postgraphile(
   }
 );
 
-//https://github.com/graphile/postgraphile/issues/442
-const hackReq =
-  (fn): RequestHandler =>
-  (req, res, next) => {
-    console.log(postGraphile.graphqlRoute);
-    if (req.method === "GET" && req.originalUrl === postGraphile.graphqlRoute) {
-      req.method = "POST";
-      const payload = {
-        query: req.query.query,
-        operationName: req.query.operationName,
-        variables: req.query.variables,
-      };
-      const originalBody = req.body;
-      req.body = payload;
-      fn(req, res, (err) => {
-        req.body = originalBody;
-        req.method = "GET";
-        next(err);
-      });
-    } else {
-      fn(req, res, next);
-    }
-  };
-app.use(hackReq(postgraphile));
+app.use(postGraphile);
+
+// //https://github.com/graphile/postgraphile/issues/442
+// const hackReq =
+//   (fn): RequestHandler =>
+//   (req, res, next) => {
+//     console.log(postGraphile.graphqlRoute);
+//     if (req.method === "GET" && req.originalUrl === postGraphile.graphqlRoute) {
+//       req.method = "POST";
+//       const payload = {
+//         query: req.query.query,
+//         operationName: req.query.operationName,
+//         variables: req.query.variables,
+//       };
+//       const originalBody = req.body;
+//       req.body = payload;
+//       fn(req, res, (err) => {
+//         req.body = originalBody;
+//         req.method = "GET";
+//         next(err);
+//       });
+//     } else {
+//       fn(req, res, next);
+//     }
+//   };
+// app.use(hackReq(postgraphile));
 
 app.get("/health", (req, res) => {
   res.statusCode = 200;
