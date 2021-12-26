@@ -88,8 +88,9 @@ app.get("/graphql", (req, res, next) => {
   req.method = "POST";
   req.method = "POST";
   req.url = "/graphql ";
+  const stringQuery = Buffer.from(req.query.query as string, "base64");
   const payload = {
-    query: req.query.query,
+    query: stringQuery.toString("utf-8"),
     operationName: req.query.operationName,
     variables: req.query.variables,
   };
