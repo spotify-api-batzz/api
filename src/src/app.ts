@@ -11,7 +11,6 @@ import PgConnectionFilterPlugin from "postgraphile-plugin-connection-filter";
 import { postgraphilePolyRelationCorePlugin } from "postgraphile-polymorphic-relation-plugin";
 import PgAggregatesPlugin from "@graphile/pg-aggregates";
 import PgSimplifyInflector from "@graphile-contrib/pg-simplify-inflector";
-import qs from "query-string";
 
 config();
 
@@ -58,7 +57,6 @@ app.use("/songs", (req, res) => {
     "This page has moved, check out https://spotify-api.batzz.io/graphiql !"
   );
 });
-console.log(`postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`);
 
 const postGraphile = postgraphile(
   `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`,
@@ -86,35 +84,7 @@ const postGraphile = postgraphile(
   }
 );
 
-//https://github.com/graphile/postgraphile/issues/442
-const hackReq =
-  (fn): RequestHandler =>
-  (req, res, next) => {
-    console.log(req.originalUrl.split("?")[0]);
-
-    if (
-      req.method === "GET" &&
-      req.originalUrl.split("?")[0] === postGraphile.graphqlRoute
-    ) {
-      req.method = "POST";
-      const payload = {
-        query: req.query.query,
-        operationName: req.query.operationName,
-        variables: req.query.variables,
-      };
-      const originalBody = req.body;
-      req.body = payload;
-      fn(req, res, (err) => {
-        req.body = originalBody;
-        req.method = "GET";
-        next(err);
-      });
-    } else {
-      console.log("not");
-      fn(req, res, next);
-    }
-  };
-app.use(hackReq(postgraphile));
+app.use(postGraphile);
 
 app.get("/health", (req, res) => {
   res.statusCode = 200;
