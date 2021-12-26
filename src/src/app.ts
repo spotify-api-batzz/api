@@ -1,4 +1,4 @@
-import express from "express";
+import express, { RequestHandler } from "express";
 import { reject, equals } from "ramda";
 import cors from "cors";
 import { config } from "dotenv";
@@ -10,6 +10,7 @@ import { JSONPgSmartTags, makeJSONPgSmartTagsPlugin } from "graphile-utils";
 import PgConnectionFilterPlugin from "postgraphile-plugin-connection-filter";
 import { postgraphilePolyRelationCorePlugin } from "postgraphile-polymorphic-relation-plugin";
 import PgAggregatesPlugin from "@graphile/pg-aggregates";
+import PgSimplifyInflector from "@graphile-contrib/pg-simplify-inflector";
 
 config();
 
@@ -57,32 +58,56 @@ app.use("/songs", (req, res) => {
   );
 });
 
-app.use(
-  postgraphile(
-    `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`,
-    "public",
-    {
-      watchPg: true,
-      graphiql: true,
-      enhanceGraphiql: true,
-      exportGqlSchemaPath: "schema.graphql",
-      appendPlugins: [
-        makeJSONPgSmartTagsPlugin(tags),
-        PgConnectionFilterPlugin,
-        PgAggregatesPlugin,
-        postgraphilePolyRelationCorePlugin,
-      ],
-      graphileBuildOptions: {
-        connectionFilterPolymorphicForward: true,
-        connectionFilterPolymorphicBackward: true,
-        connectionFilterRelations: true,
-        connectionFilterComputedColumns: false,
-        connectionFilterSetofFunctions: false,
-        connectionFilterArrays: false,
-      },
-    }
-  )
+const postGraphile = postgraphile(
+  `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`,
+  "public",
+  {
+    watchPg: true,
+    graphiql: true,
+    enhanceGraphiql: true,
+    exportGqlSchemaPath: "schema.graphql",
+    appendPlugins: [
+      makeJSONPgSmartTagsPlugin(tags),
+      PgConnectionFilterPlugin,
+      PgAggregatesPlugin,
+      postgraphilePolyRelationCorePlugin,
+      PgSimplifyInflector,
+    ],
+    graphileBuildOptions: {
+      connectionFilterPolymorphicForward: true,
+      connectionFilterPolymorphicBackward: true,
+      connectionFilterRelations: true,
+      connectionFilterComputedColumns: false,
+      connectionFilterSetofFunctions: false,
+      connectionFilterArrays: false,
+    },
+  }
 );
+
+//https://github.com/graphile/postgraphile/issues/442
+const hackReq =
+  (fn): RequestHandler =>
+  (req, res, next) => {
+    console.log(postGraphile.graphqlRoute);
+    if (req.method === "GET" && req.originalUrl === postGraphile.graphqlRoute) {
+      req.method = "POST";
+      const payload = {
+        query: req.query.query,
+        operationName: req.query.operationName,
+        variables: req.query.variables,
+      };
+      const originalBody = req.body;
+      req.body = payload;
+      fn(req, res, (err) => {
+        req.body = originalBody;
+        req.method = "GET";
+        next(err);
+      });
+    } else {
+      fn(req, res, next);
+    }
+  };
+app.use(hackReq(postgraphile));
 
 app.get("/health", (req, res) => {
   res.statusCode = 200;

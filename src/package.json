@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
     "@graphile/pg-aggregates": "^0.1.0",
     "@types/joi": "^17.2.3",
     "body-parser": "^1.19.0",
