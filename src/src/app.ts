@@ -11,6 +11,7 @@ import PgConnectionFilterPlugin from "postgraphile-plugin-connection-filter";
 import { postgraphilePolyRelationCorePlugin } from "postgraphile-polymorphic-relation-plugin";
 import PgAggregatesPlugin from "@graphile/pg-aggregates";
 import PgSimplifyInflector from "@graphile-contrib/pg-simplify-inflector";
+import { EndpointCacheInformation, Endpoints } from "types";
 
 config();
 
@@ -51,6 +52,16 @@ const tags = {
     },
   },
 } as JSONPgSmartTags;
+
+const cacheDefaults = Object.keys(Endpoints).reduce(
+  (prev, key) => ({ ...prev, [key]: { maxAge: "3600" } }),
+  {}
+) as EndpointCacheInformation;
+
+const cacheTime: EndpointCacheInformation = {
+  ...cacheDefaults,
+  recentListens: { maxAge: "10" },
+};
 
 app.use("/songs", (req, res) => {
   res.send(
@@ -94,6 +105,12 @@ app.get("/graphql", (req, res, next) => {
     operationName: req.query.operationName,
     variables: req.query.variables,
   };
+  const cacheAgeKey = req.header("x-cache-age-key");
+  if (cacheAgeKey) {
+    console.log(cacheAgeKey);
+    console.log(`max-age=${cacheTime[cacheAgeKey] || 3600}`);
+    res.header("cache-control", `max-age=${cacheTime[cacheAgeKey] || 3600}`);
+  }
   const originalBody = req.body;
   req.body = payload;
   next();
