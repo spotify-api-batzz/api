@@ -60,7 +60,7 @@ const cacheDefaults = Object.keys(Endpoints).reduce(
 
 const cacheTime: EndpointCacheInformation = {
   ...cacheDefaults,
-  recentListens: { maxAge: "10" },
+  recentListens: { maxAge: "300" },
 };
 
 app.use("/songs", (req, res) => {
