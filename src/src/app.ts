@@ -1,6 +1,5 @@
 import express, { RequestHandler } from "express";
 import { reject, equals } from "ramda";
-import cors from "cors";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
 import rateLimit from "express-rate-limit";
@@ -29,7 +28,6 @@ const limiter = rateLimit({
 });
 
 var app = express();
-app.use(cors());
 app.use(limiter);
 
 const dbIp = mustGetEnv("DB_IP");
@@ -97,7 +95,6 @@ const postGraphile = postgraphile(
 
 app.get("/graphql", (req, res, next) => {
   req.method = "POST";
-  req.method = "POST";
   req.url = "/graphql ";
   const stringQuery = Buffer.from(req.query.query as string, "base64");
   const payload = {
@@ -108,7 +105,7 @@ app.get("/graphql", (req, res, next) => {
   const cacheAgeKey = req.header("x-cache-age-key");
   if (cacheAgeKey) {
     console.log(cacheAgeKey);
-    console.log(`max-age=${cacheTime[cacheAgeKey] || 3600}`);
+    console.log(`max-age=${cacheTime[cacheAgeKey]?.maxAge || 3600}`);
     res.header(
       "cache-control",
       `max-age=${cacheTime[cacheAgeKey]?.maxAge || 3600}`
