@@ -22,7 +22,6 @@
     "start": "node dist/esbuild-main.js",
     "bundle:dev": "node scripts/bundle.js watch",
     "start:dev": "nodemon dist/esbuild-main.js",
-    "make:models": "sequelize-auto -d spotify -h 192.168.0.27 -u test -x 123 -p 5432 -e postgres -l ts",
     "watch": "concurrently 'yarn:bundle:dev' 'yarn:start:dev'"
   },
   "devDependencies": {
