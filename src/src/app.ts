@@ -52,7 +52,7 @@ const tags = {
 } as JSONPgSmartTags;
 
 const cacheDefaults = Object.keys(Endpoints).reduce(
-  (prev, key) => ({ ...prev, [key]: { maxAge: "3600" } }),
+  (prev, key) => ({ ...prev, [key]: { maxAge: "15" } }),
   {}
 ) as EndpointCacheInformation;
 
@@ -95,7 +95,7 @@ const postGraphile = postgraphile(
 
 app.get("/graphql", (req, res, next) => {
   req.method = "POST";
-  req.url = "/graphql ";
+  req.url = "/graphql";
   const stringQuery = Buffer.from(req.query.query as string, "base64");
   const payload = {
     query: stringQuery.toString("utf-8"),
