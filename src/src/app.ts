@@ -52,7 +52,7 @@ const tags = {
 } as JSONPgSmartTags;
 
 const cacheDefaults = Object.keys(Endpoints).reduce(
-  (prev, key) => ({ ...prev, [key]: { maxAge: "15" } }),
+  (prev, key) => ({ ...prev, [key]: { maxAge: "3600" } }),
   {}
 ) as EndpointCacheInformation;
 
@@ -104,8 +104,6 @@ app.get("/graphql", (req, res, next) => {
   };
   const cacheAgeKey = req.header("x-cache-age-key");
   if (cacheAgeKey) {
-    console.log(cacheAgeKey);
-    console.log(cacheTime);
     console.log(`max-age=${cacheTime[cacheAgeKey]?.maxAge || 3600}`);
     res.header(
       "cache-control",
