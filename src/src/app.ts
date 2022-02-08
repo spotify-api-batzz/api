@@ -1,14 +1,16 @@
 import express from "express";
 import { config } from "dotenv";
 import { mustGetEnv } from "./util";
-import createAggregateRouter from "./aggregate/routes";
-import createPostgraphileRouter from "postgraphile/routes";
 import postgraphile from "postgraphile";
-import cacheMiddleware from "middleware/cache";
-import errorMiddleware from "middleware/errors";
-import limiterMiddleware from "middleware/ratelimiter";
 import { Client } from "pg";
-import { postGraphileOptions } from "postgraphile/config";
+
+import createPostgraphileRouter from "./postgraphile/routes";
+import { postGraphileOptions } from "./postgraphile/config";
+import createAggregateRouter from "./aggregate/routes";
+
+import cacheMiddleware from "./middleware/cache";
+import errorMiddleware from "./middleware/errors";
+import limiterMiddleware from "./middleware/ratelimiter";
 
 config();
 
