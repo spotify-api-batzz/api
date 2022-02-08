@@ -1,4 +1,3 @@
-import { SequelizeScopeError } from "sequelize/types";
 import Joi from "joi";
 
 export class APIError extends Error {
@@ -29,9 +28,9 @@ export class UnknownError extends APIError {
 }
 
 export class ValidationError extends APIError {
-  public errors: Joi.ValidationError[];
-  constructor(errors: Joi.ValidationError[]) {
-    super("Malformed body input", 400, errors);
-    this.errors = errors;
+  public error: Joi.ValidationError;
+  constructor(error: Joi.ValidationError) {
+    super("Malformed body input", 400, error);
+    this.error = error;
   }
 }
