@@ -33,7 +33,7 @@ const postGraphile = postgraphile(
   postGraphileOptions
 );
 
-app.use(limiterMiddleware());
+app.use(limiterMiddleware);
 app.use(cacheMiddleware);
 app.use(errorMiddleware);
 
