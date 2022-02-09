@@ -17,7 +17,7 @@ class AggregateHandler {
   ) {
     const startDate = dayjs(start);
     const endDate = dayjs(end);
-    console.log(startDate);
+    console.log(formatToPgTimestamp(startDate));
     console.log(start);
 
     const data = await this.db.query(
