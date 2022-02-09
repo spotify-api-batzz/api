@@ -34,12 +34,13 @@ const postGraphile = postgraphile(
 );
 
 app.use(limiterMiddleware);
-app.use(cacheMiddleware);
-app.use(errorMiddleware);
 
 app.use(postGraphile);
 app.use("/aggregate", createAggregateRouter(db));
 app.use(createPostgraphileRouter());
+
+app.use(cacheMiddleware);
+app.use(errorMiddleware);
 
 app.get("/health", (req, res) => {
   res.statusCode = 200;

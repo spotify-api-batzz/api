@@ -17,14 +17,8 @@ class AggregateHandler {
   ) {
     const startDate = dayjs(start);
     const endDate = dayjs(end);
-    console.log(`
-    select count(*),songs.name from recent_listens
-      inner join songs on recent_listens.song_id = songs.id
-      where user_id='$1'
-      and played_at <= '$2'
-      and played_at >= '$3'
-      group by songs.name
-    `);
+    console.log(startDate);
+    console.log(start);
 
     const data = await this.db.query(
       `

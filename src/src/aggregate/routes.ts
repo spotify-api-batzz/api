@@ -27,6 +27,7 @@ const createAggregateRouter = (db: Client) => {
       console.log(data);
       res.send(data);
     } catch (e) {
+      console.log("caught error");
       next(e);
     }
   });
