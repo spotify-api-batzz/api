@@ -35,9 +35,9 @@ const postGraphile = postgraphile(
 
 app.use(limiterMiddleware);
 
-app.use(postGraphile);
 app.use("/aggregate", createAggregateRouter(db));
 app.use(createPostgraphileRouter());
+app.use(postGraphile);
 
 app.use(cacheMiddleware);
 app.use(errorMiddleware);

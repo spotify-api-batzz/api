@@ -17,16 +17,14 @@ class AggregateHandler {
   ) {
     const startDate = dayjs(start);
     const endDate = dayjs(end);
-    console.log(formatToPgTimestamp(startDate));
-    console.log(start);
 
     const data = await this.db.query(
       `
       select count(*),songs.name from recent_listens
         inner join songs on recent_listens.song_id = songs.id
         where user_id=$1
-        and played_at <=$2
-        and played_at >=$3
+        and played_at<=$2
+        and played_at>=$3
         group by songs.name
       `,
       [userId, formatToPgTimestamp(startDate), formatToPgTimestamp(endDate)]
