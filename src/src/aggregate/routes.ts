@@ -14,7 +14,7 @@ const createAggregateRouter = (db: Client) => {
   const aggregateRouter = express.Router();
   const aggregateHandler = new AggregateHandler(db);
 
-  aggregateRouter.use("/recentlistensbymonth", async (req, res, next) => {
+  aggregateRouter.get("/recentlistensbymonth", async (req, res, next) => {
     const { error, value } = recentListensByMonthSchema.validate(req.query);
     if (error) next(new ValidationError(error));
 
