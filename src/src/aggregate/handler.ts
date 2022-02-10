@@ -20,7 +20,7 @@ class AggregateHandler {
 
     const data = await this.db.query<{ count: number; name: string }[]>(
       `
-      SELECT count(*),songs.name from recent_listens
+      SELECT count(*)::int,songs.name from recent_listens
         INNER JOIN songs on recent_listens.song_id = songs.id
         WHERE user_id=$1
         AND played_at<=$2
