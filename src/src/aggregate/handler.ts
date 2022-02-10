@@ -20,12 +20,13 @@ class AggregateHandler {
 
     const data = await this.db.query(
       `
-      select count(*),songs.name from recent_listens
-        inner join songs on recent_listens.song_id = songs.id
-        where user_id=$1
-        and played_at<=$2
-        and played_at>=$3
-        group by songs.name
+      SELECT count(*),songs.name from recent_listens
+        INNER JOIN songs on recent_listens.song_id = songs.id
+        WHERE user_id=$1
+        AND played_at<=$2
+        AND played_at>=$3
+        GROUP BY songs.name
+        ORDER BY count(*) DESC
       `,
       [userId, formatToPgTimestamp(startDate), formatToPgTimestamp(endDate)]
     );
