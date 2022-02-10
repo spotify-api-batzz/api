@@ -18,7 +18,7 @@ class AggregateHandler {
     const startDate = dayjs(start);
     const endDate = dayjs(end);
 
-    const data = await this.db.query(
+    const data = await this.db.query<{ count: number; name: string }[]>(
       `
       SELECT count(*),songs.name from recent_listens
         INNER JOIN songs on recent_listens.song_id = songs.id
