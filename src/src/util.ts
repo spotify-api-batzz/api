@@ -1,4 +1,7 @@
+import { config } from "dotenv";
+
 export const mustGetEnv = (key: string) => {
+  config();
   const envItem = process.env[key];
   if (!envItem) throw new Error(`Key ${key} not present in env`);
   return envItem;

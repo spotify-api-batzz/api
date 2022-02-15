@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from "dayjs";
-import { Op, fn } from "sequelize";
+import { Op, fn, cast } from "sequelize";
 import { Database } from "models/init-models";
 
 const formatToPgTimestamp = (dayjs: Dayjs) =>
@@ -19,20 +19,35 @@ class AggregateHandler {
     const startDate = dayjs(start);
     const endDate = dayjs(end);
 
-    const data = await this.db.recentListens.findAll({
-      attributes: [[fn("count", "song_id"), "song_id_count"], "song.id"],
+    const recentListenAggregations = await this.db.recentListens.findAll({
+      attributes: [
+        [cast(fn("count", "song_id"), "int"), "song_id_count"],
+        "song_id",
+      ],
       where: {
         created_at: { [Op.gte]: formatToPgTimestamp(startDate) },
         updated_at: { [Op.lte]: formatToPgTimestamp(endDate) },
         user_id: userId,
       },
-      include: {
-        model: this.db.songs,
-      },
-      group: ["song_id", "song.song_id"],
+      group: ["song_id"],
+      order: [[fn("count", "song_id"), "DESC"]],
     });
 
-    return data;
+    const songs = await this.db.songs.findAll({
+      where: {
+        id: recentListenAggregations.map((rl) => {
+          return rl.song_id;
+        }),
+      },
+    });
+
+    const getMeta = (id) =>
+      songs.find((song) => song.get("id") === id).get() || {};
+
+    return recentListenAggregations.map((rla) => ({
+      count: rla.get("song_id_count"),
+      ...getMeta(rla.get("song_id")),
+    }));
   }
 }
 

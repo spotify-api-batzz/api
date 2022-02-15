@@ -1,5 +1,5 @@
 import { ValidationError } from "errors";
-import { Client } from "pg";
+import { Database } from "../models/init-models";
 import express from "express";
 import Joi from "joi";
 import AggregateHandler from "./handler";
@@ -10,7 +10,7 @@ const recentListensByMonthSchema = Joi.object({
   userId: Joi.string().required(),
 });
 
-const createAggregateRouter = (db: Client) => {
+const createAggregateRouter = (db: Database) => {
   const aggregateRouter = express.Router();
   const aggregateHandler = new AggregateHandler(db);
 
@@ -24,7 +24,6 @@ const createAggregateRouter = (db: Client) => {
         value.greaterThan,
         value.userId
       );
-      console.log(data);
       res.send(data);
     } catch (e) {
       console.log("caught error");
