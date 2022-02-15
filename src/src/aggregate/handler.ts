@@ -1,12 +1,13 @@
 import dayjs, { Dayjs } from "dayjs";
-import { Client } from "pg";
+import { Op, fn } from "sequelize";
+import { Database } from "models/init-models";
 
 const formatToPgTimestamp = (dayjs: Dayjs) =>
   dayjs.format("YYYY-MM-DD hh:mm:ss");
 
 class AggregateHandler {
-  private db: Client;
-  constructor(db: Client) {
+  private db: Database;
+  constructor(db: Database) {
     this.db = db;
   }
 
@@ -18,19 +19,20 @@ class AggregateHandler {
     const startDate = dayjs(start);
     const endDate = dayjs(end);
 
-    const data = await this.db.query<{ count: number; name: string }[]>(
-      `
-      SELECT count(*)::int,songs.name from recent_listens
-        INNER JOIN songs on recent_listens.song_id = songs.id
-        WHERE user_id=$1
-        AND played_at<=$2
-        AND played_at>=$3
-        GROUP BY songs.name
-        ORDER BY count(*) DESC
-      `,
-      [userId, formatToPgTimestamp(startDate), formatToPgTimestamp(endDate)]
-    );
-    return data.rows;
+    const data = await this.db.recentListens.findAll({
+      attributes: [[fn("count", "song_id"), "song_id_count"], "song.id"],
+      where: {
+        created_at: { [Op.gte]: formatToPgTimestamp(startDate) },
+        updated_at: { [Op.lte]: formatToPgTimestamp(endDate) },
+        user_id: userId,
+      },
+      include: {
+        model: this.db.songs,
+      },
+      group: ["song_id", "song.song_id"],
+    });
+
+    return data;
   }
 }
 
