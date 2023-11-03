@@ -15,7 +15,7 @@ import { ConnectToDB } from "./db";
 import { initModels } from "./models/init-models";
 
 const app = express();
-app.use(cors());
+// app.use(cors());
 
 const dbIp = mustGetEnv("DB_IP");
 const dbTable = mustGetEnv("DB_TABLE");
