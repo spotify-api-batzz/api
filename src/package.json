@@ -6,6 +6,7 @@
     "body-parser": "^1.19.0",
     "camelcase": "^6.2.1",
     "concurrently": "^6.1.0",
+    "cors": "^2.8.5",
     "dayjs": "^1.10.7",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
@@ -18,7 +19,7 @@
     "postgraphile-polymorphic-relation-plugin": "^1.1.6",
     "querystring": "^0.2.1",
     "ramda": "^0.27.1",
-    "sequelize": "^6.16.1"
+    "sequelize": "^6.25.8"
   },
   "scripts": {
     "bundle": "node scripts/bundle.js",

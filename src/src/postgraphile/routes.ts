@@ -12,7 +12,6 @@ const createPostgraphileRouter = () => {
       variables: req.query.variables,
     };
 
-    const originalBody = req.body;
     req.body = payload;
     next();
   });

@@ -2,6 +2,7 @@ import express from "express";
 import { mustGetEnv } from "./util";
 import postgraphile from "postgraphile";
 import { Client } from "pg";
+import cors from "cors";
 
 import createPostgraphileRouter from "./postgraphile/routes";
 import { postGraphileOptions } from "./postgraphile/config";
@@ -13,7 +14,8 @@ import limiterMiddleware from "./middleware/ratelimiter";
 import { ConnectToDB } from "./db";
 import { initModels } from "./models/init-models";
 
-var app = express();
+const app = express();
+app.use(cors());
 
 const dbIp = mustGetEnv("DB_IP");
 const dbTable = mustGetEnv("DB_TABLE");
