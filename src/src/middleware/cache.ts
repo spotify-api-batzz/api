@@ -12,9 +12,7 @@ const cacheTime: EndpointCacheInformation = {
 };
 
 const cacheMiddleware: RequestHandler = (req, res, next) => {
-  console.log("??");
   const cacheAgeKey = req.header("x-cache-age-key");
-  console.log(req.header("X-Cache-Age-Key"));
   if (cacheAgeKey && res.statusCode === 200) {
     console.log(`max-age=${cacheTime[cacheAgeKey]?.maxAge || 3600}`);
     res.header(
@@ -25,7 +23,6 @@ const cacheMiddleware: RequestHandler = (req, res, next) => {
     console.log("Non 200, caching for 0 seconds");
     res.header("cache-control", `max-age=0`);
   }
-  console.log(req.headers);
   next();
 };
 
