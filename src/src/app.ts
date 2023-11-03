@@ -34,12 +34,12 @@ const sequelize = ConnectToDB(connString);
 const sequelizeDb = initModels(sequelize);
 
 app.use(limiterMiddleware);
+app.use(cacheMiddleware);
 
 app.use("/aggregate", createAggregateRouter(sequelizeDb));
 app.use(createPostgraphileRouter());
 app.use(postGraphile);
 
-app.use(cacheMiddleware);
 app.use(errorMiddleware);
 
 app.get("/health", (req, res) => {
