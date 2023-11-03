@@ -16,6 +16,7 @@ import { initModels } from "./models/init-models";
 
 const app = express();
 // app.use(cors());
+console.log("test");
 
 const dbIp = mustGetEnv("DB_IP");
 const dbTable = mustGetEnv("DB_TABLE");
