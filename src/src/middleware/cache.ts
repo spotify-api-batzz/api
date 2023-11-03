@@ -12,6 +12,7 @@ const cacheTime: EndpointCacheInformation = {
 };
 
 const cacheMiddleware: RequestHandler = (req, res, next) => {
+  console.log("??");
   const cacheAgeKey = req.header("x-cache-age-key");
   console.log(req.header("X-Cache-Age-Key"));
   if (cacheAgeKey && res.statusCode === 200) {
