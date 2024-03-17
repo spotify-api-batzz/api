@@ -25,26 +25,29 @@ const dbPort = mustGetEnv("DB_PORT");
 const dbUser = mustGetEnv("DB_USER");
 
 const connString = `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`;
-
 const db = new Client(connString);
-db.connect();
+const run = () => {
+  db.connect();
 
-const postGraphile = postgraphile(connString, "public", postGraphileOptions);
-const sequelize = ConnectToDB(connString);
-const sequelizeDb = initModels(sequelize);
+  const postGraphile = postgraphile(connString, "public", postGraphileOptions);
+  const sequelize = ConnectToDB(connString);
+  const sequelizeDb = initModels(sequelize);
 
-app.use(limiterMiddleware);
-app.use(cacheMiddleware);
+  app.use(limiterMiddleware);
+  app.use(cacheMiddleware);
 
-app.use("/aggregate", createAggregateRouter(sequelizeDb));
-app.use(createPostgraphileRouter());
-app.use(postGraphile);
+  app.use("/aggregate", createAggregateRouter(sequelizeDb));
+  app.use(createPostgraphileRouter());
+  app.use(postGraphile);
 
-app.use(errorMiddleware);
+  app.use(errorMiddleware);
 
-app.get("/health", (req, res) => {
-  res.statusCode = 200;
-  res.send("ok");
-});
+  app.get("/health", (req, res) => {
+    res.statusCode = 200;
+    res.send("ok");
+  });
 
-app.listen(3000, "0.0.0.0");
+  app.listen(3000, "0.0.0.0");
+};
+
+const lambdaHander = () => {};

@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "test": "yarn run jest"
+  },
+  "dependencies": {
+    "kysely": "^0.27.3",
+    "urlpattern-polyfill": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.136",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.4.2"
+  }
+}
