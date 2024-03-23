@@ -5,8 +5,7 @@ services:
     container_name: spotify_api
     build: ./
     networks:
-      - default 
-      - web
+      - spotify
     environment:
       - DB_USER=${DB_USER}
       - DB_PORT=${DB_PORT}
