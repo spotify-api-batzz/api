@@ -2,14 +2,14 @@ name: spotify
 
 services:
   spotify_api:
-    container_name: spotify_api
+    container_name: ${COMPOSE_PROJECT_NAME}_api
     build: ./
     networks:
       - spotify
     environment:
       - DB_USER=${DB_USER}
       - DB_PORT=${DB_PORT}
-      - DB_IP=${DB_IP}
+      - DB_IP=${COMPOSE_PROJECT_NAME}_postgres
       - DB_TABLE=${DB_TABLE}
       - DB_PASS=${DB_PASS}
       - AUTH_HEADER=${AUTH_HEADER}
