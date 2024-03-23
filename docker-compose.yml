@@ -1,4 +1,5 @@
-version: "3.9"  # optional since v1.27.0
+name: spotify
+
 services:
   spotify_api:
     container_name: spotify_api
@@ -18,11 +19,8 @@ services:
       - traefik.http.routers.spotify_api.tls=true
       - traefik.http.routers.spotify_api.tls.certresolver=lets-encrypt
     ports:
-      - 3000:3000
+      - 80:3000
 
 networks:
-  web:
-     external: true
-  default:
-    external:
-      name: database
+  spotify:
+    name: spotify
