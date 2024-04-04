@@ -1,21 +1,29 @@
-import express from "express";
-import { mustGetEnv } from "./util";
-import postgraphile from "postgraphile";
-import { Client } from "pg";
 import cors from "cors";
+import express from "express";
+import { Client } from "pg";
+import postgraphile from "postgraphile";
+import { getEnv, mustGetEnv } from "./util";
 
-import createPostgraphileRouter from "./postgraphile/routes";
-import { postGraphileOptions } from "./postgraphile/config";
 import createAggregateRouter from "./aggregate/routes";
+import { postGraphileOptions } from "./postgraphile/config";
+import createPostgraphileRouter from "./postgraphile/routes";
 
+import { ConnectToDB } from "./db";
 import cacheMiddleware from "./middleware/cache";
 import errorMiddleware from "./middleware/errors";
 import limiterMiddleware from "./middleware/ratelimiter";
-import { ConnectToDB } from "./db";
 import { initModels } from "./models/init-models";
 
 const app = express();
-// app.use(cors());
+const corsDomain = getEnv("cors", null);
+if (corsDomain) {
+  app.use(
+    cors({
+      origin: "https://spotify.batzz.me",
+    })
+  );
+}
+
 console.log("test");
 
 const dbIp = mustGetEnv("DB_IP");
