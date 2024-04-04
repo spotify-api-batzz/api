@@ -13,6 +13,7 @@ services:
       - DB_TABLE=${DB_TABLE}
       - DB_PASS=${DB_PASS}
       - AUTH_HEADER=${AUTH_HEADER}
+      - CORS=${CORS}
     labels:
       - traefik.http.routers.spotify_api.rule=Host(`spotify-api.batzz.io`)
       - traefik.http.routers.spotify_api.tls=true
