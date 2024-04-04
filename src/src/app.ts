@@ -15,7 +15,7 @@ import limiterMiddleware from "./middleware/ratelimiter";
 import { initModels } from "./models/init-models";
 
 const app = express();
-const corsDomain = getEnv("cors", null);
+const corsDomain = getEnv("CORS", null);
 if (corsDomain) {
   console.log(`using cors, origin ${corsDomain}`);
   app.use(
