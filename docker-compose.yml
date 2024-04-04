@@ -19,7 +19,7 @@ services:
       - traefik.http.routers.spotify_api.tls=true
       - traefik.http.routers.spotify_api.tls.certresolver=lets-encrypt
     ports:
-      - 80:3000
+      - 3000:3000
 
 networks:
   spotify:
