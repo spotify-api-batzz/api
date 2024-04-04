@@ -17,9 +17,10 @@ import { initModels } from "./models/init-models";
 const app = express();
 const corsDomain = getEnv("cors", null);
 if (corsDomain) {
+  console.log(`using cors, origin ${corsDomain}`);
   app.use(
     cors({
-      origin: "https://spotify.batzz.me",
+      origin: corsDomain,
     })
   );
 }
