@@ -17,3 +17,5 @@ const createIngestRouter = () => {
 
   return ingestRouter;
 };
+
+export default createIngestRouter;

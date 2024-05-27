@@ -13,6 +13,7 @@ import cacheMiddleware from "./middleware/cache";
 import errorMiddleware from "./middleware/errors";
 import { initModels } from "./models/init-models";
 import { AppContext } from "./types";
+import createIngestRouter from "./ingest";
 
 const app = express();
 const corsDomain = getEnv("CORS", null);
@@ -52,6 +53,7 @@ const run = async () => {
 
   app.use("/aggregate", createAggregateRouter(sequelize));
   app.use(createPostgraphileRouter());
+  app.use(createIngestRouter());
   app.use(postGraphile);
   app.use;
 

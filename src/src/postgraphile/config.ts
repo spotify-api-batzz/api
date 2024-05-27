@@ -5,7 +5,7 @@ import PgAggregatesPlugin from "@graphile/pg-aggregates";
 import PgSimplifyInflector from "@graphile-contrib/pg-simplify-inflector";
 import { JSONPgSmartTags, makeJSONPgSmartTagsPlugin } from "graphile-utils";
 
-const tags = {
+const tags: JSONPgSmartTags = {
   version: 1,
   config: {
     attribute: {
@@ -17,10 +17,10 @@ const tags = {
       },
     },
   },
-} as JSONPgSmartTags;
+};
 
 export const postGraphileOptions: PostGraphileOptions = {
-  watchPg: true,
+  watchPg: false,
   graphiql: true,
   enhanceGraphiql: true,
   exportGqlSchemaPath: "schema.graphql",
