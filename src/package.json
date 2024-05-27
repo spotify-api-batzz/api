@@ -27,9 +27,6 @@
     "start:dev": "nodemon dist/esbuild-main.js",
     "watch": "concurrently 'yarn:bundle:dev' 'yarn:start:dev'"
   },
-  "resolutions": {
-    "graphql": "14.0.0"
-  },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.12",
