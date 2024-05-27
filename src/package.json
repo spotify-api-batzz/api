@@ -28,7 +28,7 @@
     "watch": "concurrently 'yarn:bundle:dev' 'yarn:start:dev'"
   },
   "resolutions": {
-    "graphql": "15.0.0"
+    "graphql": "14.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
