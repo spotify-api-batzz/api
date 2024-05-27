@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:20-alpine
 COPY src /app
 WORKDIR /app
 RUN yarn set version 3.5.1
