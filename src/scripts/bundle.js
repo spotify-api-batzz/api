@@ -27,6 +27,7 @@ async function main() {
     platform: "node",
     outfile: "dist/esbuild-main.js",
     ...extraArgs,
+    external: ["pg", "pg-native"],
     sourcemap: true,
   });
 }
