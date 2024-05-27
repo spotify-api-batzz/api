@@ -1,3 +1,6 @@
+import { Client, Pool, PoolClient } from "pg";
+import { Database } from "./models/init-models";
+
 export enum Endpoints {
   songs = "songs",
   albums = "albums",
@@ -16,3 +19,8 @@ interface CacheInformation {
 export type EndpointCacheInformation = {
   [T in Endpoints]: CacheInformation;
 };
+
+export interface AppContext {
+  sequelize: Database;
+  pool: Pool;
+}

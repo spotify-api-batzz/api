@@ -1,6 +1,6 @@
 import cors from "cors";
 import express from "express";
-import { Client } from "pg";
+import { Client, Pool } from "pg";
 import postgraphile from "postgraphile";
 import { getEnv, mustGetEnv } from "./util";
 
@@ -11,8 +11,8 @@ import createPostgraphileRouter from "./postgraphile/routes";
 import { ConnectToDB } from "./db";
 import cacheMiddleware from "./middleware/cache";
 import errorMiddleware from "./middleware/errors";
-import limiterMiddleware from "./middleware/ratelimiter";
 import { initModels } from "./models/init-models";
+import { AppContext } from "./types";
 
 const app = express();
 const corsDomain = getEnv("CORS", null);
@@ -25,8 +25,6 @@ if (corsDomain) {
   );
 }
 
-console.log("test");
-
 const dbIp = mustGetEnv("DB_IP");
 const dbTable = mustGetEnv("DB_TABLE");
 const dbPass = mustGetEnv("DB_PASS");
@@ -35,25 +33,35 @@ const dbUser = mustGetEnv("DB_USER");
 
 const connString = `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`;
 
-const db = new Client(connString);
-db.connect();
+const init = async (): Promise<AppContext> => {
+  const pool = new Pool({ connectionString: connString });
+  const sequelize = ConnectToDB(connString);
+  const sequelizeDb = initModels(sequelize);
 
-const postGraphile = postgraphile(connString, "public", postGraphileOptions);
-const sequelize = ConnectToDB(connString);
-const sequelizeDb = initModels(sequelize);
+  return {
+    pool,
+    sequelize: sequelizeDb,
+  };
+};
 
-app.use(limiterMiddleware);
-app.use(cacheMiddleware);
+const run = async () => {
+  const { sequelize, pool } = await init();
 
-app.use("/aggregate", createAggregateRouter(sequelizeDb));
-app.use(createPostgraphileRouter());
-app.use(postGraphile);
+  app.use(cacheMiddleware);
+  const postGraphile = postgraphile(pool, "public", postGraphileOptions);
 
-app.use(errorMiddleware);
+  app.use("/aggregate", createAggregateRouter(sequelize));
+  app.use(createPostgraphileRouter());
+  app.use(postGraphile);
 
-app.get("/health", (req, res) => {
-  res.statusCode = 200;
-  res.send("ok");
-});
+  app.use(errorMiddleware);
 
-app.listen(3000, "0.0.0.0");
+  app.get("/health", (req, res) => {
+    res.statusCode = 200;
+    res.send("ok");
+  });
+
+  app.listen(3000, "0.0.0.0");
+};
+
+run();
