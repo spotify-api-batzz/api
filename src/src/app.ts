@@ -17,11 +17,12 @@ import createIngestRouter from "./ingest";
 
 const app = express();
 const corsDomain = getEnv("CORS", null);
+
 if (corsDomain) {
   console.log(`using cors, origin ${corsDomain}`);
   app.use(
     cors({
-      origin: corsDomain,
+      origin: corsDomain.split(","),
     })
   );
 }
