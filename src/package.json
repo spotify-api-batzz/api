@@ -28,7 +28,7 @@
     "watch": "concurrently 'yarn:bundle:dev' 'yarn:start:dev'"
   },
   "resolutions": {
-    "graphql": "15.0.0"
+    "graphql": "15.8.0"
   },
   "engines": {
     "yarn": "3.5.1"
