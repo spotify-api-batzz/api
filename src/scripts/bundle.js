@@ -1,8 +1,4 @@
 const esbuild = require("esbuild");
-const { readFileSync } = require("fs");
-
-const localPkgJson = JSON.parse(readFileSync("./package.json", "utf-8"));
-
 const acceptedArgs = ["watch"];
 
 const applyArg = (arg, args) => {
@@ -22,19 +18,16 @@ async function main() {
   process.argv
     .filter((v) => acceptedArgs.includes(v))
     .forEach((arg) => (extraArgs = applyArg(arg, extraArgs)));
+
   await esbuild.build({
     entryPoints: [`src/app.ts`],
     bundle: true,
+    minify: true,
     target: "node12",
     platform: "node",
     outfile: "dist/esbuild-main.js",
     ...extraArgs,
     sourcemap: true,
-    external: Object.keys({
-      ...(localPkgJson.dependencies || {}),
-      ...(localPkgJson.devDependencies || {}),
-      ...(localPkgJson.peerDependencies || {}),
-    }),
   });
 }
 

@@ -1,6 +1,6 @@
 import cors from "cors";
 import express from "express";
-import { Client, Pool } from "pg";
+import { Pool } from "pg";
 import postgraphile from "postgraphile";
 import { getEnv, mustGetEnv } from "./util";
 
@@ -53,6 +53,7 @@ const run = async () => {
   app.use("/aggregate", createAggregateRouter(sequelize));
   app.use(createPostgraphileRouter());
   app.use(postGraphile);
+  app.use;
 
   app.use(errorMiddleware);
 
