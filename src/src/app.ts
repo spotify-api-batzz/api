@@ -15,18 +15,16 @@ import { Kysely, PostgresDialect } from "kysely";
 import { DB } from "./kydb";
 
 const app = express();
-// const corsDomain = getEnv("CORS", null);
+const corsDomain = getEnv("CORS", null);
 
-// if (corsDomain) {
-//   console.log(`using cors, origin ${corsDomain}`);
-//   app.use(
-//     cors({
-//       origin: corsDomain.split(","),
-//     })
-//   );
-// }
-
-app.use(cors());
+if (corsDomain) {
+  console.log(`using cors, origin ${corsDomain}`);
+  app.use(
+    cors({
+      origin: corsDomain.split(","),
+    })
+  );
+}
 
 const dbIp = mustGetEnv("DB_IP");
 const dbTable = mustGetEnv("DB_TABLE");
@@ -66,7 +64,7 @@ const run = async () => {
     res.send("ok");
   });
 
-  app.listen(3001, "0.0.0.0");
+  app.listen(3000s, "0.0.0.0");
 };
 
 run();
