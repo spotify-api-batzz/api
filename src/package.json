@@ -11,21 +11,24 @@
     "express": "^4.17.1",
     "express-rate-limit": "^5.5.1",
     "graphile-utils": "^4.12.2",
+    "kysely": "^0.27.3",
+    "myzod": "^1.11.0",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.3",
     "postgraphile": "^4.12.5",
     "postgraphile-plugin-connection-filter": "^1.0.0",
     "postgraphile-polymorphic-relation-plugin": "^1.1.6",
     "querystring": "^0.2.1",
-    "ramda": "^0.27.1",
-    "sequelize": "^6.25.8"
+    "ramda": "^0.27.1"
   },
   "scripts": {
+    "kysely": "kysely-codegen --dialect postgres --out-file src/kysely.ts",
     "bundle": "node scripts/bundle.js",
     "start": "node dist/esbuild-main.js",
     "bundle:dev": "node scripts/bundle.js watch",
     "start:dev": "nodemon dist/esbuild-main.js",
-    "watch": "concurrently 'yarn:bundle:dev' 'yarn:start:dev'"
+    "watch": "concurrently 'yarn:bundle:dev' 'yarn:start:dev'",
+    "make-allowlist": "node scripts/graphql"
   },
   "resolutions": {
     "graphql": "15.8.0"
@@ -39,6 +42,7 @@
     "@types/joi": "^17.2.3",
     "@types/ramda": "^0.27.40",
     "esbuild": "^0.11.20",
+    "kysely-codegen": "^0.15.0",
     "nodemon": "^2.0.7",
     "sequelize-auto": "^0.8.3",
     "ts-node": "^9.1.1",

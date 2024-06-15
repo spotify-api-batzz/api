@@ -8,24 +8,25 @@ import createAggregateRouter from "./aggregate/routes";
 import { postGraphileOptions } from "./postgraphile/config";
 import createPostgraphileRouter from "./postgraphile/routes";
 
-import { ConnectToDB } from "./db";
 import cacheMiddleware from "./middleware/cache";
 import errorMiddleware from "./middleware/errors";
-import { initModels } from "./models/init-models";
-import { AppContext } from "./types";
 import createIngestRouter from "./ingest";
+import { Kysely, PostgresDialect } from "kysely";
+import { DB } from "./kydb";
 
 const app = express();
-const corsDomain = getEnv("CORS", null);
+// const corsDomain = getEnv("CORS", null);
 
-if (corsDomain) {
-  console.log(`using cors, origin ${corsDomain}`);
-  app.use(
-    cors({
-      origin: corsDomain.split(","),
-    })
-  );
-}
+// if (corsDomain) {
+//   console.log(`using cors, origin ${corsDomain}`);
+//   app.use(
+//     cors({
+//       origin: corsDomain.split(","),
+//     })
+//   );
+// }
+
+app.use(cors());
 
 const dbIp = mustGetEnv("DB_IP");
 const dbTable = mustGetEnv("DB_TABLE");
@@ -35,28 +36,28 @@ const dbUser = mustGetEnv("DB_USER");
 
 const connString = `postgres://${dbUser}:${dbPass}@${dbIp}:${dbPort}/${dbTable}`;
 
-const init = async (): Promise<AppContext> => {
+const init = async () => {
   const pool = new Pool({ connectionString: connString });
-  const sequelize = ConnectToDB(connString);
-  const sequelizeDb = initModels(sequelize);
 
-  return {
-    pool,
-    sequelize: sequelizeDb,
-  };
+  return pool;
 };
 
 const run = async () => {
-  const { sequelize, pool } = await init();
+  const pool = await init();
+
+  const db = new Kysely<DB>({
+    dialect: new PostgresDialect({
+      pool,
+    }),
+  });
 
   app.use(cacheMiddleware);
   const postGraphile = postgraphile(pool, "public", postGraphileOptions);
 
-  app.use("/aggregate", createAggregateRouter(sequelize));
+  app.use("/aggregate", createAggregateRouter(db));
   app.use(createPostgraphileRouter());
   app.use(createIngestRouter());
   app.use(postGraphile);
-  app.use;
 
   app.use(errorMiddleware);
 
@@ -65,7 +66,7 @@ const run = async () => {
     res.send("ok");
   });
 
-  app.listen(3000, "0.0.0.0");
+  app.listen(3001, "0.0.0.0");
 };
 
 run();

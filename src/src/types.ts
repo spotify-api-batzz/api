@@ -1,5 +1,5 @@
-import { Client, Pool, PoolClient } from "pg";
-import { Database } from "./models/init-models";
+import { Kysely } from "kysely";
+import { DB } from "./kydb";
 
 export enum Endpoints {
   songs = "songs",
@@ -20,7 +20,4 @@ export type EndpointCacheInformation = {
   [T in Endpoints]: CacheInformation;
 };
 
-export interface AppContext {
-  sequelize: Database;
-  pool: Pool;
-}
+export type KyDatabase = Kysely<DB>;

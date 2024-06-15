@@ -22,7 +22,7 @@ async function main() {
   await esbuild.build({
     entryPoints: [`src/app.ts`],
     bundle: true,
-    minify: true,
+    minify: false,
     target: "node12",
     platform: "node",
     outfile: "dist/esbuild-main.js",

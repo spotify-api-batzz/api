@@ -1,19 +1,54 @@
 import express from "express";
+import allowList from "./allowList";
+import Joi from "joi";
+import myzod from "myzod";
+import { ForbiddenQueryError, ValidationError } from "../errors";
+
+const extractVars = (reqVars: string | undefined) => {
+  if (!reqVars) {
+    return undefined;
+  }
+
+  const queryVariables = Buffer.from(reqVars, "base64");
+  const variables = JSON.parse(queryVariables.toString("utf-8"));
+
+  return variables;
+};
+
+const graphqlSchema = myzod
+  .object({
+    variables: myzod.string().optional(),
+    operationName: myzod.string(),
+  })
+  .allowUnknownKeys();
 
 const createPostgraphileRouter = () => {
   const postgraphileRouter = express.Router();
   postgraphileRouter.get("/graphql", (req, res, next) => {
     req.method = "POST";
     req.url = "/graphql";
-    const stringQuery = Buffer.from(req.query.query as string, "base64");
-    const payload = {
-      query: stringQuery.toString("utf-8"),
-      operationName: req.query.operationName,
-      variables: req.query.variables,
-    };
+    try {
+      const { variables, operationName } = graphqlSchema.parse(req.query);
 
-    req.body = payload;
-    next();
+      if (!allowList[String(req.query.operationName)]) {
+        next(new ForbiddenQueryError());
+        return;
+      }
+
+      const payload = {
+        query: allowList[String(operationName)],
+        variables: extractVars(variables),
+      };
+
+      req.body = payload;
+      next();
+    } catch (e) {
+      if (e instanceof myzod.ValidationError) {
+        next(new ValidationError(e));
+        return;
+      }
+      next(e);
+    }
   });
 
   return postgraphileRouter;

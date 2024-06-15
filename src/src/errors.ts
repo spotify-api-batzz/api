@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { ValidationError as MyzodValidationError } from "myzod";
 
 export class APIError extends Error {
   public statusCode: number;
@@ -27,9 +28,15 @@ export class UnknownError extends APIError {
   }
 }
 
+export class ForbiddenQueryError extends APIError {
+  constructor() {
+    super("Forbidden query", 404);
+  }
+}
+
 export class ValidationError extends APIError {
-  public error: Joi.ValidationError;
-  constructor(error: Joi.ValidationError) {
+  public error: MyzodValidationError;
+  constructor(error: MyzodValidationError) {
     super("Malformed body input", 400, error);
     this.error = error;
   }

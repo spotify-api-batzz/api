@@ -1,29 +1,65 @@
-import { ValidationError } from "errors";
-import { Database } from "../models/init-models";
 import express from "express";
-import Joi from "joi";
+import Myzod from "myzod";
 import AggregateHandler from "./handler";
+import { KyDatabase } from "../types";
 
-const recentListensByMonthSchema = Joi.object({
-  lessThan: Joi.number().required(),
-  greaterThan: Joi.number().required(),
-  userId: Joi.string().required(),
+const recentListensByMonthSchema = Myzod.object({
+  userId: Myzod.string(),
+  before: Myzod.string().optional(),
+  after: Myzod.string().optional(),
 });
 
-const createAggregateRouter = (db: Database) => {
+const statsSchema = Myzod.object({
+  userId: Myzod.string(),
+});
+
+const createAggregateRouter = (db: KyDatabase) => {
   const aggregateRouter = express.Router();
   const aggregateHandler = new AggregateHandler(db);
 
-  aggregateRouter.get("/recentlistensbymonth", async (req, res, next) => {
-    const { error, value } = recentListensByMonthSchema.validate(req.query);
-    if (error) next(new ValidationError(error));
-
+  aggregateRouter.get("/listensPerDay", async (req, res, next) => {
     try {
-      const data = await aggregateHandler.getRecentListensByUserIdBetweenDate(
-        value.lessThan,
-        value.greaterThan,
-        value.userId
+      const { userId, before, after } = recentListensByMonthSchema.parse(
+        req.query
       );
+
+      console.log(before);
+      const data = await aggregateHandler.getAverageSongsPerDay(
+        userId,
+        new Date(Number(before)),
+        new Date(Number(after))
+      );
+      res.send(data);
+    } catch (e) {
+      console.log("caught error");
+      next(e);
+    }
+  });
+
+  aggregateRouter.get("/timeOfDay", async (req, res, next) => {
+    try {
+      const { userId, before, after } = recentListensByMonthSchema.parse(
+        req.query
+      );
+
+      console.log(before, after);
+      const data = await aggregateHandler.getTimeOfDay(
+        userId,
+        new Date(Number(before)),
+        new Date(Number(after))
+      );
+      res.send(data);
+    } catch (e) {
+      console.log("caught error");
+      next(e);
+    }
+  });
+
+  aggregateRouter.get("/stats", async (req, res, next) => {
+    try {
+      const { userId } = statsSchema.parse(req.query);
+
+      const data = await aggregateHandler.stats(userId);
       res.send(data);
     } catch (e) {
       console.log("caught error");

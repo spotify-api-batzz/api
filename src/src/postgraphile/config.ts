@@ -1,4 +1,4 @@
-import { PostGraphileOptions } from "postgraphile";
+import { PostGraphileOptions, makePluginHook } from "postgraphile";
 import PgConnectionFilterPlugin from "postgraphile-plugin-connection-filter";
 import { postgraphilePolyRelationCorePlugin } from "postgraphile-polymorphic-relation-plugin";
 import PgAggregatesPlugin from "@graphile/pg-aggregates";

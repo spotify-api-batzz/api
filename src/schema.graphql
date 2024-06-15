@@ -367,31 +367,6 @@ type Query implements Node {
   topSong(id: String!): TopSong
   user(id: String!): User
 
-  """Reads and enables pagination through a set of `RecentListen`."""
-  recentListensByTimeOfDay(
-    userId: String
-    startTime: Time
-    endTime: Time
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-  ): RecentListensConnection
-
   """Reads a single `Album` using its globally unique `ID`."""
   albumByNodeId(
     """The globally unique `ID` to be used in selecting a single `Album`."""
@@ -601,8 +576,8 @@ type Artist implements Node {
   createdAt: Datetime
   updatedAt: Datetime
 
-  """Reads and enables pagination through a set of `TopArtistDatum`."""
-  topArtistData(
+  """Reads and enables pagination through a set of `Album`."""
+  albums(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -621,19 +596,19 @@ type Artist implements Node {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `TopArtistDatum`."""
-    orderBy: [TopArtistDataOrderBy!] = [PRIMARY_KEY_ASC]
+    """The method to use when ordering `Album`."""
+    orderBy: [AlbumsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: TopArtistDatumCondition
+    condition: AlbumCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: TopArtistDatumFilter
-  ): TopArtistDataConnection!
+    filter: AlbumFilter
+  ): AlbumsConnection!
 
   """Reads and enables pagination through a set of `Song`."""
   songs(
@@ -669,8 +644,8 @@ type Artist implements Node {
     filter: SongFilter
   ): SongsConnection!
 
-  """Reads and enables pagination through a set of `Album`."""
-  albums(
+  """Reads and enables pagination through a set of `TopArtistDatum`."""
+  topArtistData(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -689,19 +664,19 @@ type Artist implements Node {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `Album`."""
-    orderBy: [AlbumsOrderBy!] = [PRIMARY_KEY_ASC]
+    """The method to use when ordering `TopArtistDatum`."""
+    orderBy: [TopArtistDataOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: AlbumCondition
+    condition: TopArtistDatumCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: AlbumFilter
-  ): AlbumsConnection!
+    filter: TopArtistDatumFilter
+  ): TopArtistDataConnection!
 
   """Reads through a `Thumbnail`."""
   thumbnails(
@@ -738,487 +713,171 @@ type Artist implements Node {
   ): ThumbnailsConnection!
 }
 
-"""A connection to a list of `TopArtistDatum` values."""
-type TopArtistDataConnection {
-  """A list of `TopArtistDatum` objects."""
-  nodes: [TopArtistDatum]!
-
-  """
-  A list of edges which contains the `TopArtistDatum` and cursor to aid in pagination.
-  """
-  edges: [TopArtistDataEdge!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* `TopArtistDatum` you could get from the connection."""
-  totalCount: Int!
-
-  """
-  Aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  aggregates: TopArtistDatumAggregates
-
-  """
-  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  groupedAggregates(
-    """The method to use when grouping `TopArtistDatum` for these aggregates."""
-    groupBy: [TopArtistDataGroupBy!]!
-
-    """Conditions on the grouped aggregates."""
-    having: TopArtistDataHavingInput
-  ): [TopArtistDatumAggregates!]
-}
-
-type TopArtistDatum implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  id: String!
-  artistId: String
-  topArtistId: String
-  timePeriod: String
-  order: Int
-  createdAt: Datetime
-  updatedAt: Datetime
-
-  """Reads a single `Artist` that is related to this `TopArtistDatum`."""
-  artist: Artist
-
-  """Reads a single `TopArtist` that is related to this `TopArtistDatum`."""
-  topArtist: TopArtist
-}
-
-type TopArtist implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  id: String!
-  userId: String
-  createdAt: Datetime
-  updatedAt: Datetime
-
-  """Reads a single `User` that is related to this `TopArtist`."""
-  user: User
-
-  """Reads and enables pagination through a set of `TopArtistDatum`."""
-  topArtistData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `TopArtistDatum`."""
-    orderBy: [TopArtistDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: TopArtistDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: TopArtistDatumFilter
-  ): TopArtistDataConnection!
-}
-
-type User implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  id: String!
-  spotifyId: String
-  username: String
-  password: String
-  createdAt: Datetime
-  updatedAt: Datetime
-
-  """Reads and enables pagination through a set of `TopSong`."""
-  topSongs(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `TopSong`."""
-    orderBy: [TopSongsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: TopSongCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: TopSongFilter
-  ): TopSongsConnection!
-
-  """Reads and enables pagination through a set of `TopArtist`."""
-  topArtists(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `TopArtist`."""
-    orderBy: [TopArtistsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: TopArtistCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: TopArtistFilter
-  ): TopArtistsConnection!
-
-  """Reads and enables pagination through a set of `RecentListen`."""
-  recentListens(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `RecentListen`."""
-    orderBy: [RecentListensOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: RecentListenCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: RecentListenFilter
-  ): RecentListensConnection!
-}
-
-"""A connection to a list of `TopSong` values."""
-type TopSongsConnection {
-  """A list of `TopSong` objects."""
-  nodes: [TopSong]!
-
-  """
-  A list of edges which contains the `TopSong` and cursor to aid in pagination.
-  """
-  edges: [TopSongsEdge!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* `TopSong` you could get from the connection."""
-  totalCount: Int!
-
-  """
-  Aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  aggregates: TopSongAggregates
-
-  """
-  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  groupedAggregates(
-    """The method to use when grouping `TopSong` for these aggregates."""
-    groupBy: [TopSongsGroupBy!]!
-
-    """Conditions on the grouped aggregates."""
-    having: TopSongsHavingInput
-  ): [TopSongAggregates!]
-}
-
-type TopSong implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  id: String!
-  userId: String
-  createdAt: Datetime
-  updatedAt: Datetime
-
-  """Reads a single `User` that is related to this `TopSong`."""
-  user: User
-
-  """Reads and enables pagination through a set of `TopSongDatum`."""
-  topSongData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `TopSongDatum`."""
-    orderBy: [TopSongDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: TopSongDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: TopSongDatumFilter
-  ): TopSongDataConnection!
-}
-
-"""A connection to a list of `TopSongDatum` values."""
-type TopSongDataConnection {
-  """A list of `TopSongDatum` objects."""
-  nodes: [TopSongDatum]!
-
-  """
-  A list of edges which contains the `TopSongDatum` and cursor to aid in pagination.
-  """
-  edges: [TopSongDataEdge!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* `TopSongDatum` you could get from the connection."""
-  totalCount: Int!
-
-  """
-  Aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  aggregates: TopSongDatumAggregates
-
-  """
-  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  groupedAggregates(
-    """The method to use when grouping `TopSongDatum` for these aggregates."""
-    groupBy: [TopSongDataGroupBy!]!
-
-    """Conditions on the grouped aggregates."""
-    having: TopSongDataHavingInput
-  ): [TopSongDatumAggregates!]
-}
-
-type TopSongDatum implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  id: String!
-  songId: String
-  topSongId: String
-  order: Int
-  timePeriod: String
-  createdAt: Datetime
-  updatedAt: Datetime
-
-  """Reads a single `Song` that is related to this `TopSongDatum`."""
-  song: Song
-
-  """Reads a single `TopSong` that is related to this `TopSongDatum`."""
-  topSong: TopSong
-}
-
-type Song implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  id: String!
-  spotifyId: String
-  albumId: String
-  artistId: String
-  name: String
-  createdAt: Datetime
-  updatedAt: Datetime
-
-  """Reads a single `Album` that is related to this `Song`."""
-  album: Album
-
-  """Reads a single `Artist` that is related to this `Song`."""
-  artist: Artist
-
-  """Reads and enables pagination through a set of `TopSongDatum`."""
-  topSongData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `TopSongDatum`."""
-    orderBy: [TopSongDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: TopSongDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: TopSongDatumFilter
-  ): TopSongDataConnection!
-
-  """Reads and enables pagination through a set of `RecentListen`."""
-  recentListens(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `RecentListen`."""
-    orderBy: [RecentListensOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: RecentListenCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: RecentListenFilter
-  ): RecentListensConnection!
-}
-
 """A location in a connection that can be used for resuming pagination."""
 scalar Cursor
 
-"""Methods to use when ordering `TopSongDatum`."""
-enum TopSongDataOrderBy {
+"""Methods to use when ordering `Album`."""
+enum AlbumsOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
-  SONG_ID_ASC
-  SONG_ID_DESC
-  TOP_SONG_ID_ASC
-  TOP_SONG_ID_DESC
-  ORDER_ASC
-  ORDER_DESC
-  TIME_PERIOD_ASC
-  TIME_PERIOD_DESC
+  NAME_ASC
+  NAME_DESC
+  SPOTIFY_ID_ASC
+  SPOTIFY_ID_DESC
+  ARTIST_ID_ASC
+  ARTIST_ID_DESC
   CREATED_AT_ASC
   CREATED_AT_DESC
   UPDATED_AT_ASC
   UPDATED_AT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
+  SONGS_COUNT_ASC
+  SONGS_COUNT_DESC
+  SONGS_SUM_ID_ASC
+  SONGS_SUM_ID_DESC
+  SONGS_SUM_SPOTIFY_ID_ASC
+  SONGS_SUM_SPOTIFY_ID_DESC
+  SONGS_SUM_ALBUM_ID_ASC
+  SONGS_SUM_ALBUM_ID_DESC
+  SONGS_SUM_ARTIST_ID_ASC
+  SONGS_SUM_ARTIST_ID_DESC
+  SONGS_SUM_NAME_ASC
+  SONGS_SUM_NAME_DESC
+  SONGS_SUM_CREATED_AT_ASC
+  SONGS_SUM_CREATED_AT_DESC
+  SONGS_SUM_UPDATED_AT_ASC
+  SONGS_SUM_UPDATED_AT_DESC
+  SONGS_DISTINCT_COUNT_ID_ASC
+  SONGS_DISTINCT_COUNT_ID_DESC
+  SONGS_DISTINCT_COUNT_SPOTIFY_ID_ASC
+  SONGS_DISTINCT_COUNT_SPOTIFY_ID_DESC
+  SONGS_DISTINCT_COUNT_ALBUM_ID_ASC
+  SONGS_DISTINCT_COUNT_ALBUM_ID_DESC
+  SONGS_DISTINCT_COUNT_ARTIST_ID_ASC
+  SONGS_DISTINCT_COUNT_ARTIST_ID_DESC
+  SONGS_DISTINCT_COUNT_NAME_ASC
+  SONGS_DISTINCT_COUNT_NAME_DESC
+  SONGS_DISTINCT_COUNT_CREATED_AT_ASC
+  SONGS_DISTINCT_COUNT_CREATED_AT_DESC
+  SONGS_DISTINCT_COUNT_UPDATED_AT_ASC
+  SONGS_DISTINCT_COUNT_UPDATED_AT_DESC
+  SONGS_MIN_ID_ASC
+  SONGS_MIN_ID_DESC
+  SONGS_MIN_SPOTIFY_ID_ASC
+  SONGS_MIN_SPOTIFY_ID_DESC
+  SONGS_MIN_ALBUM_ID_ASC
+  SONGS_MIN_ALBUM_ID_DESC
+  SONGS_MIN_ARTIST_ID_ASC
+  SONGS_MIN_ARTIST_ID_DESC
+  SONGS_MIN_NAME_ASC
+  SONGS_MIN_NAME_DESC
+  SONGS_MIN_CREATED_AT_ASC
+  SONGS_MIN_CREATED_AT_DESC
+  SONGS_MIN_UPDATED_AT_ASC
+  SONGS_MIN_UPDATED_AT_DESC
+  SONGS_MAX_ID_ASC
+  SONGS_MAX_ID_DESC
+  SONGS_MAX_SPOTIFY_ID_ASC
+  SONGS_MAX_SPOTIFY_ID_DESC
+  SONGS_MAX_ALBUM_ID_ASC
+  SONGS_MAX_ALBUM_ID_DESC
+  SONGS_MAX_ARTIST_ID_ASC
+  SONGS_MAX_ARTIST_ID_DESC
+  SONGS_MAX_NAME_ASC
+  SONGS_MAX_NAME_DESC
+  SONGS_MAX_CREATED_AT_ASC
+  SONGS_MAX_CREATED_AT_DESC
+  SONGS_MAX_UPDATED_AT_ASC
+  SONGS_MAX_UPDATED_AT_DESC
+  SONGS_AVERAGE_ID_ASC
+  SONGS_AVERAGE_ID_DESC
+  SONGS_AVERAGE_SPOTIFY_ID_ASC
+  SONGS_AVERAGE_SPOTIFY_ID_DESC
+  SONGS_AVERAGE_ALBUM_ID_ASC
+  SONGS_AVERAGE_ALBUM_ID_DESC
+  SONGS_AVERAGE_ARTIST_ID_ASC
+  SONGS_AVERAGE_ARTIST_ID_DESC
+  SONGS_AVERAGE_NAME_ASC
+  SONGS_AVERAGE_NAME_DESC
+  SONGS_AVERAGE_CREATED_AT_ASC
+  SONGS_AVERAGE_CREATED_AT_DESC
+  SONGS_AVERAGE_UPDATED_AT_ASC
+  SONGS_AVERAGE_UPDATED_AT_DESC
+  SONGS_STDDEV_SAMPLE_ID_ASC
+  SONGS_STDDEV_SAMPLE_ID_DESC
+  SONGS_STDDEV_SAMPLE_SPOTIFY_ID_ASC
+  SONGS_STDDEV_SAMPLE_SPOTIFY_ID_DESC
+  SONGS_STDDEV_SAMPLE_ALBUM_ID_ASC
+  SONGS_STDDEV_SAMPLE_ALBUM_ID_DESC
+  SONGS_STDDEV_SAMPLE_ARTIST_ID_ASC
+  SONGS_STDDEV_SAMPLE_ARTIST_ID_DESC
+  SONGS_STDDEV_SAMPLE_NAME_ASC
+  SONGS_STDDEV_SAMPLE_NAME_DESC
+  SONGS_STDDEV_SAMPLE_CREATED_AT_ASC
+  SONGS_STDDEV_SAMPLE_CREATED_AT_DESC
+  SONGS_STDDEV_SAMPLE_UPDATED_AT_ASC
+  SONGS_STDDEV_SAMPLE_UPDATED_AT_DESC
+  SONGS_STDDEV_POPULATION_ID_ASC
+  SONGS_STDDEV_POPULATION_ID_DESC
+  SONGS_STDDEV_POPULATION_SPOTIFY_ID_ASC
+  SONGS_STDDEV_POPULATION_SPOTIFY_ID_DESC
+  SONGS_STDDEV_POPULATION_ALBUM_ID_ASC
+  SONGS_STDDEV_POPULATION_ALBUM_ID_DESC
+  SONGS_STDDEV_POPULATION_ARTIST_ID_ASC
+  SONGS_STDDEV_POPULATION_ARTIST_ID_DESC
+  SONGS_STDDEV_POPULATION_NAME_ASC
+  SONGS_STDDEV_POPULATION_NAME_DESC
+  SONGS_STDDEV_POPULATION_CREATED_AT_ASC
+  SONGS_STDDEV_POPULATION_CREATED_AT_DESC
+  SONGS_STDDEV_POPULATION_UPDATED_AT_ASC
+  SONGS_STDDEV_POPULATION_UPDATED_AT_DESC
+  SONGS_VARIANCE_SAMPLE_ID_ASC
+  SONGS_VARIANCE_SAMPLE_ID_DESC
+  SONGS_VARIANCE_SAMPLE_SPOTIFY_ID_ASC
+  SONGS_VARIANCE_SAMPLE_SPOTIFY_ID_DESC
+  SONGS_VARIANCE_SAMPLE_ALBUM_ID_ASC
+  SONGS_VARIANCE_SAMPLE_ALBUM_ID_DESC
+  SONGS_VARIANCE_SAMPLE_ARTIST_ID_ASC
+  SONGS_VARIANCE_SAMPLE_ARTIST_ID_DESC
+  SONGS_VARIANCE_SAMPLE_NAME_ASC
+  SONGS_VARIANCE_SAMPLE_NAME_DESC
+  SONGS_VARIANCE_SAMPLE_CREATED_AT_ASC
+  SONGS_VARIANCE_SAMPLE_CREATED_AT_DESC
+  SONGS_VARIANCE_SAMPLE_UPDATED_AT_ASC
+  SONGS_VARIANCE_SAMPLE_UPDATED_AT_DESC
+  SONGS_VARIANCE_POPULATION_ID_ASC
+  SONGS_VARIANCE_POPULATION_ID_DESC
+  SONGS_VARIANCE_POPULATION_SPOTIFY_ID_ASC
+  SONGS_VARIANCE_POPULATION_SPOTIFY_ID_DESC
+  SONGS_VARIANCE_POPULATION_ALBUM_ID_ASC
+  SONGS_VARIANCE_POPULATION_ALBUM_ID_DESC
+  SONGS_VARIANCE_POPULATION_ARTIST_ID_ASC
+  SONGS_VARIANCE_POPULATION_ARTIST_ID_DESC
+  SONGS_VARIANCE_POPULATION_NAME_ASC
+  SONGS_VARIANCE_POPULATION_NAME_DESC
+  SONGS_VARIANCE_POPULATION_CREATED_AT_ASC
+  SONGS_VARIANCE_POPULATION_CREATED_AT_DESC
+  SONGS_VARIANCE_POPULATION_UPDATED_AT_ASC
+  SONGS_VARIANCE_POPULATION_UPDATED_AT_DESC
 }
 
 """
-A condition to be used against `TopSongDatum` object types. All fields are
-tested for equality and combined with a logical ‘and.’
+A condition to be used against `Album` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
-input TopSongDatumCondition {
+input AlbumCondition {
   """Checks for equality with the object’s `id` field."""
   id: String
 
-  """Checks for equality with the object’s `songId` field."""
-  songId: String
+  """Checks for equality with the object’s `name` field."""
+  name: String
 
-  """Checks for equality with the object’s `topSongId` field."""
-  topSongId: String
+  """Checks for equality with the object’s `spotifyId` field."""
+  spotifyId: String
 
-  """Checks for equality with the object’s `order` field."""
-  order: Int
-
-  """Checks for equality with the object’s `timePeriod` field."""
-  timePeriod: String
+  """Checks for equality with the object’s `artistId` field."""
+  artistId: String
 
   """Checks for equality with the object’s `createdAt` field."""
   createdAt: Datetime
@@ -1228,23 +887,20 @@ input TopSongDatumCondition {
 }
 
 """
-A filter to be used against `TopSongDatum` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `Album` object types. All fields are combined with a logical ‘and.’
 """
-input TopSongDatumFilter {
+input AlbumFilter {
   """Filter by the object’s `id` field."""
   id: StringFilter
 
-  """Filter by the object’s `songId` field."""
-  songId: StringFilter
+  """Filter by the object’s `name` field."""
+  name: StringFilter
 
-  """Filter by the object’s `topSongId` field."""
-  topSongId: StringFilter
+  """Filter by the object’s `spotifyId` field."""
+  spotifyId: StringFilter
 
-  """Filter by the object’s `order` field."""
-  order: IntFilter
-
-  """Filter by the object’s `timePeriod` field."""
-  timePeriod: StringFilter
+  """Filter by the object’s `artistId` field."""
+  artistId: StringFilter
 
   """Filter by the object’s `createdAt` field."""
   createdAt: DatetimeFilter
@@ -1252,26 +908,34 @@ input TopSongDatumFilter {
   """Filter by the object’s `updatedAt` field."""
   updatedAt: DatetimeFilter
 
-  """Filter by the object’s `song` relation."""
-  song: SongFilter
+  """Filter by the object’s `songs` relation."""
+  songs: AlbumToManySongFilter
 
-  """A related `song` exists."""
-  songExists: Boolean
+  """Some related `songs` exist."""
+  songsExist: Boolean
 
-  """Filter by the object’s `topSong` relation."""
-  topSong: TopSongFilter
+  """Filter by the object’s `artist` relation."""
+  artist: ArtistFilter
 
-  """A related `topSong` exists."""
-  topSongExists: Boolean
+  """A related `artist` exists."""
+  artistExists: Boolean
 
   """Checks for all expressions in this list."""
-  and: [TopSongDatumFilter!]
+  and: [AlbumFilter!]
 
   """Checks for any expressions in this list."""
-  or: [TopSongDatumFilter!]
+  or: [AlbumFilter!]
 
   """Negates the expression."""
-  not: TopSongDatumFilter
+  not: AlbumFilter
+
+  """Filter by the object’s `thumbnails` polymorphic relation."""
+  thumbnails: AlbumToManyThumbnailFilterPoly
+
+  """
+  Filter for if the object’s `thumbnails`               polymorphic relation exist.
+  """
+  thumbnailsExist: Boolean
 }
 
 """
@@ -1383,48 +1047,6 @@ input StringFilter {
 }
 
 """
-A filter to be used against Int fields. All fields are combined with a logical ‘and.’
-"""
-input IntFilter {
-  """
-  Is null (if `true` is specified) or is not null (if `false` is specified).
-  """
-  isNull: Boolean
-
-  """Equal to the specified value."""
-  equalTo: Int
-
-  """Not equal to the specified value."""
-  notEqualTo: Int
-
-  """
-  Not equal to the specified value, treating null like an ordinary value.
-  """
-  distinctFrom: Int
-
-  """Equal to the specified value, treating null like an ordinary value."""
-  notDistinctFrom: Int
-
-  """Included in the specified list."""
-  in: [Int!]
-
-  """Not included in the specified list."""
-  notIn: [Int!]
-
-  """Less than the specified value."""
-  lessThan: Int
-
-  """Less than or equal to the specified value."""
-  lessThanOrEqualTo: Int
-
-  """Greater than the specified value."""
-  greaterThan: Int
-
-  """Greater than or equal to the specified value."""
-  greaterThanOrEqualTo: Int
-}
-
-"""
 A filter to be used against Datetime fields. All fields are combined with a logical ‘and.’
 """
 input DatetimeFilter {
@@ -1467,6 +1089,29 @@ input DatetimeFilter {
 }
 
 """
+A filter to be used against many `Song` object types. All fields are combined with a logical ‘and.’
+"""
+input AlbumToManySongFilter {
+  """
+  Every related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: SongFilter
+
+  """
+  Some related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: SongFilter
+
+  """
+  No related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: SongFilter
+
+  """Aggregates across related `Song` match the filter criteria."""
+  aggregates: SongAggregatesFilter
+}
+
+"""
 A filter to be used against `Song` object types. All fields are combined with a logical ‘and.’
 """
 input SongFilter {
@@ -1491,17 +1136,17 @@ input SongFilter {
   """Filter by the object’s `updatedAt` field."""
   updatedAt: DatetimeFilter
 
-  """Filter by the object’s `topSongData` relation."""
-  topSongData: SongToManyTopSongDatumFilter
-
-  """Some related `topSongData` exist."""
-  topSongDataExist: Boolean
-
   """Filter by the object’s `recentListens` relation."""
   recentListens: SongToManyRecentListenFilter
 
   """Some related `recentListens` exist."""
   recentListensExist: Boolean
+
+  """Filter by the object’s `topSongData` relation."""
+  topSongData: SongToManyTopSongDatumFilter
+
+  """Some related `topSongData` exist."""
+  topSongDataExist: Boolean
 
   """Filter by the object’s `album` relation."""
   album: AlbumFilter
@@ -1523,206 +1168,6 @@ input SongFilter {
 
   """Negates the expression."""
   not: SongFilter
-}
-
-"""
-A filter to be used against many `TopSongDatum` object types. All fields are combined with a logical ‘and.’
-"""
-input SongToManyTopSongDatumFilter {
-  """
-  Every related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: TopSongDatumFilter
-
-  """
-  Some related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: TopSongDatumFilter
-
-  """
-  No related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: TopSongDatumFilter
-
-  """Aggregates across related `TopSongDatum` match the filter criteria."""
-  aggregates: TopSongDatumAggregatesFilter
-}
-
-"""A filter to be used against aggregates of `TopSongDatum` object types."""
-input TopSongDatumAggregatesFilter {
-  """
-  A filter that must pass for the relevant `TopSongDatum` object to be included within the aggregate.
-  """
-  filter: TopSongDatumFilter
-
-  """Sum aggregate over matching `TopSongDatum` objects."""
-  sum: TopSongDatumSumAggregateFilter
-
-  """Distinct count aggregate over matching `TopSongDatum` objects."""
-  distinctCount: TopSongDatumDistinctCountAggregateFilter
-
-  """Minimum aggregate over matching `TopSongDatum` objects."""
-  min: TopSongDatumMinAggregateFilter
-
-  """Maximum aggregate over matching `TopSongDatum` objects."""
-  max: TopSongDatumMaxAggregateFilter
-
-  """Mean average aggregate over matching `TopSongDatum` objects."""
-  average: TopSongDatumAverageAggregateFilter
-
-  """
-  Sample standard deviation aggregate over matching `TopSongDatum` objects.
-  """
-  stddevSample: TopSongDatumStddevSampleAggregateFilter
-
-  """
-  Population standard deviation aggregate over matching `TopSongDatum` objects.
-  """
-  stddevPopulation: TopSongDatumStddevPopulationAggregateFilter
-
-  """Sample variance aggregate over matching `TopSongDatum` objects."""
-  varianceSample: TopSongDatumVarianceSampleAggregateFilter
-
-  """Population variance aggregate over matching `TopSongDatum` objects."""
-  variancePopulation: TopSongDatumVariancePopulationAggregateFilter
-}
-
-input TopSongDatumSumAggregateFilter {
-  order: BigIntFilter
-}
-
-"""
-A filter to be used against BigInt fields. All fields are combined with a logical ‘and.’
-"""
-input BigIntFilter {
-  """
-  Is null (if `true` is specified) or is not null (if `false` is specified).
-  """
-  isNull: Boolean
-
-  """Equal to the specified value."""
-  equalTo: BigInt
-
-  """Not equal to the specified value."""
-  notEqualTo: BigInt
-
-  """
-  Not equal to the specified value, treating null like an ordinary value.
-  """
-  distinctFrom: BigInt
-
-  """Equal to the specified value, treating null like an ordinary value."""
-  notDistinctFrom: BigInt
-
-  """Included in the specified list."""
-  in: [BigInt!]
-
-  """Not included in the specified list."""
-  notIn: [BigInt!]
-
-  """Less than the specified value."""
-  lessThan: BigInt
-
-  """Less than or equal to the specified value."""
-  lessThanOrEqualTo: BigInt
-
-  """Greater than the specified value."""
-  greaterThan: BigInt
-
-  """Greater than or equal to the specified value."""
-  greaterThanOrEqualTo: BigInt
-}
-
-"""
-A signed eight-byte integer. The upper big integer values are greater than the
-max value for a JavaScript number. Therefore all big integers will be output as
-strings and not numbers.
-"""
-scalar BigInt
-
-input TopSongDatumDistinctCountAggregateFilter {
-  id: BigIntFilter
-  songId: BigIntFilter
-  topSongId: BigIntFilter
-  order: BigIntFilter
-  timePeriod: BigIntFilter
-  createdAt: BigIntFilter
-  updatedAt: BigIntFilter
-}
-
-input TopSongDatumMinAggregateFilter {
-  order: IntFilter
-}
-
-input TopSongDatumMaxAggregateFilter {
-  order: IntFilter
-}
-
-input TopSongDatumAverageAggregateFilter {
-  order: BigFloatFilter
-}
-
-"""
-A filter to be used against BigFloat fields. All fields are combined with a logical ‘and.’
-"""
-input BigFloatFilter {
-  """
-  Is null (if `true` is specified) or is not null (if `false` is specified).
-  """
-  isNull: Boolean
-
-  """Equal to the specified value."""
-  equalTo: BigFloat
-
-  """Not equal to the specified value."""
-  notEqualTo: BigFloat
-
-  """
-  Not equal to the specified value, treating null like an ordinary value.
-  """
-  distinctFrom: BigFloat
-
-  """Equal to the specified value, treating null like an ordinary value."""
-  notDistinctFrom: BigFloat
-
-  """Included in the specified list."""
-  in: [BigFloat!]
-
-  """Not included in the specified list."""
-  notIn: [BigFloat!]
-
-  """Less than the specified value."""
-  lessThan: BigFloat
-
-  """Less than or equal to the specified value."""
-  lessThanOrEqualTo: BigFloat
-
-  """Greater than the specified value."""
-  greaterThan: BigFloat
-
-  """Greater than or equal to the specified value."""
-  greaterThanOrEqualTo: BigFloat
-}
-
-"""
-A floating point number that requires more precision than IEEE 754 binary 64
-"""
-scalar BigFloat
-
-input TopSongDatumStddevSampleAggregateFilter {
-  order: BigFloatFilter
-}
-
-input TopSongDatumStddevPopulationAggregateFilter {
-  order: BigFloatFilter
-}
-
-input TopSongDatumVarianceSampleAggregateFilter {
-  order: BigFloatFilter
-}
-
-input TopSongDatumVariancePopulationAggregateFilter {
-  order: BigFloatFilter
 }
 
 """
@@ -1814,11 +1259,11 @@ input UserFilter {
   """Filter by the object’s `updatedAt` field."""
   updatedAt: DatetimeFilter
 
-  """Filter by the object’s `topSongs` relation."""
-  topSongs: UserToManyTopSongFilter
+  """Filter by the object’s `recentListens` relation."""
+  recentListens: UserToManyRecentListenFilter
 
-  """Some related `topSongs` exist."""
-  topSongsExist: Boolean
+  """Some related `recentListens` exist."""
+  recentListensExist: Boolean
 
   """Filter by the object’s `topArtists` relation."""
   topArtists: UserToManyTopArtistFilter
@@ -1826,11 +1271,11 @@ input UserFilter {
   """Some related `topArtists` exist."""
   topArtistsExist: Boolean
 
-  """Filter by the object’s `recentListens` relation."""
-  recentListens: UserToManyRecentListenFilter
+  """Filter by the object’s `topSongs` relation."""
+  topSongs: UserToManyTopSongFilter
 
-  """Some related `recentListens` exist."""
-  recentListensExist: Boolean
+  """Some related `topSongs` exist."""
+  topSongsExist: Boolean
 
   """Checks for all expressions in this list."""
   and: [UserFilter!]
@@ -1843,106 +1288,96 @@ input UserFilter {
 }
 
 """
-A filter to be used against many `TopSong` object types. All fields are combined with a logical ‘and.’
+A filter to be used against many `RecentListen` object types. All fields are combined with a logical ‘and.’
 """
-input UserToManyTopSongFilter {
+input UserToManyRecentListenFilter {
   """
-  Every related `TopSong` matches the filter criteria. All fields are combined with a logical ‘and.’
+  Every related `RecentListen` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
-  every: TopSongFilter
+  every: RecentListenFilter
 
   """
-  Some related `TopSong` matches the filter criteria. All fields are combined with a logical ‘and.’
+  Some related `RecentListen` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
-  some: TopSongFilter
+  some: RecentListenFilter
 
   """
-  No related `TopSong` matches the filter criteria. All fields are combined with a logical ‘and.’
+  No related `RecentListen` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
-  none: TopSongFilter
+  none: RecentListenFilter
 
-  """Aggregates across related `TopSong` match the filter criteria."""
-  aggregates: TopSongAggregatesFilter
+  """Aggregates across related `RecentListen` match the filter criteria."""
+  aggregates: RecentListenAggregatesFilter
 }
 
-"""
-A filter to be used against `TopSong` object types. All fields are combined with a logical ‘and.’
-"""
-input TopSongFilter {
-  """Filter by the object’s `id` field."""
-  id: StringFilter
+"""A filter to be used against aggregates of `RecentListen` object types."""
+input RecentListenAggregatesFilter {
+  """
+  A filter that must pass for the relevant `RecentListen` object to be included within the aggregate.
+  """
+  filter: RecentListenFilter
 
-  """Filter by the object’s `userId` field."""
-  userId: StringFilter
-
-  """Filter by the object’s `createdAt` field."""
-  createdAt: DatetimeFilter
-
-  """Filter by the object’s `updatedAt` field."""
-  updatedAt: DatetimeFilter
-
-  """Filter by the object’s `topSongData` relation."""
-  topSongData: TopSongToManyTopSongDatumFilter
-
-  """Some related `topSongData` exist."""
-  topSongDataExist: Boolean
-
-  """Filter by the object’s `user` relation."""
-  user: UserFilter
-
-  """A related `user` exists."""
-  userExists: Boolean
-
-  """Checks for all expressions in this list."""
-  and: [TopSongFilter!]
-
-  """Checks for any expressions in this list."""
-  or: [TopSongFilter!]
-
-  """Negates the expression."""
-  not: TopSongFilter
+  """Distinct count aggregate over matching `RecentListen` objects."""
+  distinctCount: RecentListenDistinctCountAggregateFilter
 }
 
-"""
-A filter to be used against many `TopSongDatum` object types. All fields are combined with a logical ‘and.’
-"""
-input TopSongToManyTopSongDatumFilter {
-  """
-  Every related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: TopSongDatumFilter
-
-  """
-  Some related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: TopSongDatumFilter
-
-  """
-  No related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: TopSongDatumFilter
-
-  """Aggregates across related `TopSongDatum` match the filter criteria."""
-  aggregates: TopSongDatumAggregatesFilter
-}
-
-"""A filter to be used against aggregates of `TopSong` object types."""
-input TopSongAggregatesFilter {
-  """
-  A filter that must pass for the relevant `TopSong` object to be included within the aggregate.
-  """
-  filter: TopSongFilter
-
-  """Distinct count aggregate over matching `TopSong` objects."""
-  distinctCount: TopSongDistinctCountAggregateFilter
-}
-
-input TopSongDistinctCountAggregateFilter {
+input RecentListenDistinctCountAggregateFilter {
   id: BigIntFilter
+  songId: BigIntFilter
   userId: BigIntFilter
+  playedAt: BigIntFilter
   createdAt: BigIntFilter
   updatedAt: BigIntFilter
 }
+
+"""
+A filter to be used against BigInt fields. All fields are combined with a logical ‘and.’
+"""
+input BigIntFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: BigInt
+
+  """Not equal to the specified value."""
+  notEqualTo: BigInt
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: BigInt
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: BigInt
+
+  """Included in the specified list."""
+  in: [BigInt!]
+
+  """Not included in the specified list."""
+  notIn: [BigInt!]
+
+  """Less than the specified value."""
+  lessThan: BigInt
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: BigInt
+
+  """Greater than the specified value."""
+  greaterThan: BigInt
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: BigInt
+}
+
+"""
+A signed eight-byte integer. The upper big integer values are greater than the
+max value for a JavaScript number. Therefore all big integers will be output as
+strings and not numbers.
+"""
+scalar BigInt
 
 """
 A filter to be used against many `TopArtist` object types. All fields are combined with a logical ‘and.’
@@ -2076,6 +1511,48 @@ input TopArtistDatumFilter {
 }
 
 """
+A filter to be used against Int fields. All fields are combined with a logical ‘and.’
+"""
+input IntFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: Int
+
+  """Not equal to the specified value."""
+  notEqualTo: Int
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Int
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Int
+
+  """Included in the specified list."""
+  in: [Int!]
+
+  """Not included in the specified list."""
+  notIn: [Int!]
+
+  """Less than the specified value."""
+  lessThan: Int
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Int
+
+  """Greater than the specified value."""
+  greaterThan: Int
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Int
+}
+
+"""
 A filter to be used against `Artist` object types. All fields are combined with a logical ‘and.’
 """
 input ArtistFilter {
@@ -2094,11 +1571,11 @@ input ArtistFilter {
   """Filter by the object’s `updatedAt` field."""
   updatedAt: DatetimeFilter
 
-  """Filter by the object’s `topArtistData` relation."""
-  topArtistData: ArtistToManyTopArtistDatumFilter
+  """Filter by the object’s `albums` relation."""
+  albums: ArtistToManyAlbumFilter
 
-  """Some related `topArtistData` exist."""
-  topArtistDataExist: Boolean
+  """Some related `albums` exist."""
+  albumsExist: Boolean
 
   """Filter by the object’s `songs` relation."""
   songs: ArtistToManySongFilter
@@ -2106,11 +1583,11 @@ input ArtistFilter {
   """Some related `songs` exist."""
   songsExist: Boolean
 
-  """Filter by the object’s `albums` relation."""
-  albums: ArtistToManyAlbumFilter
+  """Filter by the object’s `topArtistData` relation."""
+  topArtistData: ArtistToManyTopArtistDatumFilter
 
-  """Some related `albums` exist."""
-  albumsExist: Boolean
+  """Some related `topArtistData` exist."""
+  topArtistDataExist: Boolean
 
   """Checks for all expressions in this list."""
   and: [ArtistFilter!]
@@ -2128,6 +1605,93 @@ input ArtistFilter {
   Filter for if the object’s `thumbnails`               polymorphic relation exist.
   """
   thumbnailsExist: Boolean
+}
+
+"""
+A filter to be used against many `Album` object types. All fields are combined with a logical ‘and.’
+"""
+input ArtistToManyAlbumFilter {
+  """
+  Every related `Album` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: AlbumFilter
+
+  """
+  Some related `Album` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: AlbumFilter
+
+  """
+  No related `Album` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: AlbumFilter
+
+  """Aggregates across related `Album` match the filter criteria."""
+  aggregates: AlbumAggregatesFilter
+}
+
+"""A filter to be used against aggregates of `Album` object types."""
+input AlbumAggregatesFilter {
+  """
+  A filter that must pass for the relevant `Album` object to be included within the aggregate.
+  """
+  filter: AlbumFilter
+
+  """Distinct count aggregate over matching `Album` objects."""
+  distinctCount: AlbumDistinctCountAggregateFilter
+}
+
+input AlbumDistinctCountAggregateFilter {
+  id: BigIntFilter
+  name: BigIntFilter
+  spotifyId: BigIntFilter
+  artistId: BigIntFilter
+  createdAt: BigIntFilter
+  updatedAt: BigIntFilter
+}
+
+"""
+A filter to be used against many `Song` object types. All fields are combined with a logical ‘and.’
+"""
+input ArtistToManySongFilter {
+  """
+  Every related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: SongFilter
+
+  """
+  Some related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: SongFilter
+
+  """
+  No related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: SongFilter
+
+  """Aggregates across related `Song` match the filter criteria."""
+  aggregates: SongAggregatesFilter
+}
+
+"""A filter to be used against aggregates of `Song` object types."""
+input SongAggregatesFilter {
+  """
+  A filter that must pass for the relevant `Song` object to be included within the aggregate.
+  """
+  filter: SongFilter
+
+  """Distinct count aggregate over matching `Song` objects."""
+  distinctCount: SongDistinctCountAggregateFilter
+}
+
+input SongDistinctCountAggregateFilter {
+  id: BigIntFilter
+  spotifyId: BigIntFilter
+  albumId: BigIntFilter
+  artistId: BigIntFilter
+  name: BigIntFilter
+  createdAt: BigIntFilter
+  updatedAt: BigIntFilter
 }
 
 """
@@ -2220,6 +1784,53 @@ input TopArtistDatumAverageAggregateFilter {
   order: BigFloatFilter
 }
 
+"""
+A filter to be used against BigFloat fields. All fields are combined with a logical ‘and.’
+"""
+input BigFloatFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: BigFloat
+
+  """Not equal to the specified value."""
+  notEqualTo: BigFloat
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: BigFloat
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: BigFloat
+
+  """Included in the specified list."""
+  in: [BigFloat!]
+
+  """Not included in the specified list."""
+  notIn: [BigFloat!]
+
+  """Less than the specified value."""
+  lessThan: BigFloat
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: BigFloat
+
+  """Greater than the specified value."""
+  greaterThan: BigFloat
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: BigFloat
+}
+
+"""
+A floating point number that requires more precision than IEEE 754 binary 64
+"""
+scalar BigFloat
+
 input TopArtistDatumStddevSampleAggregateFilter {
   order: BigFloatFilter
 }
@@ -2237,152 +1848,10 @@ input TopArtistDatumVariancePopulationAggregateFilter {
 }
 
 """
-A filter to be used against many `Song` object types. All fields are combined with a logical ‘and.’
-"""
-input ArtistToManySongFilter {
-  """
-  Every related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: SongFilter
-
-  """
-  Some related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: SongFilter
-
-  """
-  No related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: SongFilter
-
-  """Aggregates across related `Song` match the filter criteria."""
-  aggregates: SongAggregatesFilter
-}
-
-"""A filter to be used against aggregates of `Song` object types."""
-input SongAggregatesFilter {
-  """
-  A filter that must pass for the relevant `Song` object to be included within the aggregate.
-  """
-  filter: SongFilter
-
-  """Distinct count aggregate over matching `Song` objects."""
-  distinctCount: SongDistinctCountAggregateFilter
-}
-
-input SongDistinctCountAggregateFilter {
-  id: BigIntFilter
-  spotifyId: BigIntFilter
-  albumId: BigIntFilter
-  artistId: BigIntFilter
-  name: BigIntFilter
-  createdAt: BigIntFilter
-  updatedAt: BigIntFilter
-}
-
-"""
-A filter to be used against many `Album` object types. All fields are combined with a logical ‘and.’
-"""
-input ArtistToManyAlbumFilter {
-  """
-  Every related `Album` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: AlbumFilter
-
-  """
-  Some related `Album` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: AlbumFilter
-
-  """
-  No related `Album` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: AlbumFilter
-
-  """Aggregates across related `Album` match the filter criteria."""
-  aggregates: AlbumAggregatesFilter
-}
-
-"""
-A filter to be used against `Album` object types. All fields are combined with a logical ‘and.’
-"""
-input AlbumFilter {
-  """Filter by the object’s `id` field."""
-  id: StringFilter
-
-  """Filter by the object’s `name` field."""
-  name: StringFilter
-
-  """Filter by the object’s `spotifyId` field."""
-  spotifyId: StringFilter
-
-  """Filter by the object’s `artistId` field."""
-  artistId: StringFilter
-
-  """Filter by the object’s `createdAt` field."""
-  createdAt: DatetimeFilter
-
-  """Filter by the object’s `updatedAt` field."""
-  updatedAt: DatetimeFilter
-
-  """Filter by the object’s `songs` relation."""
-  songs: AlbumToManySongFilter
-
-  """Some related `songs` exist."""
-  songsExist: Boolean
-
-  """Filter by the object’s `artist` relation."""
-  artist: ArtistFilter
-
-  """A related `artist` exists."""
-  artistExists: Boolean
-
-  """Checks for all expressions in this list."""
-  and: [AlbumFilter!]
-
-  """Checks for any expressions in this list."""
-  or: [AlbumFilter!]
-
-  """Negates the expression."""
-  not: AlbumFilter
-
-  """Filter by the object’s `thumbnails` polymorphic relation."""
-  thumbnails: AlbumToManyThumbnailFilterPoly
-
-  """
-  Filter for if the object’s `thumbnails`               polymorphic relation exist.
-  """
-  thumbnailsExist: Boolean
-}
-
-"""
-A filter to be used against many `Song` object types. All fields are combined with a logical ‘and.’
-"""
-input AlbumToManySongFilter {
-  """
-  Every related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: SongFilter
-
-  """
-  Some related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: SongFilter
-
-  """
-  No related `Song` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: SongFilter
-
-  """Aggregates across related `Song` match the filter criteria."""
-  aggregates: SongAggregatesFilter
-}
-
-"""
 A filter to be used against many `Thumbnail` object
                  through polymorphic types. All fields are combined with a logical ‘and.’
 """
-input AlbumToManyThumbnailFilterPoly {
+input ArtistToManyThumbnailFilterPoly {
   """
   Every related `Thumbnail` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
@@ -2443,47 +1912,6 @@ input ThumbnailFilter {
   artistAsEntity: ArtistFilter
 }
 
-"""A filter to be used against aggregates of `Album` object types."""
-input AlbumAggregatesFilter {
-  """
-  A filter that must pass for the relevant `Album` object to be included within the aggregate.
-  """
-  filter: AlbumFilter
-
-  """Distinct count aggregate over matching `Album` objects."""
-  distinctCount: AlbumDistinctCountAggregateFilter
-}
-
-input AlbumDistinctCountAggregateFilter {
-  id: BigIntFilter
-  name: BigIntFilter
-  spotifyId: BigIntFilter
-  artistId: BigIntFilter
-  createdAt: BigIntFilter
-  updatedAt: BigIntFilter
-}
-
-"""
-A filter to be used against many `Thumbnail` object
-                 through polymorphic types. All fields are combined with a logical ‘and.’
-"""
-input ArtistToManyThumbnailFilterPoly {
-  """
-  Every related `Thumbnail` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: ThumbnailFilter
-
-  """
-  Some related `Thumbnail` matches the filter criteria. All fields are combined with a logical ‘any.’
-  """
-  some: ThumbnailFilter
-
-  """
-  No related `Thumbnail` matches the filter criteria. All fields are combined with a logical ‘none.’
-  """
-  none: ThumbnailFilter
-}
-
 """A filter to be used against aggregates of `TopArtist` object types."""
 input TopArtistAggregatesFilter {
   """
@@ -2503,46 +1931,398 @@ input TopArtistDistinctCountAggregateFilter {
 }
 
 """
-A filter to be used against many `RecentListen` object types. All fields are combined with a logical ‘and.’
+A filter to be used against many `TopSong` object types. All fields are combined with a logical ‘and.’
 """
-input UserToManyRecentListenFilter {
+input UserToManyTopSongFilter {
   """
-  Every related `RecentListen` matches the filter criteria. All fields are combined with a logical ‘and.’
+  Every related `TopSong` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
-  every: RecentListenFilter
+  every: TopSongFilter
 
   """
-  Some related `RecentListen` matches the filter criteria. All fields are combined with a logical ‘and.’
+  Some related `TopSong` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
-  some: RecentListenFilter
+  some: TopSongFilter
 
   """
-  No related `RecentListen` matches the filter criteria. All fields are combined with a logical ‘and.’
+  No related `TopSong` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
-  none: RecentListenFilter
+  none: TopSongFilter
 
-  """Aggregates across related `RecentListen` match the filter criteria."""
-  aggregates: RecentListenAggregatesFilter
+  """Aggregates across related `TopSong` match the filter criteria."""
+  aggregates: TopSongAggregatesFilter
 }
 
-"""A filter to be used against aggregates of `RecentListen` object types."""
-input RecentListenAggregatesFilter {
-  """
-  A filter that must pass for the relevant `RecentListen` object to be included within the aggregate.
-  """
-  filter: RecentListenFilter
+"""
+A filter to be used against `TopSong` object types. All fields are combined with a logical ‘and.’
+"""
+input TopSongFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
 
-  """Distinct count aggregate over matching `RecentListen` objects."""
-  distinctCount: RecentListenDistinctCountAggregateFilter
+  """Filter by the object’s `userId` field."""
+  userId: StringFilter
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
+  """Filter by the object’s `updatedAt` field."""
+  updatedAt: DatetimeFilter
+
+  """Filter by the object’s `topSongData` relation."""
+  topSongData: TopSongToManyTopSongDatumFilter
+
+  """Some related `topSongData` exist."""
+  topSongDataExist: Boolean
+
+  """Filter by the object’s `user` relation."""
+  user: UserFilter
+
+  """A related `user` exists."""
+  userExists: Boolean
+
+  """Checks for all expressions in this list."""
+  and: [TopSongFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [TopSongFilter!]
+
+  """Negates the expression."""
+  not: TopSongFilter
 }
 
-input RecentListenDistinctCountAggregateFilter {
+"""
+A filter to be used against many `TopSongDatum` object types. All fields are combined with a logical ‘and.’
+"""
+input TopSongToManyTopSongDatumFilter {
+  """
+  Every related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: TopSongDatumFilter
+
+  """
+  Some related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: TopSongDatumFilter
+
+  """
+  No related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: TopSongDatumFilter
+
+  """Aggregates across related `TopSongDatum` match the filter criteria."""
+  aggregates: TopSongDatumAggregatesFilter
+}
+
+"""
+A filter to be used against `TopSongDatum` object types. All fields are combined with a logical ‘and.’
+"""
+input TopSongDatumFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `songId` field."""
+  songId: StringFilter
+
+  """Filter by the object’s `topSongId` field."""
+  topSongId: StringFilter
+
+  """Filter by the object’s `order` field."""
+  order: IntFilter
+
+  """Filter by the object’s `timePeriod` field."""
+  timePeriod: StringFilter
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
+  """Filter by the object’s `updatedAt` field."""
+  updatedAt: DatetimeFilter
+
+  """Filter by the object’s `song` relation."""
+  song: SongFilter
+
+  """A related `song` exists."""
+  songExists: Boolean
+
+  """Filter by the object’s `topSong` relation."""
+  topSong: TopSongFilter
+
+  """A related `topSong` exists."""
+  topSongExists: Boolean
+
+  """Checks for all expressions in this list."""
+  and: [TopSongDatumFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [TopSongDatumFilter!]
+
+  """Negates the expression."""
+  not: TopSongDatumFilter
+}
+
+"""A filter to be used against aggregates of `TopSongDatum` object types."""
+input TopSongDatumAggregatesFilter {
+  """
+  A filter that must pass for the relevant `TopSongDatum` object to be included within the aggregate.
+  """
+  filter: TopSongDatumFilter
+
+  """Sum aggregate over matching `TopSongDatum` objects."""
+  sum: TopSongDatumSumAggregateFilter
+
+  """Distinct count aggregate over matching `TopSongDatum` objects."""
+  distinctCount: TopSongDatumDistinctCountAggregateFilter
+
+  """Minimum aggregate over matching `TopSongDatum` objects."""
+  min: TopSongDatumMinAggregateFilter
+
+  """Maximum aggregate over matching `TopSongDatum` objects."""
+  max: TopSongDatumMaxAggregateFilter
+
+  """Mean average aggregate over matching `TopSongDatum` objects."""
+  average: TopSongDatumAverageAggregateFilter
+
+  """
+  Sample standard deviation aggregate over matching `TopSongDatum` objects.
+  """
+  stddevSample: TopSongDatumStddevSampleAggregateFilter
+
+  """
+  Population standard deviation aggregate over matching `TopSongDatum` objects.
+  """
+  stddevPopulation: TopSongDatumStddevPopulationAggregateFilter
+
+  """Sample variance aggregate over matching `TopSongDatum` objects."""
+  varianceSample: TopSongDatumVarianceSampleAggregateFilter
+
+  """Population variance aggregate over matching `TopSongDatum` objects."""
+  variancePopulation: TopSongDatumVariancePopulationAggregateFilter
+}
+
+input TopSongDatumSumAggregateFilter {
+  order: BigIntFilter
+}
+
+input TopSongDatumDistinctCountAggregateFilter {
   id: BigIntFilter
   songId: BigIntFilter
-  userId: BigIntFilter
-  playedAt: BigIntFilter
+  topSongId: BigIntFilter
+  order: BigIntFilter
+  timePeriod: BigIntFilter
   createdAt: BigIntFilter
   updatedAt: BigIntFilter
+}
+
+input TopSongDatumMinAggregateFilter {
+  order: IntFilter
+}
+
+input TopSongDatumMaxAggregateFilter {
+  order: IntFilter
+}
+
+input TopSongDatumAverageAggregateFilter {
+  order: BigFloatFilter
+}
+
+input TopSongDatumStddevSampleAggregateFilter {
+  order: BigFloatFilter
+}
+
+input TopSongDatumStddevPopulationAggregateFilter {
+  order: BigFloatFilter
+}
+
+input TopSongDatumVarianceSampleAggregateFilter {
+  order: BigFloatFilter
+}
+
+input TopSongDatumVariancePopulationAggregateFilter {
+  order: BigFloatFilter
+}
+
+"""A filter to be used against aggregates of `TopSong` object types."""
+input TopSongAggregatesFilter {
+  """
+  A filter that must pass for the relevant `TopSong` object to be included within the aggregate.
+  """
+  filter: TopSongFilter
+
+  """Distinct count aggregate over matching `TopSong` objects."""
+  distinctCount: TopSongDistinctCountAggregateFilter
+}
+
+input TopSongDistinctCountAggregateFilter {
+  id: BigIntFilter
+  userId: BigIntFilter
+  createdAt: BigIntFilter
+  updatedAt: BigIntFilter
+}
+
+"""
+A filter to be used against many `TopSongDatum` object types. All fields are combined with a logical ‘and.’
+"""
+input SongToManyTopSongDatumFilter {
+  """
+  Every related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: TopSongDatumFilter
+
+  """
+  Some related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: TopSongDatumFilter
+
+  """
+  No related `TopSongDatum` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: TopSongDatumFilter
+
+  """Aggregates across related `TopSongDatum` match the filter criteria."""
+  aggregates: TopSongDatumAggregatesFilter
+}
+
+"""
+A filter to be used against many `Thumbnail` object
+                 through polymorphic types. All fields are combined with a logical ‘and.’
+"""
+input AlbumToManyThumbnailFilterPoly {
+  """
+  Every related `Thumbnail` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: ThumbnailFilter
+
+  """
+  Some related `Thumbnail` matches the filter criteria. All fields are combined with a logical ‘any.’
+  """
+  some: ThumbnailFilter
+
+  """
+  No related `Thumbnail` matches the filter criteria. All fields are combined with a logical ‘none.’
+  """
+  none: ThumbnailFilter
+}
+
+"""A connection to a list of `Song` values."""
+type SongsConnection {
+  """A list of `Song` objects."""
+  nodes: [Song]!
+
+  """
+  A list of edges which contains the `Song` and cursor to aid in pagination.
+  """
+  edges: [SongsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Song` you could get from the connection."""
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: SongAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """The method to use when grouping `Song` for these aggregates."""
+    groupBy: [SongsGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: SongsHavingInput
+  ): [SongAggregates!]
+}
+
+type Song implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: String!
+  spotifyId: String
+  albumId: String
+  artistId: String
+  name: String
+  createdAt: Datetime
+  updatedAt: Datetime
+
+  """Reads a single `Album` that is related to this `Song`."""
+  album: Album
+
+  """Reads a single `Artist` that is related to this `Song`."""
+  artist: Artist
+
+  """Reads and enables pagination through a set of `RecentListen`."""
+  recentListens(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `RecentListen`."""
+    orderBy: [RecentListensOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: RecentListenCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: RecentListenFilter
+  ): RecentListensConnection!
+
+  """Reads and enables pagination through a set of `TopSongDatum`."""
+  topSongData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `TopSongDatum`."""
+    orderBy: [TopSongDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: TopSongDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: TopSongDatumFilter
+  ): TopSongDataConnection!
 }
 
 """A connection to a list of `RecentListen` values."""
@@ -2597,150 +2377,119 @@ type RecentListen implements Node {
   user: User
 }
 
-"""A `RecentListen` edge in the connection."""
-type RecentListensEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `RecentListen` at the end of the edge."""
-  node: RecentListen
-}
-
-"""Information about pagination in a connection."""
-type PageInfo {
-  """When paginating forwards, are there more items?"""
-  hasNextPage: Boolean!
-
-  """When paginating backwards, are there more items?"""
-  hasPreviousPage: Boolean!
-
-  """When paginating backwards, the cursor to continue."""
-  startCursor: Cursor
-
-  """When paginating forwards, the cursor to continue."""
-  endCursor: Cursor
-}
-
-type RecentListenAggregates {
-  keys: [String!]
-
+type User implements Node {
   """
-  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
-  distinctCount: RecentListenDistinctCountAggregates
-}
+  nodeId: ID!
+  id: String!
+  spotifyId: String
+  username: String
+  password: String
+  createdAt: Datetime
+  updatedAt: Datetime
 
-type RecentListenDistinctCountAggregates {
-  """Distinct count of id across the matching connection"""
-  id: BigInt
+  """Reads and enables pagination through a set of `RecentListen`."""
+  recentListens(
+    """Only read the first `n` values of the set."""
+    first: Int
 
-  """Distinct count of songId across the matching connection"""
-  songId: BigInt
+    """Only read the last `n` values of the set."""
+    last: Int
 
-  """Distinct count of userId across the matching connection"""
-  userId: BigInt
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
 
-  """Distinct count of playedAt across the matching connection"""
-  playedAt: BigInt
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
 
-  """Distinct count of createdAt across the matching connection"""
-  createdAt: BigInt
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
 
-  """Distinct count of updatedAt across the matching connection"""
-  updatedAt: BigInt
-}
+    """The method to use when ordering `RecentListen`."""
+    orderBy: [RecentListensOrderBy!] = [PRIMARY_KEY_ASC]
 
-"""Grouping methods for `RecentListen` for usage during aggregation."""
-enum RecentListensGroupBy {
-  SONG_ID
-  USER_ID
-  PLAYED_AT
-  PLAYED_AT_TRUNCATED_TO_HOUR
-  PLAYED_AT_TRUNCATED_TO_DAY
-  CREATED_AT
-  CREATED_AT_TRUNCATED_TO_HOUR
-  CREATED_AT_TRUNCATED_TO_DAY
-  UPDATED_AT
-  UPDATED_AT_TRUNCATED_TO_HOUR
-  UPDATED_AT_TRUNCATED_TO_DAY
-}
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: RecentListenCondition
 
-"""Conditions for `RecentListen` aggregates."""
-input RecentListensHavingInput {
-  AND: [RecentListensHavingInput!]
-  OR: [RecentListensHavingInput!]
-  sum: RecentListensHavingSumInput
-  distinctCount: RecentListensHavingDistinctCountInput
-  min: RecentListensHavingMinInput
-  max: RecentListensHavingMaxInput
-  average: RecentListensHavingAverageInput
-  stddevSample: RecentListensHavingStddevSampleInput
-  stddevPopulation: RecentListensHavingStddevPopulationInput
-  varianceSample: RecentListensHavingVarianceSampleInput
-  variancePopulation: RecentListensHavingVariancePopulationInput
-}
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: RecentListenFilter
+  ): RecentListensConnection!
 
-input RecentListensHavingSumInput {
-  playedAt: HavingDatetimeFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
+  """Reads and enables pagination through a set of `TopArtist`."""
+  topArtists(
+    """Only read the first `n` values of the set."""
+    first: Int
 
-input HavingDatetimeFilter {
-  equalTo: Datetime
-  notEqualTo: Datetime
-  greaterThan: Datetime
-  greaterThanOrEqualTo: Datetime
-  lessThan: Datetime
-  lessThanOrEqualTo: Datetime
-}
+    """Only read the last `n` values of the set."""
+    last: Int
 
-input RecentListensHavingDistinctCountInput {
-  playedAt: HavingDatetimeFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
 
-input RecentListensHavingMinInput {
-  playedAt: HavingDatetimeFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
 
-input RecentListensHavingMaxInput {
-  playedAt: HavingDatetimeFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
 
-input RecentListensHavingAverageInput {
-  playedAt: HavingDatetimeFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
+    """The method to use when ordering `TopArtist`."""
+    orderBy: [TopArtistsOrderBy!] = [PRIMARY_KEY_ASC]
 
-input RecentListensHavingStddevSampleInput {
-  playedAt: HavingDatetimeFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: TopArtistCondition
 
-input RecentListensHavingStddevPopulationInput {
-  playedAt: HavingDatetimeFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: TopArtistFilter
+  ): TopArtistsConnection!
 
-input RecentListensHavingVarianceSampleInput {
-  playedAt: HavingDatetimeFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
+  """Reads and enables pagination through a set of `TopSong`."""
+  topSongs(
+    """Only read the first `n` values of the set."""
+    first: Int
 
-input RecentListensHavingVariancePopulationInput {
-  playedAt: HavingDatetimeFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `TopSong`."""
+    orderBy: [TopSongsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: TopSongCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: TopSongFilter
+  ): TopSongsConnection!
 }
 
 """Methods to use when ordering `RecentListen`."""
@@ -2786,482 +2535,6 @@ input RecentListenCondition {
   updatedAt: Datetime
 }
 
-"""A `TopSongDatum` edge in the connection."""
-type TopSongDataEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `TopSongDatum` at the end of the edge."""
-  node: TopSongDatum
-}
-
-type TopSongDatumAggregates {
-  keys: [String!]
-
-  """
-  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  sum: TopSongDatumSumAggregates
-
-  """
-  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  distinctCount: TopSongDatumDistinctCountAggregates
-
-  """
-  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  min: TopSongDatumMinAggregates
-
-  """
-  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  max: TopSongDatumMaxAggregates
-
-  """
-  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  average: TopSongDatumAverageAggregates
-
-  """
-  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  stddevSample: TopSongDatumStddevSampleAggregates
-
-  """
-  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  stddevPopulation: TopSongDatumStddevPopulationAggregates
-
-  """
-  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  varianceSample: TopSongDatumVarianceSampleAggregates
-
-  """
-  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  variancePopulation: TopSongDatumVariancePopulationAggregates
-}
-
-type TopSongDatumSumAggregates {
-  """Sum of order across the matching connection"""
-  order: BigInt!
-}
-
-type TopSongDatumDistinctCountAggregates {
-  """Distinct count of id across the matching connection"""
-  id: BigInt
-
-  """Distinct count of songId across the matching connection"""
-  songId: BigInt
-
-  """Distinct count of topSongId across the matching connection"""
-  topSongId: BigInt
-
-  """Distinct count of order across the matching connection"""
-  order: BigInt
-
-  """Distinct count of timePeriod across the matching connection"""
-  timePeriod: BigInt
-
-  """Distinct count of createdAt across the matching connection"""
-  createdAt: BigInt
-
-  """Distinct count of updatedAt across the matching connection"""
-  updatedAt: BigInt
-}
-
-type TopSongDatumMinAggregates {
-  """Minimum of order across the matching connection"""
-  order: Int
-}
-
-type TopSongDatumMaxAggregates {
-  """Maximum of order across the matching connection"""
-  order: Int
-}
-
-type TopSongDatumAverageAggregates {
-  """Mean average of order across the matching connection"""
-  order: BigFloat
-}
-
-type TopSongDatumStddevSampleAggregates {
-  """Sample standard deviation of order across the matching connection"""
-  order: BigFloat
-}
-
-type TopSongDatumStddevPopulationAggregates {
-  """Population standard deviation of order across the matching connection"""
-  order: BigFloat
-}
-
-type TopSongDatumVarianceSampleAggregates {
-  """Sample variance of order across the matching connection"""
-  order: BigFloat
-}
-
-type TopSongDatumVariancePopulationAggregates {
-  """Population variance of order across the matching connection"""
-  order: BigFloat
-}
-
-"""Grouping methods for `TopSongDatum` for usage during aggregation."""
-enum TopSongDataGroupBy {
-  SONG_ID
-  TOP_SONG_ID
-  ORDER
-  TIME_PERIOD
-  CREATED_AT
-  CREATED_AT_TRUNCATED_TO_HOUR
-  CREATED_AT_TRUNCATED_TO_DAY
-  UPDATED_AT
-  UPDATED_AT_TRUNCATED_TO_HOUR
-  UPDATED_AT_TRUNCATED_TO_DAY
-}
-
-"""Conditions for `TopSongDatum` aggregates."""
-input TopSongDataHavingInput {
-  AND: [TopSongDataHavingInput!]
-  OR: [TopSongDataHavingInput!]
-  sum: TopSongDataHavingSumInput
-  distinctCount: TopSongDataHavingDistinctCountInput
-  min: TopSongDataHavingMinInput
-  max: TopSongDataHavingMaxInput
-  average: TopSongDataHavingAverageInput
-  stddevSample: TopSongDataHavingStddevSampleInput
-  stddevPopulation: TopSongDataHavingStddevPopulationInput
-  varianceSample: TopSongDataHavingVarianceSampleInput
-  variancePopulation: TopSongDataHavingVariancePopulationInput
-}
-
-input TopSongDataHavingSumInput {
-  order: HavingIntFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input HavingIntFilter {
-  equalTo: Int
-  notEqualTo: Int
-  greaterThan: Int
-  greaterThanOrEqualTo: Int
-  lessThan: Int
-  lessThanOrEqualTo: Int
-}
-
-input TopSongDataHavingDistinctCountInput {
-  order: HavingIntFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongDataHavingMinInput {
-  order: HavingIntFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongDataHavingMaxInput {
-  order: HavingIntFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongDataHavingAverageInput {
-  order: HavingIntFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongDataHavingStddevSampleInput {
-  order: HavingIntFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongDataHavingStddevPopulationInput {
-  order: HavingIntFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongDataHavingVarianceSampleInput {
-  order: HavingIntFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongDataHavingVariancePopulationInput {
-  order: HavingIntFilter
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-"""A `TopSong` edge in the connection."""
-type TopSongsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `TopSong` at the end of the edge."""
-  node: TopSong
-}
-
-type TopSongAggregates {
-  keys: [String!]
-
-  """
-  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  distinctCount: TopSongDistinctCountAggregates
-}
-
-type TopSongDistinctCountAggregates {
-  """Distinct count of id across the matching connection"""
-  id: BigInt
-
-  """Distinct count of userId across the matching connection"""
-  userId: BigInt
-
-  """Distinct count of createdAt across the matching connection"""
-  createdAt: BigInt
-
-  """Distinct count of updatedAt across the matching connection"""
-  updatedAt: BigInt
-}
-
-"""Grouping methods for `TopSong` for usage during aggregation."""
-enum TopSongsGroupBy {
-  USER_ID
-  CREATED_AT
-  CREATED_AT_TRUNCATED_TO_HOUR
-  CREATED_AT_TRUNCATED_TO_DAY
-  UPDATED_AT
-  UPDATED_AT_TRUNCATED_TO_HOUR
-  UPDATED_AT_TRUNCATED_TO_DAY
-}
-
-"""Conditions for `TopSong` aggregates."""
-input TopSongsHavingInput {
-  AND: [TopSongsHavingInput!]
-  OR: [TopSongsHavingInput!]
-  sum: TopSongsHavingSumInput
-  distinctCount: TopSongsHavingDistinctCountInput
-  min: TopSongsHavingMinInput
-  max: TopSongsHavingMaxInput
-  average: TopSongsHavingAverageInput
-  stddevSample: TopSongsHavingStddevSampleInput
-  stddevPopulation: TopSongsHavingStddevPopulationInput
-  varianceSample: TopSongsHavingVarianceSampleInput
-  variancePopulation: TopSongsHavingVariancePopulationInput
-}
-
-input TopSongsHavingSumInput {
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongsHavingDistinctCountInput {
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongsHavingMinInput {
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongsHavingMaxInput {
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongsHavingAverageInput {
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongsHavingStddevSampleInput {
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongsHavingStddevPopulationInput {
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongsHavingVarianceSampleInput {
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-input TopSongsHavingVariancePopulationInput {
-  createdAt: HavingDatetimeFilter
-  updatedAt: HavingDatetimeFilter
-}
-
-"""Methods to use when ordering `TopSong`."""
-enum TopSongsOrderBy {
-  NATURAL
-  ID_ASC
-  ID_DESC
-  USER_ID_ASC
-  USER_ID_DESC
-  CREATED_AT_ASC
-  CREATED_AT_DESC
-  UPDATED_AT_ASC
-  UPDATED_AT_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  TOP_SONG_DATA_COUNT_ASC
-  TOP_SONG_DATA_COUNT_DESC
-  TOP_SONG_DATA_SUM_ID_ASC
-  TOP_SONG_DATA_SUM_ID_DESC
-  TOP_SONG_DATA_SUM_SONG_ID_ASC
-  TOP_SONG_DATA_SUM_SONG_ID_DESC
-  TOP_SONG_DATA_SUM_TOP_SONG_ID_ASC
-  TOP_SONG_DATA_SUM_TOP_SONG_ID_DESC
-  TOP_SONG_DATA_SUM_ORDER_ASC
-  TOP_SONG_DATA_SUM_ORDER_DESC
-  TOP_SONG_DATA_SUM_TIME_PERIOD_ASC
-  TOP_SONG_DATA_SUM_TIME_PERIOD_DESC
-  TOP_SONG_DATA_SUM_CREATED_AT_ASC
-  TOP_SONG_DATA_SUM_CREATED_AT_DESC
-  TOP_SONG_DATA_SUM_UPDATED_AT_ASC
-  TOP_SONG_DATA_SUM_UPDATED_AT_DESC
-  TOP_SONG_DATA_DISTINCT_COUNT_ID_ASC
-  TOP_SONG_DATA_DISTINCT_COUNT_ID_DESC
-  TOP_SONG_DATA_DISTINCT_COUNT_SONG_ID_ASC
-  TOP_SONG_DATA_DISTINCT_COUNT_SONG_ID_DESC
-  TOP_SONG_DATA_DISTINCT_COUNT_TOP_SONG_ID_ASC
-  TOP_SONG_DATA_DISTINCT_COUNT_TOP_SONG_ID_DESC
-  TOP_SONG_DATA_DISTINCT_COUNT_ORDER_ASC
-  TOP_SONG_DATA_DISTINCT_COUNT_ORDER_DESC
-  TOP_SONG_DATA_DISTINCT_COUNT_TIME_PERIOD_ASC
-  TOP_SONG_DATA_DISTINCT_COUNT_TIME_PERIOD_DESC
-  TOP_SONG_DATA_DISTINCT_COUNT_CREATED_AT_ASC
-  TOP_SONG_DATA_DISTINCT_COUNT_CREATED_AT_DESC
-  TOP_SONG_DATA_DISTINCT_COUNT_UPDATED_AT_ASC
-  TOP_SONG_DATA_DISTINCT_COUNT_UPDATED_AT_DESC
-  TOP_SONG_DATA_MIN_ID_ASC
-  TOP_SONG_DATA_MIN_ID_DESC
-  TOP_SONG_DATA_MIN_SONG_ID_ASC
-  TOP_SONG_DATA_MIN_SONG_ID_DESC
-  TOP_SONG_DATA_MIN_TOP_SONG_ID_ASC
-  TOP_SONG_DATA_MIN_TOP_SONG_ID_DESC
-  TOP_SONG_DATA_MIN_ORDER_ASC
-  TOP_SONG_DATA_MIN_ORDER_DESC
-  TOP_SONG_DATA_MIN_TIME_PERIOD_ASC
-  TOP_SONG_DATA_MIN_TIME_PERIOD_DESC
-  TOP_SONG_DATA_MIN_CREATED_AT_ASC
-  TOP_SONG_DATA_MIN_CREATED_AT_DESC
-  TOP_SONG_DATA_MIN_UPDATED_AT_ASC
-  TOP_SONG_DATA_MIN_UPDATED_AT_DESC
-  TOP_SONG_DATA_MAX_ID_ASC
-  TOP_SONG_DATA_MAX_ID_DESC
-  TOP_SONG_DATA_MAX_SONG_ID_ASC
-  TOP_SONG_DATA_MAX_SONG_ID_DESC
-  TOP_SONG_DATA_MAX_TOP_SONG_ID_ASC
-  TOP_SONG_DATA_MAX_TOP_SONG_ID_DESC
-  TOP_SONG_DATA_MAX_ORDER_ASC
-  TOP_SONG_DATA_MAX_ORDER_DESC
-  TOP_SONG_DATA_MAX_TIME_PERIOD_ASC
-  TOP_SONG_DATA_MAX_TIME_PERIOD_DESC
-  TOP_SONG_DATA_MAX_CREATED_AT_ASC
-  TOP_SONG_DATA_MAX_CREATED_AT_DESC
-  TOP_SONG_DATA_MAX_UPDATED_AT_ASC
-  TOP_SONG_DATA_MAX_UPDATED_AT_DESC
-  TOP_SONG_DATA_AVERAGE_ID_ASC
-  TOP_SONG_DATA_AVERAGE_ID_DESC
-  TOP_SONG_DATA_AVERAGE_SONG_ID_ASC
-  TOP_SONG_DATA_AVERAGE_SONG_ID_DESC
-  TOP_SONG_DATA_AVERAGE_TOP_SONG_ID_ASC
-  TOP_SONG_DATA_AVERAGE_TOP_SONG_ID_DESC
-  TOP_SONG_DATA_AVERAGE_ORDER_ASC
-  TOP_SONG_DATA_AVERAGE_ORDER_DESC
-  TOP_SONG_DATA_AVERAGE_TIME_PERIOD_ASC
-  TOP_SONG_DATA_AVERAGE_TIME_PERIOD_DESC
-  TOP_SONG_DATA_AVERAGE_CREATED_AT_ASC
-  TOP_SONG_DATA_AVERAGE_CREATED_AT_DESC
-  TOP_SONG_DATA_AVERAGE_UPDATED_AT_ASC
-  TOP_SONG_DATA_AVERAGE_UPDATED_AT_DESC
-  TOP_SONG_DATA_STDDEV_SAMPLE_ID_ASC
-  TOP_SONG_DATA_STDDEV_SAMPLE_ID_DESC
-  TOP_SONG_DATA_STDDEV_SAMPLE_SONG_ID_ASC
-  TOP_SONG_DATA_STDDEV_SAMPLE_SONG_ID_DESC
-  TOP_SONG_DATA_STDDEV_SAMPLE_TOP_SONG_ID_ASC
-  TOP_SONG_DATA_STDDEV_SAMPLE_TOP_SONG_ID_DESC
-  TOP_SONG_DATA_STDDEV_SAMPLE_ORDER_ASC
-  TOP_SONG_DATA_STDDEV_SAMPLE_ORDER_DESC
-  TOP_SONG_DATA_STDDEV_SAMPLE_TIME_PERIOD_ASC
-  TOP_SONG_DATA_STDDEV_SAMPLE_TIME_PERIOD_DESC
-  TOP_SONG_DATA_STDDEV_SAMPLE_CREATED_AT_ASC
-  TOP_SONG_DATA_STDDEV_SAMPLE_CREATED_AT_DESC
-  TOP_SONG_DATA_STDDEV_SAMPLE_UPDATED_AT_ASC
-  TOP_SONG_DATA_STDDEV_SAMPLE_UPDATED_AT_DESC
-  TOP_SONG_DATA_STDDEV_POPULATION_ID_ASC
-  TOP_SONG_DATA_STDDEV_POPULATION_ID_DESC
-  TOP_SONG_DATA_STDDEV_POPULATION_SONG_ID_ASC
-  TOP_SONG_DATA_STDDEV_POPULATION_SONG_ID_DESC
-  TOP_SONG_DATA_STDDEV_POPULATION_TOP_SONG_ID_ASC
-  TOP_SONG_DATA_STDDEV_POPULATION_TOP_SONG_ID_DESC
-  TOP_SONG_DATA_STDDEV_POPULATION_ORDER_ASC
-  TOP_SONG_DATA_STDDEV_POPULATION_ORDER_DESC
-  TOP_SONG_DATA_STDDEV_POPULATION_TIME_PERIOD_ASC
-  TOP_SONG_DATA_STDDEV_POPULATION_TIME_PERIOD_DESC
-  TOP_SONG_DATA_STDDEV_POPULATION_CREATED_AT_ASC
-  TOP_SONG_DATA_STDDEV_POPULATION_CREATED_AT_DESC
-  TOP_SONG_DATA_STDDEV_POPULATION_UPDATED_AT_ASC
-  TOP_SONG_DATA_STDDEV_POPULATION_UPDATED_AT_DESC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_ID_ASC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_ID_DESC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_SONG_ID_ASC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_SONG_ID_DESC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_TOP_SONG_ID_ASC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_TOP_SONG_ID_DESC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_ORDER_ASC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_ORDER_DESC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_TIME_PERIOD_ASC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_TIME_PERIOD_DESC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_CREATED_AT_ASC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_CREATED_AT_DESC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_UPDATED_AT_ASC
-  TOP_SONG_DATA_VARIANCE_SAMPLE_UPDATED_AT_DESC
-  TOP_SONG_DATA_VARIANCE_POPULATION_ID_ASC
-  TOP_SONG_DATA_VARIANCE_POPULATION_ID_DESC
-  TOP_SONG_DATA_VARIANCE_POPULATION_SONG_ID_ASC
-  TOP_SONG_DATA_VARIANCE_POPULATION_SONG_ID_DESC
-  TOP_SONG_DATA_VARIANCE_POPULATION_TOP_SONG_ID_ASC
-  TOP_SONG_DATA_VARIANCE_POPULATION_TOP_SONG_ID_DESC
-  TOP_SONG_DATA_VARIANCE_POPULATION_ORDER_ASC
-  TOP_SONG_DATA_VARIANCE_POPULATION_ORDER_DESC
-  TOP_SONG_DATA_VARIANCE_POPULATION_TIME_PERIOD_ASC
-  TOP_SONG_DATA_VARIANCE_POPULATION_TIME_PERIOD_DESC
-  TOP_SONG_DATA_VARIANCE_POPULATION_CREATED_AT_ASC
-  TOP_SONG_DATA_VARIANCE_POPULATION_CREATED_AT_DESC
-  TOP_SONG_DATA_VARIANCE_POPULATION_UPDATED_AT_ASC
-  TOP_SONG_DATA_VARIANCE_POPULATION_UPDATED_AT_DESC
-}
-
-"""
-A condition to be used against `TopSong` object types. All fields are tested for equality and combined with a logical ‘and.’
-"""
-input TopSongCondition {
-  """Checks for equality with the object’s `id` field."""
-  id: String
-
-  """Checks for equality with the object’s `userId` field."""
-  userId: String
-
-  """Checks for equality with the object’s `createdAt` field."""
-  createdAt: Datetime
-
-  """Checks for equality with the object’s `updatedAt` field."""
-  updatedAt: Datetime
-}
-
 """A connection to a list of `TopArtist` values."""
 type TopArtistsConnection {
   """A list of `TopArtist` objects."""
@@ -3293,6 +2566,392 @@ type TopArtistsConnection {
     """Conditions on the grouped aggregates."""
     having: TopArtistsHavingInput
   ): [TopArtistAggregates!]
+}
+
+type TopArtist implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: String!
+  userId: String
+  createdAt: Datetime
+  updatedAt: Datetime
+
+  """Reads a single `User` that is related to this `TopArtist`."""
+  user: User
+
+  """Reads and enables pagination through a set of `TopArtistDatum`."""
+  topArtistData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `TopArtistDatum`."""
+    orderBy: [TopArtistDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: TopArtistDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: TopArtistDatumFilter
+  ): TopArtistDataConnection!
+}
+
+"""A connection to a list of `TopArtistDatum` values."""
+type TopArtistDataConnection {
+  """A list of `TopArtistDatum` objects."""
+  nodes: [TopArtistDatum]!
+
+  """
+  A list of edges which contains the `TopArtistDatum` and cursor to aid in pagination.
+  """
+  edges: [TopArtistDataEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `TopArtistDatum` you could get from the connection."""
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: TopArtistDatumAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """The method to use when grouping `TopArtistDatum` for these aggregates."""
+    groupBy: [TopArtistDataGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: TopArtistDataHavingInput
+  ): [TopArtistDatumAggregates!]
+}
+
+type TopArtistDatum implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: String!
+  artistId: String
+  topArtistId: String
+  timePeriod: String
+  order: Int
+  createdAt: Datetime
+  updatedAt: Datetime
+
+  """Reads a single `Artist` that is related to this `TopArtistDatum`."""
+  artist: Artist
+
+  """Reads a single `TopArtist` that is related to this `TopArtistDatum`."""
+  topArtist: TopArtist
+}
+
+"""A `TopArtistDatum` edge in the connection."""
+type TopArtistDataEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `TopArtistDatum` at the end of the edge."""
+  node: TopArtistDatum
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: Cursor
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: Cursor
+}
+
+type TopArtistDatumAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: TopArtistDatumSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: TopArtistDatumDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: TopArtistDatumMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: TopArtistDatumMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: TopArtistDatumAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: TopArtistDatumStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: TopArtistDatumStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: TopArtistDatumVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: TopArtistDatumVariancePopulationAggregates
+}
+
+type TopArtistDatumSumAggregates {
+  """Sum of order across the matching connection"""
+  order: BigInt!
+}
+
+type TopArtistDatumDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of artistId across the matching connection"""
+  artistId: BigInt
+
+  """Distinct count of topArtistId across the matching connection"""
+  topArtistId: BigInt
+
+  """Distinct count of timePeriod across the matching connection"""
+  timePeriod: BigInt
+
+  """Distinct count of order across the matching connection"""
+  order: BigInt
+
+  """Distinct count of createdAt across the matching connection"""
+  createdAt: BigInt
+
+  """Distinct count of updatedAt across the matching connection"""
+  updatedAt: BigInt
+}
+
+type TopArtistDatumMinAggregates {
+  """Minimum of order across the matching connection"""
+  order: Int
+}
+
+type TopArtistDatumMaxAggregates {
+  """Maximum of order across the matching connection"""
+  order: Int
+}
+
+type TopArtistDatumAverageAggregates {
+  """Mean average of order across the matching connection"""
+  order: BigFloat
+}
+
+type TopArtistDatumStddevSampleAggregates {
+  """Sample standard deviation of order across the matching connection"""
+  order: BigFloat
+}
+
+type TopArtistDatumStddevPopulationAggregates {
+  """Population standard deviation of order across the matching connection"""
+  order: BigFloat
+}
+
+type TopArtistDatumVarianceSampleAggregates {
+  """Sample variance of order across the matching connection"""
+  order: BigFloat
+}
+
+type TopArtistDatumVariancePopulationAggregates {
+  """Population variance of order across the matching connection"""
+  order: BigFloat
+}
+
+"""Grouping methods for `TopArtistDatum` for usage during aggregation."""
+enum TopArtistDataGroupBy {
+  ARTIST_ID
+  TOP_ARTIST_ID
+  TIME_PERIOD
+  ORDER
+  CREATED_AT
+  CREATED_AT_TRUNCATED_TO_HOUR
+  CREATED_AT_TRUNCATED_TO_DAY
+  UPDATED_AT
+  UPDATED_AT_TRUNCATED_TO_HOUR
+  UPDATED_AT_TRUNCATED_TO_DAY
+}
+
+"""Conditions for `TopArtistDatum` aggregates."""
+input TopArtistDataHavingInput {
+  AND: [TopArtistDataHavingInput!]
+  OR: [TopArtistDataHavingInput!]
+  sum: TopArtistDataHavingSumInput
+  distinctCount: TopArtistDataHavingDistinctCountInput
+  min: TopArtistDataHavingMinInput
+  max: TopArtistDataHavingMaxInput
+  average: TopArtistDataHavingAverageInput
+  stddevSample: TopArtistDataHavingStddevSampleInput
+  stddevPopulation: TopArtistDataHavingStddevPopulationInput
+  varianceSample: TopArtistDataHavingVarianceSampleInput
+  variancePopulation: TopArtistDataHavingVariancePopulationInput
+}
+
+input TopArtistDataHavingSumInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input HavingIntFilter {
+  equalTo: Int
+  notEqualTo: Int
+  greaterThan: Int
+  greaterThanOrEqualTo: Int
+  lessThan: Int
+  lessThanOrEqualTo: Int
+}
+
+input HavingDatetimeFilter {
+  equalTo: Datetime
+  notEqualTo: Datetime
+  greaterThan: Datetime
+  greaterThanOrEqualTo: Datetime
+  lessThan: Datetime
+  lessThanOrEqualTo: Datetime
+}
+
+input TopArtistDataHavingDistinctCountInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopArtistDataHavingMinInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopArtistDataHavingMaxInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopArtistDataHavingAverageInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopArtistDataHavingStddevSampleInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopArtistDataHavingStddevPopulationInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopArtistDataHavingVarianceSampleInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopArtistDataHavingVariancePopulationInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+"""Methods to use when ordering `TopArtistDatum`."""
+enum TopArtistDataOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  ARTIST_ID_ASC
+  ARTIST_ID_DESC
+  TOP_ARTIST_ID_ASC
+  TOP_ARTIST_ID_DESC
+  TIME_PERIOD_ASC
+  TIME_PERIOD_DESC
+  ORDER_ASC
+  ORDER_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `TopArtistDatum` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input TopArtistDatumCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `artistId` field."""
+  artistId: String
+
+  """Checks for equality with the object’s `topArtistId` field."""
+  topArtistId: String
+
+  """Checks for equality with the object’s `timePeriod` field."""
+  timePeriod: String
+
+  """Checks for equality with the object’s `order` field."""
+  order: Int
+
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s `updatedAt` field."""
+  updatedAt: Datetime
 }
 
 """A `TopArtist` edge in the connection."""
@@ -3559,19 +3218,357 @@ input TopArtistCondition {
   updatedAt: Datetime
 }
 
-"""Methods to use when ordering `TopArtistDatum`."""
-enum TopArtistDataOrderBy {
+"""A connection to a list of `TopSong` values."""
+type TopSongsConnection {
+  """A list of `TopSong` objects."""
+  nodes: [TopSong]!
+
+  """
+  A list of edges which contains the `TopSong` and cursor to aid in pagination.
+  """
+  edges: [TopSongsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `TopSong` you could get from the connection."""
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: TopSongAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """The method to use when grouping `TopSong` for these aggregates."""
+    groupBy: [TopSongsGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: TopSongsHavingInput
+  ): [TopSongAggregates!]
+}
+
+type TopSong implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: String!
+  userId: String
+  createdAt: Datetime
+  updatedAt: Datetime
+
+  """Reads a single `User` that is related to this `TopSong`."""
+  user: User
+
+  """Reads and enables pagination through a set of `TopSongDatum`."""
+  topSongData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `TopSongDatum`."""
+    orderBy: [TopSongDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: TopSongDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: TopSongDatumFilter
+  ): TopSongDataConnection!
+}
+
+"""A connection to a list of `TopSongDatum` values."""
+type TopSongDataConnection {
+  """A list of `TopSongDatum` objects."""
+  nodes: [TopSongDatum]!
+
+  """
+  A list of edges which contains the `TopSongDatum` and cursor to aid in pagination.
+  """
+  edges: [TopSongDataEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `TopSongDatum` you could get from the connection."""
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: TopSongDatumAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """The method to use when grouping `TopSongDatum` for these aggregates."""
+    groupBy: [TopSongDataGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: TopSongDataHavingInput
+  ): [TopSongDatumAggregates!]
+}
+
+type TopSongDatum implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: String!
+  songId: String
+  topSongId: String
+  order: Int
+  timePeriod: String
+  createdAt: Datetime
+  updatedAt: Datetime
+
+  """Reads a single `Song` that is related to this `TopSongDatum`."""
+  song: Song
+
+  """Reads a single `TopSong` that is related to this `TopSongDatum`."""
+  topSong: TopSong
+}
+
+"""A `TopSongDatum` edge in the connection."""
+type TopSongDataEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `TopSongDatum` at the end of the edge."""
+  node: TopSongDatum
+}
+
+type TopSongDatumAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: TopSongDatumSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: TopSongDatumDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: TopSongDatumMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: TopSongDatumMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: TopSongDatumAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: TopSongDatumStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: TopSongDatumStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: TopSongDatumVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: TopSongDatumVariancePopulationAggregates
+}
+
+type TopSongDatumSumAggregates {
+  """Sum of order across the matching connection"""
+  order: BigInt!
+}
+
+type TopSongDatumDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of songId across the matching connection"""
+  songId: BigInt
+
+  """Distinct count of topSongId across the matching connection"""
+  topSongId: BigInt
+
+  """Distinct count of order across the matching connection"""
+  order: BigInt
+
+  """Distinct count of timePeriod across the matching connection"""
+  timePeriod: BigInt
+
+  """Distinct count of createdAt across the matching connection"""
+  createdAt: BigInt
+
+  """Distinct count of updatedAt across the matching connection"""
+  updatedAt: BigInt
+}
+
+type TopSongDatumMinAggregates {
+  """Minimum of order across the matching connection"""
+  order: Int
+}
+
+type TopSongDatumMaxAggregates {
+  """Maximum of order across the matching connection"""
+  order: Int
+}
+
+type TopSongDatumAverageAggregates {
+  """Mean average of order across the matching connection"""
+  order: BigFloat
+}
+
+type TopSongDatumStddevSampleAggregates {
+  """Sample standard deviation of order across the matching connection"""
+  order: BigFloat
+}
+
+type TopSongDatumStddevPopulationAggregates {
+  """Population standard deviation of order across the matching connection"""
+  order: BigFloat
+}
+
+type TopSongDatumVarianceSampleAggregates {
+  """Sample variance of order across the matching connection"""
+  order: BigFloat
+}
+
+type TopSongDatumVariancePopulationAggregates {
+  """Population variance of order across the matching connection"""
+  order: BigFloat
+}
+
+"""Grouping methods for `TopSongDatum` for usage during aggregation."""
+enum TopSongDataGroupBy {
+  SONG_ID
+  TOP_SONG_ID
+  ORDER
+  TIME_PERIOD
+  CREATED_AT
+  CREATED_AT_TRUNCATED_TO_HOUR
+  CREATED_AT_TRUNCATED_TO_DAY
+  UPDATED_AT
+  UPDATED_AT_TRUNCATED_TO_HOUR
+  UPDATED_AT_TRUNCATED_TO_DAY
+}
+
+"""Conditions for `TopSongDatum` aggregates."""
+input TopSongDataHavingInput {
+  AND: [TopSongDataHavingInput!]
+  OR: [TopSongDataHavingInput!]
+  sum: TopSongDataHavingSumInput
+  distinctCount: TopSongDataHavingDistinctCountInput
+  min: TopSongDataHavingMinInput
+  max: TopSongDataHavingMaxInput
+  average: TopSongDataHavingAverageInput
+  stddevSample: TopSongDataHavingStddevSampleInput
+  stddevPopulation: TopSongDataHavingStddevPopulationInput
+  varianceSample: TopSongDataHavingVarianceSampleInput
+  variancePopulation: TopSongDataHavingVariancePopulationInput
+}
+
+input TopSongDataHavingSumInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopSongDataHavingDistinctCountInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopSongDataHavingMinInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopSongDataHavingMaxInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopSongDataHavingAverageInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopSongDataHavingStddevSampleInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopSongDataHavingStddevPopulationInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopSongDataHavingVarianceSampleInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input TopSongDataHavingVariancePopulationInput {
+  order: HavingIntFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+"""Methods to use when ordering `TopSongDatum`."""
+enum TopSongDataOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
-  ARTIST_ID_ASC
-  ARTIST_ID_DESC
-  TOP_ARTIST_ID_ASC
-  TOP_ARTIST_ID_DESC
-  TIME_PERIOD_ASC
-  TIME_PERIOD_DESC
+  SONG_ID_ASC
+  SONG_ID_DESC
+  TOP_SONG_ID_ASC
+  TOP_SONG_ID_DESC
   ORDER_ASC
   ORDER_DESC
+  TIME_PERIOD_ASC
+  TIME_PERIOD_DESC
   CREATED_AT_ASC
   CREATED_AT_DESC
   UPDATED_AT_ASC
@@ -3581,24 +3578,24 @@ enum TopArtistDataOrderBy {
 }
 
 """
-A condition to be used against `TopArtistDatum` object types. All fields are
+A condition to be used against `TopSongDatum` object types. All fields are
 tested for equality and combined with a logical ‘and.’
 """
-input TopArtistDatumCondition {
+input TopSongDatumCondition {
   """Checks for equality with the object’s `id` field."""
   id: String
 
-  """Checks for equality with the object’s `artistId` field."""
-  artistId: String
+  """Checks for equality with the object’s `songId` field."""
+  songId: String
 
-  """Checks for equality with the object’s `topArtistId` field."""
-  topArtistId: String
-
-  """Checks for equality with the object’s `timePeriod` field."""
-  timePeriod: String
+  """Checks for equality with the object’s `topSongId` field."""
+  topSongId: String
 
   """Checks for equality with the object’s `order` field."""
   order: Int
+
+  """Checks for equality with the object’s `timePeriod` field."""
+  timePeriod: String
 
   """Checks for equality with the object’s `createdAt` field."""
   createdAt: Datetime
@@ -3607,84 +3604,30 @@ input TopArtistDatumCondition {
   updatedAt: Datetime
 }
 
-"""A `TopArtistDatum` edge in the connection."""
-type TopArtistDataEdge {
+"""A `TopSong` edge in the connection."""
+type TopSongsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `TopArtistDatum` at the end of the edge."""
-  node: TopArtistDatum
+  """The `TopSong` at the end of the edge."""
+  node: TopSong
 }
 
-type TopArtistDatumAggregates {
+type TopSongAggregates {
   keys: [String!]
-
-  """
-  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  sum: TopArtistDatumSumAggregates
 
   """
   Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  distinctCount: TopArtistDatumDistinctCountAggregates
-
-  """
-  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  min: TopArtistDatumMinAggregates
-
-  """
-  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  max: TopArtistDatumMaxAggregates
-
-  """
-  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  average: TopArtistDatumAverageAggregates
-
-  """
-  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  stddevSample: TopArtistDatumStddevSampleAggregates
-
-  """
-  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  stddevPopulation: TopArtistDatumStddevPopulationAggregates
-
-  """
-  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  varianceSample: TopArtistDatumVarianceSampleAggregates
-
-  """
-  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  variancePopulation: TopArtistDatumVariancePopulationAggregates
+  distinctCount: TopSongDistinctCountAggregates
 }
 
-type TopArtistDatumSumAggregates {
-  """Sum of order across the matching connection"""
-  order: BigInt!
-}
-
-type TopArtistDatumDistinctCountAggregates {
+type TopSongDistinctCountAggregates {
   """Distinct count of id across the matching connection"""
   id: BigInt
 
-  """Distinct count of artistId across the matching connection"""
-  artistId: BigInt
-
-  """Distinct count of topArtistId across the matching connection"""
-  topArtistId: BigInt
-
-  """Distinct count of timePeriod across the matching connection"""
-  timePeriod: BigInt
-
-  """Distinct count of order across the matching connection"""
-  order: BigInt
+  """Distinct count of userId across the matching connection"""
+  userId: BigInt
 
   """Distinct count of createdAt across the matching connection"""
   createdAt: BigInt
@@ -3693,47 +3636,9 @@ type TopArtistDatumDistinctCountAggregates {
   updatedAt: BigInt
 }
 
-type TopArtistDatumMinAggregates {
-  """Minimum of order across the matching connection"""
-  order: Int
-}
-
-type TopArtistDatumMaxAggregates {
-  """Maximum of order across the matching connection"""
-  order: Int
-}
-
-type TopArtistDatumAverageAggregates {
-  """Mean average of order across the matching connection"""
-  order: BigFloat
-}
-
-type TopArtistDatumStddevSampleAggregates {
-  """Sample standard deviation of order across the matching connection"""
-  order: BigFloat
-}
-
-type TopArtistDatumStddevPopulationAggregates {
-  """Population standard deviation of order across the matching connection"""
-  order: BigFloat
-}
-
-type TopArtistDatumVarianceSampleAggregates {
-  """Sample variance of order across the matching connection"""
-  order: BigFloat
-}
-
-type TopArtistDatumVariancePopulationAggregates {
-  """Population variance of order across the matching connection"""
-  order: BigFloat
-}
-
-"""Grouping methods for `TopArtistDatum` for usage during aggregation."""
-enum TopArtistDataGroupBy {
-  ARTIST_ID
-  TOP_ARTIST_ID
-  TIME_PERIOD
-  ORDER
+"""Grouping methods for `TopSong` for usage during aggregation."""
+enum TopSongsGroupBy {
+  USER_ID
   CREATED_AT
   CREATED_AT_TRUNCATED_TO_HOUR
   CREATED_AT_TRUNCATED_TO_DAY
@@ -3742,106 +3647,346 @@ enum TopArtistDataGroupBy {
   UPDATED_AT_TRUNCATED_TO_DAY
 }
 
-"""Conditions for `TopArtistDatum` aggregates."""
-input TopArtistDataHavingInput {
-  AND: [TopArtistDataHavingInput!]
-  OR: [TopArtistDataHavingInput!]
-  sum: TopArtistDataHavingSumInput
-  distinctCount: TopArtistDataHavingDistinctCountInput
-  min: TopArtistDataHavingMinInput
-  max: TopArtistDataHavingMaxInput
-  average: TopArtistDataHavingAverageInput
-  stddevSample: TopArtistDataHavingStddevSampleInput
-  stddevPopulation: TopArtistDataHavingStddevPopulationInput
-  varianceSample: TopArtistDataHavingVarianceSampleInput
-  variancePopulation: TopArtistDataHavingVariancePopulationInput
+"""Conditions for `TopSong` aggregates."""
+input TopSongsHavingInput {
+  AND: [TopSongsHavingInput!]
+  OR: [TopSongsHavingInput!]
+  sum: TopSongsHavingSumInput
+  distinctCount: TopSongsHavingDistinctCountInput
+  min: TopSongsHavingMinInput
+  max: TopSongsHavingMaxInput
+  average: TopSongsHavingAverageInput
+  stddevSample: TopSongsHavingStddevSampleInput
+  stddevPopulation: TopSongsHavingStddevPopulationInput
+  varianceSample: TopSongsHavingVarianceSampleInput
+  variancePopulation: TopSongsHavingVariancePopulationInput
 }
 
-input TopArtistDataHavingSumInput {
-  order: HavingIntFilter
+input TopSongsHavingSumInput {
   createdAt: HavingDatetimeFilter
   updatedAt: HavingDatetimeFilter
 }
 
-input TopArtistDataHavingDistinctCountInput {
-  order: HavingIntFilter
+input TopSongsHavingDistinctCountInput {
   createdAt: HavingDatetimeFilter
   updatedAt: HavingDatetimeFilter
 }
 
-input TopArtistDataHavingMinInput {
-  order: HavingIntFilter
+input TopSongsHavingMinInput {
   createdAt: HavingDatetimeFilter
   updatedAt: HavingDatetimeFilter
 }
 
-input TopArtistDataHavingMaxInput {
-  order: HavingIntFilter
+input TopSongsHavingMaxInput {
   createdAt: HavingDatetimeFilter
   updatedAt: HavingDatetimeFilter
 }
 
-input TopArtistDataHavingAverageInput {
-  order: HavingIntFilter
+input TopSongsHavingAverageInput {
   createdAt: HavingDatetimeFilter
   updatedAt: HavingDatetimeFilter
 }
 
-input TopArtistDataHavingStddevSampleInput {
-  order: HavingIntFilter
+input TopSongsHavingStddevSampleInput {
   createdAt: HavingDatetimeFilter
   updatedAt: HavingDatetimeFilter
 }
 
-input TopArtistDataHavingStddevPopulationInput {
-  order: HavingIntFilter
+input TopSongsHavingStddevPopulationInput {
   createdAt: HavingDatetimeFilter
   updatedAt: HavingDatetimeFilter
 }
 
-input TopArtistDataHavingVarianceSampleInput {
-  order: HavingIntFilter
+input TopSongsHavingVarianceSampleInput {
   createdAt: HavingDatetimeFilter
   updatedAt: HavingDatetimeFilter
 }
 
-input TopArtistDataHavingVariancePopulationInput {
-  order: HavingIntFilter
+input TopSongsHavingVariancePopulationInput {
   createdAt: HavingDatetimeFilter
   updatedAt: HavingDatetimeFilter
 }
 
-"""A connection to a list of `Song` values."""
-type SongsConnection {
-  """A list of `Song` objects."""
-  nodes: [Song]!
+"""Methods to use when ordering `TopSong`."""
+enum TopSongsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  USER_ID_ASC
+  USER_ID_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  TOP_SONG_DATA_COUNT_ASC
+  TOP_SONG_DATA_COUNT_DESC
+  TOP_SONG_DATA_SUM_ID_ASC
+  TOP_SONG_DATA_SUM_ID_DESC
+  TOP_SONG_DATA_SUM_SONG_ID_ASC
+  TOP_SONG_DATA_SUM_SONG_ID_DESC
+  TOP_SONG_DATA_SUM_TOP_SONG_ID_ASC
+  TOP_SONG_DATA_SUM_TOP_SONG_ID_DESC
+  TOP_SONG_DATA_SUM_ORDER_ASC
+  TOP_SONG_DATA_SUM_ORDER_DESC
+  TOP_SONG_DATA_SUM_TIME_PERIOD_ASC
+  TOP_SONG_DATA_SUM_TIME_PERIOD_DESC
+  TOP_SONG_DATA_SUM_CREATED_AT_ASC
+  TOP_SONG_DATA_SUM_CREATED_AT_DESC
+  TOP_SONG_DATA_SUM_UPDATED_AT_ASC
+  TOP_SONG_DATA_SUM_UPDATED_AT_DESC
+  TOP_SONG_DATA_DISTINCT_COUNT_ID_ASC
+  TOP_SONG_DATA_DISTINCT_COUNT_ID_DESC
+  TOP_SONG_DATA_DISTINCT_COUNT_SONG_ID_ASC
+  TOP_SONG_DATA_DISTINCT_COUNT_SONG_ID_DESC
+  TOP_SONG_DATA_DISTINCT_COUNT_TOP_SONG_ID_ASC
+  TOP_SONG_DATA_DISTINCT_COUNT_TOP_SONG_ID_DESC
+  TOP_SONG_DATA_DISTINCT_COUNT_ORDER_ASC
+  TOP_SONG_DATA_DISTINCT_COUNT_ORDER_DESC
+  TOP_SONG_DATA_DISTINCT_COUNT_TIME_PERIOD_ASC
+  TOP_SONG_DATA_DISTINCT_COUNT_TIME_PERIOD_DESC
+  TOP_SONG_DATA_DISTINCT_COUNT_CREATED_AT_ASC
+  TOP_SONG_DATA_DISTINCT_COUNT_CREATED_AT_DESC
+  TOP_SONG_DATA_DISTINCT_COUNT_UPDATED_AT_ASC
+  TOP_SONG_DATA_DISTINCT_COUNT_UPDATED_AT_DESC
+  TOP_SONG_DATA_MIN_ID_ASC
+  TOP_SONG_DATA_MIN_ID_DESC
+  TOP_SONG_DATA_MIN_SONG_ID_ASC
+  TOP_SONG_DATA_MIN_SONG_ID_DESC
+  TOP_SONG_DATA_MIN_TOP_SONG_ID_ASC
+  TOP_SONG_DATA_MIN_TOP_SONG_ID_DESC
+  TOP_SONG_DATA_MIN_ORDER_ASC
+  TOP_SONG_DATA_MIN_ORDER_DESC
+  TOP_SONG_DATA_MIN_TIME_PERIOD_ASC
+  TOP_SONG_DATA_MIN_TIME_PERIOD_DESC
+  TOP_SONG_DATA_MIN_CREATED_AT_ASC
+  TOP_SONG_DATA_MIN_CREATED_AT_DESC
+  TOP_SONG_DATA_MIN_UPDATED_AT_ASC
+  TOP_SONG_DATA_MIN_UPDATED_AT_DESC
+  TOP_SONG_DATA_MAX_ID_ASC
+  TOP_SONG_DATA_MAX_ID_DESC
+  TOP_SONG_DATA_MAX_SONG_ID_ASC
+  TOP_SONG_DATA_MAX_SONG_ID_DESC
+  TOP_SONG_DATA_MAX_TOP_SONG_ID_ASC
+  TOP_SONG_DATA_MAX_TOP_SONG_ID_DESC
+  TOP_SONG_DATA_MAX_ORDER_ASC
+  TOP_SONG_DATA_MAX_ORDER_DESC
+  TOP_SONG_DATA_MAX_TIME_PERIOD_ASC
+  TOP_SONG_DATA_MAX_TIME_PERIOD_DESC
+  TOP_SONG_DATA_MAX_CREATED_AT_ASC
+  TOP_SONG_DATA_MAX_CREATED_AT_DESC
+  TOP_SONG_DATA_MAX_UPDATED_AT_ASC
+  TOP_SONG_DATA_MAX_UPDATED_AT_DESC
+  TOP_SONG_DATA_AVERAGE_ID_ASC
+  TOP_SONG_DATA_AVERAGE_ID_DESC
+  TOP_SONG_DATA_AVERAGE_SONG_ID_ASC
+  TOP_SONG_DATA_AVERAGE_SONG_ID_DESC
+  TOP_SONG_DATA_AVERAGE_TOP_SONG_ID_ASC
+  TOP_SONG_DATA_AVERAGE_TOP_SONG_ID_DESC
+  TOP_SONG_DATA_AVERAGE_ORDER_ASC
+  TOP_SONG_DATA_AVERAGE_ORDER_DESC
+  TOP_SONG_DATA_AVERAGE_TIME_PERIOD_ASC
+  TOP_SONG_DATA_AVERAGE_TIME_PERIOD_DESC
+  TOP_SONG_DATA_AVERAGE_CREATED_AT_ASC
+  TOP_SONG_DATA_AVERAGE_CREATED_AT_DESC
+  TOP_SONG_DATA_AVERAGE_UPDATED_AT_ASC
+  TOP_SONG_DATA_AVERAGE_UPDATED_AT_DESC
+  TOP_SONG_DATA_STDDEV_SAMPLE_ID_ASC
+  TOP_SONG_DATA_STDDEV_SAMPLE_ID_DESC
+  TOP_SONG_DATA_STDDEV_SAMPLE_SONG_ID_ASC
+  TOP_SONG_DATA_STDDEV_SAMPLE_SONG_ID_DESC
+  TOP_SONG_DATA_STDDEV_SAMPLE_TOP_SONG_ID_ASC
+  TOP_SONG_DATA_STDDEV_SAMPLE_TOP_SONG_ID_DESC
+  TOP_SONG_DATA_STDDEV_SAMPLE_ORDER_ASC
+  TOP_SONG_DATA_STDDEV_SAMPLE_ORDER_DESC
+  TOP_SONG_DATA_STDDEV_SAMPLE_TIME_PERIOD_ASC
+  TOP_SONG_DATA_STDDEV_SAMPLE_TIME_PERIOD_DESC
+  TOP_SONG_DATA_STDDEV_SAMPLE_CREATED_AT_ASC
+  TOP_SONG_DATA_STDDEV_SAMPLE_CREATED_AT_DESC
+  TOP_SONG_DATA_STDDEV_SAMPLE_UPDATED_AT_ASC
+  TOP_SONG_DATA_STDDEV_SAMPLE_UPDATED_AT_DESC
+  TOP_SONG_DATA_STDDEV_POPULATION_ID_ASC
+  TOP_SONG_DATA_STDDEV_POPULATION_ID_DESC
+  TOP_SONG_DATA_STDDEV_POPULATION_SONG_ID_ASC
+  TOP_SONG_DATA_STDDEV_POPULATION_SONG_ID_DESC
+  TOP_SONG_DATA_STDDEV_POPULATION_TOP_SONG_ID_ASC
+  TOP_SONG_DATA_STDDEV_POPULATION_TOP_SONG_ID_DESC
+  TOP_SONG_DATA_STDDEV_POPULATION_ORDER_ASC
+  TOP_SONG_DATA_STDDEV_POPULATION_ORDER_DESC
+  TOP_SONG_DATA_STDDEV_POPULATION_TIME_PERIOD_ASC
+  TOP_SONG_DATA_STDDEV_POPULATION_TIME_PERIOD_DESC
+  TOP_SONG_DATA_STDDEV_POPULATION_CREATED_AT_ASC
+  TOP_SONG_DATA_STDDEV_POPULATION_CREATED_AT_DESC
+  TOP_SONG_DATA_STDDEV_POPULATION_UPDATED_AT_ASC
+  TOP_SONG_DATA_STDDEV_POPULATION_UPDATED_AT_DESC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_ID_ASC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_ID_DESC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_SONG_ID_ASC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_SONG_ID_DESC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_TOP_SONG_ID_ASC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_TOP_SONG_ID_DESC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_ORDER_ASC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_ORDER_DESC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_TIME_PERIOD_ASC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_TIME_PERIOD_DESC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_CREATED_AT_ASC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_CREATED_AT_DESC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_UPDATED_AT_ASC
+  TOP_SONG_DATA_VARIANCE_SAMPLE_UPDATED_AT_DESC
+  TOP_SONG_DATA_VARIANCE_POPULATION_ID_ASC
+  TOP_SONG_DATA_VARIANCE_POPULATION_ID_DESC
+  TOP_SONG_DATA_VARIANCE_POPULATION_SONG_ID_ASC
+  TOP_SONG_DATA_VARIANCE_POPULATION_SONG_ID_DESC
+  TOP_SONG_DATA_VARIANCE_POPULATION_TOP_SONG_ID_ASC
+  TOP_SONG_DATA_VARIANCE_POPULATION_TOP_SONG_ID_DESC
+  TOP_SONG_DATA_VARIANCE_POPULATION_ORDER_ASC
+  TOP_SONG_DATA_VARIANCE_POPULATION_ORDER_DESC
+  TOP_SONG_DATA_VARIANCE_POPULATION_TIME_PERIOD_ASC
+  TOP_SONG_DATA_VARIANCE_POPULATION_TIME_PERIOD_DESC
+  TOP_SONG_DATA_VARIANCE_POPULATION_CREATED_AT_ASC
+  TOP_SONG_DATA_VARIANCE_POPULATION_CREATED_AT_DESC
+  TOP_SONG_DATA_VARIANCE_POPULATION_UPDATED_AT_ASC
+  TOP_SONG_DATA_VARIANCE_POPULATION_UPDATED_AT_DESC
+}
+
+"""
+A condition to be used against `TopSong` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input TopSongCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `userId` field."""
+  userId: String
+
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s `updatedAt` field."""
+  updatedAt: Datetime
+}
+
+"""A `RecentListen` edge in the connection."""
+type RecentListensEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `RecentListen` at the end of the edge."""
+  node: RecentListen
+}
+
+type RecentListenAggregates {
+  keys: [String!]
 
   """
-  A list of edges which contains the `Song` and cursor to aid in pagination.
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  edges: [SongsEdge!]!
+  distinctCount: RecentListenDistinctCountAggregates
+}
 
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
+type RecentListenDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
 
-  """The count of *all* `Song` you could get from the connection."""
-  totalCount: Int!
+  """Distinct count of songId across the matching connection"""
+  songId: BigInt
 
-  """
-  Aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  aggregates: SongAggregates
+  """Distinct count of userId across the matching connection"""
+  userId: BigInt
 
-  """
-  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  groupedAggregates(
-    """The method to use when grouping `Song` for these aggregates."""
-    groupBy: [SongsGroupBy!]!
+  """Distinct count of playedAt across the matching connection"""
+  playedAt: BigInt
 
-    """Conditions on the grouped aggregates."""
-    having: SongsHavingInput
-  ): [SongAggregates!]
+  """Distinct count of createdAt across the matching connection"""
+  createdAt: BigInt
+
+  """Distinct count of updatedAt across the matching connection"""
+  updatedAt: BigInt
+}
+
+"""Grouping methods for `RecentListen` for usage during aggregation."""
+enum RecentListensGroupBy {
+  SONG_ID
+  USER_ID
+  PLAYED_AT
+  PLAYED_AT_TRUNCATED_TO_HOUR
+  PLAYED_AT_TRUNCATED_TO_DAY
+  CREATED_AT
+  CREATED_AT_TRUNCATED_TO_HOUR
+  CREATED_AT_TRUNCATED_TO_DAY
+  UPDATED_AT
+  UPDATED_AT_TRUNCATED_TO_HOUR
+  UPDATED_AT_TRUNCATED_TO_DAY
+}
+
+"""Conditions for `RecentListen` aggregates."""
+input RecentListensHavingInput {
+  AND: [RecentListensHavingInput!]
+  OR: [RecentListensHavingInput!]
+  sum: RecentListensHavingSumInput
+  distinctCount: RecentListensHavingDistinctCountInput
+  min: RecentListensHavingMinInput
+  max: RecentListensHavingMaxInput
+  average: RecentListensHavingAverageInput
+  stddevSample: RecentListensHavingStddevSampleInput
+  stddevPopulation: RecentListensHavingStddevPopulationInput
+  varianceSample: RecentListensHavingVarianceSampleInput
+  variancePopulation: RecentListensHavingVariancePopulationInput
+}
+
+input RecentListensHavingSumInput {
+  playedAt: HavingDatetimeFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input RecentListensHavingDistinctCountInput {
+  playedAt: HavingDatetimeFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input RecentListensHavingMinInput {
+  playedAt: HavingDatetimeFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input RecentListensHavingMaxInput {
+  playedAt: HavingDatetimeFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input RecentListensHavingAverageInput {
+  playedAt: HavingDatetimeFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input RecentListensHavingStddevSampleInput {
+  playedAt: HavingDatetimeFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input RecentListensHavingStddevPopulationInput {
+  playedAt: HavingDatetimeFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input RecentListensHavingVarianceSampleInput {
+  playedAt: HavingDatetimeFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
+}
+
+input RecentListensHavingVariancePopulationInput {
+  playedAt: HavingDatetimeFilter
+  createdAt: HavingDatetimeFilter
+  updatedAt: HavingDatetimeFilter
 }
 
 """A `Song` edge in the connection."""
@@ -3978,6 +4123,116 @@ enum SongsOrderBy {
   UPDATED_AT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
+  RECENT_LISTENS_COUNT_ASC
+  RECENT_LISTENS_COUNT_DESC
+  RECENT_LISTENS_SUM_ID_ASC
+  RECENT_LISTENS_SUM_ID_DESC
+  RECENT_LISTENS_SUM_SONG_ID_ASC
+  RECENT_LISTENS_SUM_SONG_ID_DESC
+  RECENT_LISTENS_SUM_USER_ID_ASC
+  RECENT_LISTENS_SUM_USER_ID_DESC
+  RECENT_LISTENS_SUM_PLAYED_AT_ASC
+  RECENT_LISTENS_SUM_PLAYED_AT_DESC
+  RECENT_LISTENS_SUM_CREATED_AT_ASC
+  RECENT_LISTENS_SUM_CREATED_AT_DESC
+  RECENT_LISTENS_SUM_UPDATED_AT_ASC
+  RECENT_LISTENS_SUM_UPDATED_AT_DESC
+  RECENT_LISTENS_DISTINCT_COUNT_ID_ASC
+  RECENT_LISTENS_DISTINCT_COUNT_ID_DESC
+  RECENT_LISTENS_DISTINCT_COUNT_SONG_ID_ASC
+  RECENT_LISTENS_DISTINCT_COUNT_SONG_ID_DESC
+  RECENT_LISTENS_DISTINCT_COUNT_USER_ID_ASC
+  RECENT_LISTENS_DISTINCT_COUNT_USER_ID_DESC
+  RECENT_LISTENS_DISTINCT_COUNT_PLAYED_AT_ASC
+  RECENT_LISTENS_DISTINCT_COUNT_PLAYED_AT_DESC
+  RECENT_LISTENS_DISTINCT_COUNT_CREATED_AT_ASC
+  RECENT_LISTENS_DISTINCT_COUNT_CREATED_AT_DESC
+  RECENT_LISTENS_DISTINCT_COUNT_UPDATED_AT_ASC
+  RECENT_LISTENS_DISTINCT_COUNT_UPDATED_AT_DESC
+  RECENT_LISTENS_MIN_ID_ASC
+  RECENT_LISTENS_MIN_ID_DESC
+  RECENT_LISTENS_MIN_SONG_ID_ASC
+  RECENT_LISTENS_MIN_SONG_ID_DESC
+  RECENT_LISTENS_MIN_USER_ID_ASC
+  RECENT_LISTENS_MIN_USER_ID_DESC
+  RECENT_LISTENS_MIN_PLAYED_AT_ASC
+  RECENT_LISTENS_MIN_PLAYED_AT_DESC
+  RECENT_LISTENS_MIN_CREATED_AT_ASC
+  RECENT_LISTENS_MIN_CREATED_AT_DESC
+  RECENT_LISTENS_MIN_UPDATED_AT_ASC
+  RECENT_LISTENS_MIN_UPDATED_AT_DESC
+  RECENT_LISTENS_MAX_ID_ASC
+  RECENT_LISTENS_MAX_ID_DESC
+  RECENT_LISTENS_MAX_SONG_ID_ASC
+  RECENT_LISTENS_MAX_SONG_ID_DESC
+  RECENT_LISTENS_MAX_USER_ID_ASC
+  RECENT_LISTENS_MAX_USER_ID_DESC
+  RECENT_LISTENS_MAX_PLAYED_AT_ASC
+  RECENT_LISTENS_MAX_PLAYED_AT_DESC
+  RECENT_LISTENS_MAX_CREATED_AT_ASC
+  RECENT_LISTENS_MAX_CREATED_AT_DESC
+  RECENT_LISTENS_MAX_UPDATED_AT_ASC
+  RECENT_LISTENS_MAX_UPDATED_AT_DESC
+  RECENT_LISTENS_AVERAGE_ID_ASC
+  RECENT_LISTENS_AVERAGE_ID_DESC
+  RECENT_LISTENS_AVERAGE_SONG_ID_ASC
+  RECENT_LISTENS_AVERAGE_SONG_ID_DESC
+  RECENT_LISTENS_AVERAGE_USER_ID_ASC
+  RECENT_LISTENS_AVERAGE_USER_ID_DESC
+  RECENT_LISTENS_AVERAGE_PLAYED_AT_ASC
+  RECENT_LISTENS_AVERAGE_PLAYED_AT_DESC
+  RECENT_LISTENS_AVERAGE_CREATED_AT_ASC
+  RECENT_LISTENS_AVERAGE_CREATED_AT_DESC
+  RECENT_LISTENS_AVERAGE_UPDATED_AT_ASC
+  RECENT_LISTENS_AVERAGE_UPDATED_AT_DESC
+  RECENT_LISTENS_STDDEV_SAMPLE_ID_ASC
+  RECENT_LISTENS_STDDEV_SAMPLE_ID_DESC
+  RECENT_LISTENS_STDDEV_SAMPLE_SONG_ID_ASC
+  RECENT_LISTENS_STDDEV_SAMPLE_SONG_ID_DESC
+  RECENT_LISTENS_STDDEV_SAMPLE_USER_ID_ASC
+  RECENT_LISTENS_STDDEV_SAMPLE_USER_ID_DESC
+  RECENT_LISTENS_STDDEV_SAMPLE_PLAYED_AT_ASC
+  RECENT_LISTENS_STDDEV_SAMPLE_PLAYED_AT_DESC
+  RECENT_LISTENS_STDDEV_SAMPLE_CREATED_AT_ASC
+  RECENT_LISTENS_STDDEV_SAMPLE_CREATED_AT_DESC
+  RECENT_LISTENS_STDDEV_SAMPLE_UPDATED_AT_ASC
+  RECENT_LISTENS_STDDEV_SAMPLE_UPDATED_AT_DESC
+  RECENT_LISTENS_STDDEV_POPULATION_ID_ASC
+  RECENT_LISTENS_STDDEV_POPULATION_ID_DESC
+  RECENT_LISTENS_STDDEV_POPULATION_SONG_ID_ASC
+  RECENT_LISTENS_STDDEV_POPULATION_SONG_ID_DESC
+  RECENT_LISTENS_STDDEV_POPULATION_USER_ID_ASC
+  RECENT_LISTENS_STDDEV_POPULATION_USER_ID_DESC
+  RECENT_LISTENS_STDDEV_POPULATION_PLAYED_AT_ASC
+  RECENT_LISTENS_STDDEV_POPULATION_PLAYED_AT_DESC
+  RECENT_LISTENS_STDDEV_POPULATION_CREATED_AT_ASC
+  RECENT_LISTENS_STDDEV_POPULATION_CREATED_AT_DESC
+  RECENT_LISTENS_STDDEV_POPULATION_UPDATED_AT_ASC
+  RECENT_LISTENS_STDDEV_POPULATION_UPDATED_AT_DESC
+  RECENT_LISTENS_VARIANCE_SAMPLE_ID_ASC
+  RECENT_LISTENS_VARIANCE_SAMPLE_ID_DESC
+  RECENT_LISTENS_VARIANCE_SAMPLE_SONG_ID_ASC
+  RECENT_LISTENS_VARIANCE_SAMPLE_SONG_ID_DESC
+  RECENT_LISTENS_VARIANCE_SAMPLE_USER_ID_ASC
+  RECENT_LISTENS_VARIANCE_SAMPLE_USER_ID_DESC
+  RECENT_LISTENS_VARIANCE_SAMPLE_PLAYED_AT_ASC
+  RECENT_LISTENS_VARIANCE_SAMPLE_PLAYED_AT_DESC
+  RECENT_LISTENS_VARIANCE_SAMPLE_CREATED_AT_ASC
+  RECENT_LISTENS_VARIANCE_SAMPLE_CREATED_AT_DESC
+  RECENT_LISTENS_VARIANCE_SAMPLE_UPDATED_AT_ASC
+  RECENT_LISTENS_VARIANCE_SAMPLE_UPDATED_AT_DESC
+  RECENT_LISTENS_VARIANCE_POPULATION_ID_ASC
+  RECENT_LISTENS_VARIANCE_POPULATION_ID_DESC
+  RECENT_LISTENS_VARIANCE_POPULATION_SONG_ID_ASC
+  RECENT_LISTENS_VARIANCE_POPULATION_SONG_ID_DESC
+  RECENT_LISTENS_VARIANCE_POPULATION_USER_ID_ASC
+  RECENT_LISTENS_VARIANCE_POPULATION_USER_ID_DESC
+  RECENT_LISTENS_VARIANCE_POPULATION_PLAYED_AT_ASC
+  RECENT_LISTENS_VARIANCE_POPULATION_PLAYED_AT_DESC
+  RECENT_LISTENS_VARIANCE_POPULATION_CREATED_AT_ASC
+  RECENT_LISTENS_VARIANCE_POPULATION_CREATED_AT_DESC
+  RECENT_LISTENS_VARIANCE_POPULATION_UPDATED_AT_ASC
+  RECENT_LISTENS_VARIANCE_POPULATION_UPDATED_AT_DESC
   TOP_SONG_DATA_COUNT_ASC
   TOP_SONG_DATA_COUNT_DESC
   TOP_SONG_DATA_SUM_ID_ASC
@@ -4106,116 +4361,6 @@ enum SongsOrderBy {
   TOP_SONG_DATA_VARIANCE_POPULATION_CREATED_AT_DESC
   TOP_SONG_DATA_VARIANCE_POPULATION_UPDATED_AT_ASC
   TOP_SONG_DATA_VARIANCE_POPULATION_UPDATED_AT_DESC
-  RECENT_LISTENS_COUNT_ASC
-  RECENT_LISTENS_COUNT_DESC
-  RECENT_LISTENS_SUM_ID_ASC
-  RECENT_LISTENS_SUM_ID_DESC
-  RECENT_LISTENS_SUM_SONG_ID_ASC
-  RECENT_LISTENS_SUM_SONG_ID_DESC
-  RECENT_LISTENS_SUM_USER_ID_ASC
-  RECENT_LISTENS_SUM_USER_ID_DESC
-  RECENT_LISTENS_SUM_PLAYED_AT_ASC
-  RECENT_LISTENS_SUM_PLAYED_AT_DESC
-  RECENT_LISTENS_SUM_CREATED_AT_ASC
-  RECENT_LISTENS_SUM_CREATED_AT_DESC
-  RECENT_LISTENS_SUM_UPDATED_AT_ASC
-  RECENT_LISTENS_SUM_UPDATED_AT_DESC
-  RECENT_LISTENS_DISTINCT_COUNT_ID_ASC
-  RECENT_LISTENS_DISTINCT_COUNT_ID_DESC
-  RECENT_LISTENS_DISTINCT_COUNT_SONG_ID_ASC
-  RECENT_LISTENS_DISTINCT_COUNT_SONG_ID_DESC
-  RECENT_LISTENS_DISTINCT_COUNT_USER_ID_ASC
-  RECENT_LISTENS_DISTINCT_COUNT_USER_ID_DESC
-  RECENT_LISTENS_DISTINCT_COUNT_PLAYED_AT_ASC
-  RECENT_LISTENS_DISTINCT_COUNT_PLAYED_AT_DESC
-  RECENT_LISTENS_DISTINCT_COUNT_CREATED_AT_ASC
-  RECENT_LISTENS_DISTINCT_COUNT_CREATED_AT_DESC
-  RECENT_LISTENS_DISTINCT_COUNT_UPDATED_AT_ASC
-  RECENT_LISTENS_DISTINCT_COUNT_UPDATED_AT_DESC
-  RECENT_LISTENS_MIN_ID_ASC
-  RECENT_LISTENS_MIN_ID_DESC
-  RECENT_LISTENS_MIN_SONG_ID_ASC
-  RECENT_LISTENS_MIN_SONG_ID_DESC
-  RECENT_LISTENS_MIN_USER_ID_ASC
-  RECENT_LISTENS_MIN_USER_ID_DESC
-  RECENT_LISTENS_MIN_PLAYED_AT_ASC
-  RECENT_LISTENS_MIN_PLAYED_AT_DESC
-  RECENT_LISTENS_MIN_CREATED_AT_ASC
-  RECENT_LISTENS_MIN_CREATED_AT_DESC
-  RECENT_LISTENS_MIN_UPDATED_AT_ASC
-  RECENT_LISTENS_MIN_UPDATED_AT_DESC
-  RECENT_LISTENS_MAX_ID_ASC
-  RECENT_LISTENS_MAX_ID_DESC
-  RECENT_LISTENS_MAX_SONG_ID_ASC
-  RECENT_LISTENS_MAX_SONG_ID_DESC
-  RECENT_LISTENS_MAX_USER_ID_ASC
-  RECENT_LISTENS_MAX_USER_ID_DESC
-  RECENT_LISTENS_MAX_PLAYED_AT_ASC
-  RECENT_LISTENS_MAX_PLAYED_AT_DESC
-  RECENT_LISTENS_MAX_CREATED_AT_ASC
-  RECENT_LISTENS_MAX_CREATED_AT_DESC
-  RECENT_LISTENS_MAX_UPDATED_AT_ASC
-  RECENT_LISTENS_MAX_UPDATED_AT_DESC
-  RECENT_LISTENS_AVERAGE_ID_ASC
-  RECENT_LISTENS_AVERAGE_ID_DESC
-  RECENT_LISTENS_AVERAGE_SONG_ID_ASC
-  RECENT_LISTENS_AVERAGE_SONG_ID_DESC
-  RECENT_LISTENS_AVERAGE_USER_ID_ASC
-  RECENT_LISTENS_AVERAGE_USER_ID_DESC
-  RECENT_LISTENS_AVERAGE_PLAYED_AT_ASC
-  RECENT_LISTENS_AVERAGE_PLAYED_AT_DESC
-  RECENT_LISTENS_AVERAGE_CREATED_AT_ASC
-  RECENT_LISTENS_AVERAGE_CREATED_AT_DESC
-  RECENT_LISTENS_AVERAGE_UPDATED_AT_ASC
-  RECENT_LISTENS_AVERAGE_UPDATED_AT_DESC
-  RECENT_LISTENS_STDDEV_SAMPLE_ID_ASC
-  RECENT_LISTENS_STDDEV_SAMPLE_ID_DESC
-  RECENT_LISTENS_STDDEV_SAMPLE_SONG_ID_ASC
-  RECENT_LISTENS_STDDEV_SAMPLE_SONG_ID_DESC
-  RECENT_LISTENS_STDDEV_SAMPLE_USER_ID_ASC
-  RECENT_LISTENS_STDDEV_SAMPLE_USER_ID_DESC
-  RECENT_LISTENS_STDDEV_SAMPLE_PLAYED_AT_ASC
-  RECENT_LISTENS_STDDEV_SAMPLE_PLAYED_AT_DESC
-  RECENT_LISTENS_STDDEV_SAMPLE_CREATED_AT_ASC
-  RECENT_LISTENS_STDDEV_SAMPLE_CREATED_AT_DESC
-  RECENT_LISTENS_STDDEV_SAMPLE_UPDATED_AT_ASC
-  RECENT_LISTENS_STDDEV_SAMPLE_UPDATED_AT_DESC
-  RECENT_LISTENS_STDDEV_POPULATION_ID_ASC
-  RECENT_LISTENS_STDDEV_POPULATION_ID_DESC
-  RECENT_LISTENS_STDDEV_POPULATION_SONG_ID_ASC
-  RECENT_LISTENS_STDDEV_POPULATION_SONG_ID_DESC
-  RECENT_LISTENS_STDDEV_POPULATION_USER_ID_ASC
-  RECENT_LISTENS_STDDEV_POPULATION_USER_ID_DESC
-  RECENT_LISTENS_STDDEV_POPULATION_PLAYED_AT_ASC
-  RECENT_LISTENS_STDDEV_POPULATION_PLAYED_AT_DESC
-  RECENT_LISTENS_STDDEV_POPULATION_CREATED_AT_ASC
-  RECENT_LISTENS_STDDEV_POPULATION_CREATED_AT_DESC
-  RECENT_LISTENS_STDDEV_POPULATION_UPDATED_AT_ASC
-  RECENT_LISTENS_STDDEV_POPULATION_UPDATED_AT_DESC
-  RECENT_LISTENS_VARIANCE_SAMPLE_ID_ASC
-  RECENT_LISTENS_VARIANCE_SAMPLE_ID_DESC
-  RECENT_LISTENS_VARIANCE_SAMPLE_SONG_ID_ASC
-  RECENT_LISTENS_VARIANCE_SAMPLE_SONG_ID_DESC
-  RECENT_LISTENS_VARIANCE_SAMPLE_USER_ID_ASC
-  RECENT_LISTENS_VARIANCE_SAMPLE_USER_ID_DESC
-  RECENT_LISTENS_VARIANCE_SAMPLE_PLAYED_AT_ASC
-  RECENT_LISTENS_VARIANCE_SAMPLE_PLAYED_AT_DESC
-  RECENT_LISTENS_VARIANCE_SAMPLE_CREATED_AT_ASC
-  RECENT_LISTENS_VARIANCE_SAMPLE_CREATED_AT_DESC
-  RECENT_LISTENS_VARIANCE_SAMPLE_UPDATED_AT_ASC
-  RECENT_LISTENS_VARIANCE_SAMPLE_UPDATED_AT_DESC
-  RECENT_LISTENS_VARIANCE_POPULATION_ID_ASC
-  RECENT_LISTENS_VARIANCE_POPULATION_ID_DESC
-  RECENT_LISTENS_VARIANCE_POPULATION_SONG_ID_ASC
-  RECENT_LISTENS_VARIANCE_POPULATION_SONG_ID_DESC
-  RECENT_LISTENS_VARIANCE_POPULATION_USER_ID_ASC
-  RECENT_LISTENS_VARIANCE_POPULATION_USER_ID_DESC
-  RECENT_LISTENS_VARIANCE_POPULATION_PLAYED_AT_ASC
-  RECENT_LISTENS_VARIANCE_POPULATION_PLAYED_AT_DESC
-  RECENT_LISTENS_VARIANCE_POPULATION_CREATED_AT_ASC
-  RECENT_LISTENS_VARIANCE_POPULATION_CREATED_AT_DESC
-  RECENT_LISTENS_VARIANCE_POPULATION_UPDATED_AT_ASC
-  RECENT_LISTENS_VARIANCE_POPULATION_UPDATED_AT_DESC
 }
 
 """
@@ -4236,176 +4381,6 @@ input SongCondition {
 
   """Checks for equality with the object’s `name` field."""
   name: String
-
-  """Checks for equality with the object’s `createdAt` field."""
-  createdAt: Datetime
-
-  """Checks for equality with the object’s `updatedAt` field."""
-  updatedAt: Datetime
-}
-
-"""Methods to use when ordering `Album`."""
-enum AlbumsOrderBy {
-  NATURAL
-  ID_ASC
-  ID_DESC
-  NAME_ASC
-  NAME_DESC
-  SPOTIFY_ID_ASC
-  SPOTIFY_ID_DESC
-  ARTIST_ID_ASC
-  ARTIST_ID_DESC
-  CREATED_AT_ASC
-  CREATED_AT_DESC
-  UPDATED_AT_ASC
-  UPDATED_AT_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  SONGS_COUNT_ASC
-  SONGS_COUNT_DESC
-  SONGS_SUM_ID_ASC
-  SONGS_SUM_ID_DESC
-  SONGS_SUM_SPOTIFY_ID_ASC
-  SONGS_SUM_SPOTIFY_ID_DESC
-  SONGS_SUM_ALBUM_ID_ASC
-  SONGS_SUM_ALBUM_ID_DESC
-  SONGS_SUM_ARTIST_ID_ASC
-  SONGS_SUM_ARTIST_ID_DESC
-  SONGS_SUM_NAME_ASC
-  SONGS_SUM_NAME_DESC
-  SONGS_SUM_CREATED_AT_ASC
-  SONGS_SUM_CREATED_AT_DESC
-  SONGS_SUM_UPDATED_AT_ASC
-  SONGS_SUM_UPDATED_AT_DESC
-  SONGS_DISTINCT_COUNT_ID_ASC
-  SONGS_DISTINCT_COUNT_ID_DESC
-  SONGS_DISTINCT_COUNT_SPOTIFY_ID_ASC
-  SONGS_DISTINCT_COUNT_SPOTIFY_ID_DESC
-  SONGS_DISTINCT_COUNT_ALBUM_ID_ASC
-  SONGS_DISTINCT_COUNT_ALBUM_ID_DESC
-  SONGS_DISTINCT_COUNT_ARTIST_ID_ASC
-  SONGS_DISTINCT_COUNT_ARTIST_ID_DESC
-  SONGS_DISTINCT_COUNT_NAME_ASC
-  SONGS_DISTINCT_COUNT_NAME_DESC
-  SONGS_DISTINCT_COUNT_CREATED_AT_ASC
-  SONGS_DISTINCT_COUNT_CREATED_AT_DESC
-  SONGS_DISTINCT_COUNT_UPDATED_AT_ASC
-  SONGS_DISTINCT_COUNT_UPDATED_AT_DESC
-  SONGS_MIN_ID_ASC
-  SONGS_MIN_ID_DESC
-  SONGS_MIN_SPOTIFY_ID_ASC
-  SONGS_MIN_SPOTIFY_ID_DESC
-  SONGS_MIN_ALBUM_ID_ASC
-  SONGS_MIN_ALBUM_ID_DESC
-  SONGS_MIN_ARTIST_ID_ASC
-  SONGS_MIN_ARTIST_ID_DESC
-  SONGS_MIN_NAME_ASC
-  SONGS_MIN_NAME_DESC
-  SONGS_MIN_CREATED_AT_ASC
-  SONGS_MIN_CREATED_AT_DESC
-  SONGS_MIN_UPDATED_AT_ASC
-  SONGS_MIN_UPDATED_AT_DESC
-  SONGS_MAX_ID_ASC
-  SONGS_MAX_ID_DESC
-  SONGS_MAX_SPOTIFY_ID_ASC
-  SONGS_MAX_SPOTIFY_ID_DESC
-  SONGS_MAX_ALBUM_ID_ASC
-  SONGS_MAX_ALBUM_ID_DESC
-  SONGS_MAX_ARTIST_ID_ASC
-  SONGS_MAX_ARTIST_ID_DESC
-  SONGS_MAX_NAME_ASC
-  SONGS_MAX_NAME_DESC
-  SONGS_MAX_CREATED_AT_ASC
-  SONGS_MAX_CREATED_AT_DESC
-  SONGS_MAX_UPDATED_AT_ASC
-  SONGS_MAX_UPDATED_AT_DESC
-  SONGS_AVERAGE_ID_ASC
-  SONGS_AVERAGE_ID_DESC
-  SONGS_AVERAGE_SPOTIFY_ID_ASC
-  SONGS_AVERAGE_SPOTIFY_ID_DESC
-  SONGS_AVERAGE_ALBUM_ID_ASC
-  SONGS_AVERAGE_ALBUM_ID_DESC
-  SONGS_AVERAGE_ARTIST_ID_ASC
-  SONGS_AVERAGE_ARTIST_ID_DESC
-  SONGS_AVERAGE_NAME_ASC
-  SONGS_AVERAGE_NAME_DESC
-  SONGS_AVERAGE_CREATED_AT_ASC
-  SONGS_AVERAGE_CREATED_AT_DESC
-  SONGS_AVERAGE_UPDATED_AT_ASC
-  SONGS_AVERAGE_UPDATED_AT_DESC
-  SONGS_STDDEV_SAMPLE_ID_ASC
-  SONGS_STDDEV_SAMPLE_ID_DESC
-  SONGS_STDDEV_SAMPLE_SPOTIFY_ID_ASC
-  SONGS_STDDEV_SAMPLE_SPOTIFY_ID_DESC
-  SONGS_STDDEV_SAMPLE_ALBUM_ID_ASC
-  SONGS_STDDEV_SAMPLE_ALBUM_ID_DESC
-  SONGS_STDDEV_SAMPLE_ARTIST_ID_ASC
-  SONGS_STDDEV_SAMPLE_ARTIST_ID_DESC
-  SONGS_STDDEV_SAMPLE_NAME_ASC
-  SONGS_STDDEV_SAMPLE_NAME_DESC
-  SONGS_STDDEV_SAMPLE_CREATED_AT_ASC
-  SONGS_STDDEV_SAMPLE_CREATED_AT_DESC
-  SONGS_STDDEV_SAMPLE_UPDATED_AT_ASC
-  SONGS_STDDEV_SAMPLE_UPDATED_AT_DESC
-  SONGS_STDDEV_POPULATION_ID_ASC
-  SONGS_STDDEV_POPULATION_ID_DESC
-  SONGS_STDDEV_POPULATION_SPOTIFY_ID_ASC
-  SONGS_STDDEV_POPULATION_SPOTIFY_ID_DESC
-  SONGS_STDDEV_POPULATION_ALBUM_ID_ASC
-  SONGS_STDDEV_POPULATION_ALBUM_ID_DESC
-  SONGS_STDDEV_POPULATION_ARTIST_ID_ASC
-  SONGS_STDDEV_POPULATION_ARTIST_ID_DESC
-  SONGS_STDDEV_POPULATION_NAME_ASC
-  SONGS_STDDEV_POPULATION_NAME_DESC
-  SONGS_STDDEV_POPULATION_CREATED_AT_ASC
-  SONGS_STDDEV_POPULATION_CREATED_AT_DESC
-  SONGS_STDDEV_POPULATION_UPDATED_AT_ASC
-  SONGS_STDDEV_POPULATION_UPDATED_AT_DESC
-  SONGS_VARIANCE_SAMPLE_ID_ASC
-  SONGS_VARIANCE_SAMPLE_ID_DESC
-  SONGS_VARIANCE_SAMPLE_SPOTIFY_ID_ASC
-  SONGS_VARIANCE_SAMPLE_SPOTIFY_ID_DESC
-  SONGS_VARIANCE_SAMPLE_ALBUM_ID_ASC
-  SONGS_VARIANCE_SAMPLE_ALBUM_ID_DESC
-  SONGS_VARIANCE_SAMPLE_ARTIST_ID_ASC
-  SONGS_VARIANCE_SAMPLE_ARTIST_ID_DESC
-  SONGS_VARIANCE_SAMPLE_NAME_ASC
-  SONGS_VARIANCE_SAMPLE_NAME_DESC
-  SONGS_VARIANCE_SAMPLE_CREATED_AT_ASC
-  SONGS_VARIANCE_SAMPLE_CREATED_AT_DESC
-  SONGS_VARIANCE_SAMPLE_UPDATED_AT_ASC
-  SONGS_VARIANCE_SAMPLE_UPDATED_AT_DESC
-  SONGS_VARIANCE_POPULATION_ID_ASC
-  SONGS_VARIANCE_POPULATION_ID_DESC
-  SONGS_VARIANCE_POPULATION_SPOTIFY_ID_ASC
-  SONGS_VARIANCE_POPULATION_SPOTIFY_ID_DESC
-  SONGS_VARIANCE_POPULATION_ALBUM_ID_ASC
-  SONGS_VARIANCE_POPULATION_ALBUM_ID_DESC
-  SONGS_VARIANCE_POPULATION_ARTIST_ID_ASC
-  SONGS_VARIANCE_POPULATION_ARTIST_ID_DESC
-  SONGS_VARIANCE_POPULATION_NAME_ASC
-  SONGS_VARIANCE_POPULATION_NAME_DESC
-  SONGS_VARIANCE_POPULATION_CREATED_AT_ASC
-  SONGS_VARIANCE_POPULATION_CREATED_AT_DESC
-  SONGS_VARIANCE_POPULATION_UPDATED_AT_ASC
-  SONGS_VARIANCE_POPULATION_UPDATED_AT_DESC
-}
-
-"""
-A condition to be used against `Album` object types. All fields are tested for equality and combined with a logical ‘and.’
-"""
-input AlbumCondition {
-  """Checks for equality with the object’s `id` field."""
-  id: String
-
-  """Checks for equality with the object’s `name` field."""
-  name: String
-
-  """Checks for equality with the object’s `spotifyId` field."""
-  spotifyId: String
-
-  """Checks for equality with the object’s `artistId` field."""
-  artistId: String
 
   """Checks for equality with the object’s `createdAt` field."""
   createdAt: Datetime
@@ -5030,134 +5005,116 @@ enum ArtistsOrderBy {
   UPDATED_AT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
-  TOP_ARTIST_DATA_COUNT_ASC
-  TOP_ARTIST_DATA_COUNT_DESC
-  TOP_ARTIST_DATA_SUM_ID_ASC
-  TOP_ARTIST_DATA_SUM_ID_DESC
-  TOP_ARTIST_DATA_SUM_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_SUM_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_SUM_TOP_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_SUM_TOP_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_SUM_TIME_PERIOD_ASC
-  TOP_ARTIST_DATA_SUM_TIME_PERIOD_DESC
-  TOP_ARTIST_DATA_SUM_ORDER_ASC
-  TOP_ARTIST_DATA_SUM_ORDER_DESC
-  TOP_ARTIST_DATA_SUM_CREATED_AT_ASC
-  TOP_ARTIST_DATA_SUM_CREATED_AT_DESC
-  TOP_ARTIST_DATA_SUM_UPDATED_AT_ASC
-  TOP_ARTIST_DATA_SUM_UPDATED_AT_DESC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_ID_ASC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_ID_DESC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_TOP_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_TOP_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_TIME_PERIOD_ASC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_TIME_PERIOD_DESC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_ORDER_ASC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_ORDER_DESC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_CREATED_AT_ASC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_CREATED_AT_DESC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_UPDATED_AT_ASC
-  TOP_ARTIST_DATA_DISTINCT_COUNT_UPDATED_AT_DESC
-  TOP_ARTIST_DATA_MIN_ID_ASC
-  TOP_ARTIST_DATA_MIN_ID_DESC
-  TOP_ARTIST_DATA_MIN_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_MIN_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_MIN_TOP_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_MIN_TOP_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_MIN_TIME_PERIOD_ASC
-  TOP_ARTIST_DATA_MIN_TIME_PERIOD_DESC
-  TOP_ARTIST_DATA_MIN_ORDER_ASC
-  TOP_ARTIST_DATA_MIN_ORDER_DESC
-  TOP_ARTIST_DATA_MIN_CREATED_AT_ASC
-  TOP_ARTIST_DATA_MIN_CREATED_AT_DESC
-  TOP_ARTIST_DATA_MIN_UPDATED_AT_ASC
-  TOP_ARTIST_DATA_MIN_UPDATED_AT_DESC
-  TOP_ARTIST_DATA_MAX_ID_ASC
-  TOP_ARTIST_DATA_MAX_ID_DESC
-  TOP_ARTIST_DATA_MAX_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_MAX_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_MAX_TOP_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_MAX_TOP_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_MAX_TIME_PERIOD_ASC
-  TOP_ARTIST_DATA_MAX_TIME_PERIOD_DESC
-  TOP_ARTIST_DATA_MAX_ORDER_ASC
-  TOP_ARTIST_DATA_MAX_ORDER_DESC
-  TOP_ARTIST_DATA_MAX_CREATED_AT_ASC
-  TOP_ARTIST_DATA_MAX_CREATED_AT_DESC
-  TOP_ARTIST_DATA_MAX_UPDATED_AT_ASC
-  TOP_ARTIST_DATA_MAX_UPDATED_AT_DESC
-  TOP_ARTIST_DATA_AVERAGE_ID_ASC
-  TOP_ARTIST_DATA_AVERAGE_ID_DESC
-  TOP_ARTIST_DATA_AVERAGE_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_AVERAGE_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_AVERAGE_TOP_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_AVERAGE_TOP_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_AVERAGE_TIME_PERIOD_ASC
-  TOP_ARTIST_DATA_AVERAGE_TIME_PERIOD_DESC
-  TOP_ARTIST_DATA_AVERAGE_ORDER_ASC
-  TOP_ARTIST_DATA_AVERAGE_ORDER_DESC
-  TOP_ARTIST_DATA_AVERAGE_CREATED_AT_ASC
-  TOP_ARTIST_DATA_AVERAGE_CREATED_AT_DESC
-  TOP_ARTIST_DATA_AVERAGE_UPDATED_AT_ASC
-  TOP_ARTIST_DATA_AVERAGE_UPDATED_AT_DESC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_ID_ASC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_ID_DESC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_TOP_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_TOP_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_TIME_PERIOD_ASC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_TIME_PERIOD_DESC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_ORDER_ASC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_ORDER_DESC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_CREATED_AT_ASC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_CREATED_AT_DESC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_UPDATED_AT_ASC
-  TOP_ARTIST_DATA_STDDEV_SAMPLE_UPDATED_AT_DESC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_ID_ASC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_ID_DESC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_TOP_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_TOP_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_TIME_PERIOD_ASC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_TIME_PERIOD_DESC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_ORDER_ASC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_ORDER_DESC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_CREATED_AT_ASC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_CREATED_AT_DESC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_UPDATED_AT_ASC
-  TOP_ARTIST_DATA_STDDEV_POPULATION_UPDATED_AT_DESC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ID_ASC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ID_DESC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_TOP_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_TOP_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_TIME_PERIOD_ASC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_TIME_PERIOD_DESC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ORDER_ASC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ORDER_DESC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_CREATED_AT_ASC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_CREATED_AT_DESC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_UPDATED_AT_ASC
-  TOP_ARTIST_DATA_VARIANCE_SAMPLE_UPDATED_AT_DESC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_ID_ASC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_ID_DESC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_TOP_ARTIST_ID_ASC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_TOP_ARTIST_ID_DESC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_TIME_PERIOD_ASC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_TIME_PERIOD_DESC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_ORDER_ASC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_ORDER_DESC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_CREATED_AT_ASC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_CREATED_AT_DESC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_UPDATED_AT_ASC
-  TOP_ARTIST_DATA_VARIANCE_POPULATION_UPDATED_AT_DESC
+  ALBUMS_COUNT_ASC
+  ALBUMS_COUNT_DESC
+  ALBUMS_SUM_ID_ASC
+  ALBUMS_SUM_ID_DESC
+  ALBUMS_SUM_NAME_ASC
+  ALBUMS_SUM_NAME_DESC
+  ALBUMS_SUM_SPOTIFY_ID_ASC
+  ALBUMS_SUM_SPOTIFY_ID_DESC
+  ALBUMS_SUM_ARTIST_ID_ASC
+  ALBUMS_SUM_ARTIST_ID_DESC
+  ALBUMS_SUM_CREATED_AT_ASC
+  ALBUMS_SUM_CREATED_AT_DESC
+  ALBUMS_SUM_UPDATED_AT_ASC
+  ALBUMS_SUM_UPDATED_AT_DESC
+  ALBUMS_DISTINCT_COUNT_ID_ASC
+  ALBUMS_DISTINCT_COUNT_ID_DESC
+  ALBUMS_DISTINCT_COUNT_NAME_ASC
+  ALBUMS_DISTINCT_COUNT_NAME_DESC
+  ALBUMS_DISTINCT_COUNT_SPOTIFY_ID_ASC
+  ALBUMS_DISTINCT_COUNT_SPOTIFY_ID_DESC
+  ALBUMS_DISTINCT_COUNT_ARTIST_ID_ASC
+  ALBUMS_DISTINCT_COUNT_ARTIST_ID_DESC
+  ALBUMS_DISTINCT_COUNT_CREATED_AT_ASC
+  ALBUMS_DISTINCT_COUNT_CREATED_AT_DESC
+  ALBUMS_DISTINCT_COUNT_UPDATED_AT_ASC
+  ALBUMS_DISTINCT_COUNT_UPDATED_AT_DESC
+  ALBUMS_MIN_ID_ASC
+  ALBUMS_MIN_ID_DESC
+  ALBUMS_MIN_NAME_ASC
+  ALBUMS_MIN_NAME_DESC
+  ALBUMS_MIN_SPOTIFY_ID_ASC
+  ALBUMS_MIN_SPOTIFY_ID_DESC
+  ALBUMS_MIN_ARTIST_ID_ASC
+  ALBUMS_MIN_ARTIST_ID_DESC
+  ALBUMS_MIN_CREATED_AT_ASC
+  ALBUMS_MIN_CREATED_AT_DESC
+  ALBUMS_MIN_UPDATED_AT_ASC
+  ALBUMS_MIN_UPDATED_AT_DESC
+  ALBUMS_MAX_ID_ASC
+  ALBUMS_MAX_ID_DESC
+  ALBUMS_MAX_NAME_ASC
+  ALBUMS_MAX_NAME_DESC
+  ALBUMS_MAX_SPOTIFY_ID_ASC
+  ALBUMS_MAX_SPOTIFY_ID_DESC
+  ALBUMS_MAX_ARTIST_ID_ASC
+  ALBUMS_MAX_ARTIST_ID_DESC
+  ALBUMS_MAX_CREATED_AT_ASC
+  ALBUMS_MAX_CREATED_AT_DESC
+  ALBUMS_MAX_UPDATED_AT_ASC
+  ALBUMS_MAX_UPDATED_AT_DESC
+  ALBUMS_AVERAGE_ID_ASC
+  ALBUMS_AVERAGE_ID_DESC
+  ALBUMS_AVERAGE_NAME_ASC
+  ALBUMS_AVERAGE_NAME_DESC
+  ALBUMS_AVERAGE_SPOTIFY_ID_ASC
+  ALBUMS_AVERAGE_SPOTIFY_ID_DESC
+  ALBUMS_AVERAGE_ARTIST_ID_ASC
+  ALBUMS_AVERAGE_ARTIST_ID_DESC
+  ALBUMS_AVERAGE_CREATED_AT_ASC
+  ALBUMS_AVERAGE_CREATED_AT_DESC
+  ALBUMS_AVERAGE_UPDATED_AT_ASC
+  ALBUMS_AVERAGE_UPDATED_AT_DESC
+  ALBUMS_STDDEV_SAMPLE_ID_ASC
+  ALBUMS_STDDEV_SAMPLE_ID_DESC
+  ALBUMS_STDDEV_SAMPLE_NAME_ASC
+  ALBUMS_STDDEV_SAMPLE_NAME_DESC
+  ALBUMS_STDDEV_SAMPLE_SPOTIFY_ID_ASC
+  ALBUMS_STDDEV_SAMPLE_SPOTIFY_ID_DESC
+  ALBUMS_STDDEV_SAMPLE_ARTIST_ID_ASC
+  ALBUMS_STDDEV_SAMPLE_ARTIST_ID_DESC
+  ALBUMS_STDDEV_SAMPLE_CREATED_AT_ASC
+  ALBUMS_STDDEV_SAMPLE_CREATED_AT_DESC
+  ALBUMS_STDDEV_SAMPLE_UPDATED_AT_ASC
+  ALBUMS_STDDEV_SAMPLE_UPDATED_AT_DESC
+  ALBUMS_STDDEV_POPULATION_ID_ASC
+  ALBUMS_STDDEV_POPULATION_ID_DESC
+  ALBUMS_STDDEV_POPULATION_NAME_ASC
+  ALBUMS_STDDEV_POPULATION_NAME_DESC
+  ALBUMS_STDDEV_POPULATION_SPOTIFY_ID_ASC
+  ALBUMS_STDDEV_POPULATION_SPOTIFY_ID_DESC
+  ALBUMS_STDDEV_POPULATION_ARTIST_ID_ASC
+  ALBUMS_STDDEV_POPULATION_ARTIST_ID_DESC
+  ALBUMS_STDDEV_POPULATION_CREATED_AT_ASC
+  ALBUMS_STDDEV_POPULATION_CREATED_AT_DESC
+  ALBUMS_STDDEV_POPULATION_UPDATED_AT_ASC
+  ALBUMS_STDDEV_POPULATION_UPDATED_AT_DESC
+  ALBUMS_VARIANCE_SAMPLE_ID_ASC
+  ALBUMS_VARIANCE_SAMPLE_ID_DESC
+  ALBUMS_VARIANCE_SAMPLE_NAME_ASC
+  ALBUMS_VARIANCE_SAMPLE_NAME_DESC
+  ALBUMS_VARIANCE_SAMPLE_SPOTIFY_ID_ASC
+  ALBUMS_VARIANCE_SAMPLE_SPOTIFY_ID_DESC
+  ALBUMS_VARIANCE_SAMPLE_ARTIST_ID_ASC
+  ALBUMS_VARIANCE_SAMPLE_ARTIST_ID_DESC
+  ALBUMS_VARIANCE_SAMPLE_CREATED_AT_ASC
+  ALBUMS_VARIANCE_SAMPLE_CREATED_AT_DESC
+  ALBUMS_VARIANCE_SAMPLE_UPDATED_AT_ASC
+  ALBUMS_VARIANCE_SAMPLE_UPDATED_AT_DESC
+  ALBUMS_VARIANCE_POPULATION_ID_ASC
+  ALBUMS_VARIANCE_POPULATION_ID_DESC
+  ALBUMS_VARIANCE_POPULATION_NAME_ASC
+  ALBUMS_VARIANCE_POPULATION_NAME_DESC
+  ALBUMS_VARIANCE_POPULATION_SPOTIFY_ID_ASC
+  ALBUMS_VARIANCE_POPULATION_SPOTIFY_ID_DESC
+  ALBUMS_VARIANCE_POPULATION_ARTIST_ID_ASC
+  ALBUMS_VARIANCE_POPULATION_ARTIST_ID_DESC
+  ALBUMS_VARIANCE_POPULATION_CREATED_AT_ASC
+  ALBUMS_VARIANCE_POPULATION_CREATED_AT_DESC
+  ALBUMS_VARIANCE_POPULATION_UPDATED_AT_ASC
+  ALBUMS_VARIANCE_POPULATION_UPDATED_AT_DESC
   SONGS_COUNT_ASC
   SONGS_COUNT_DESC
   SONGS_SUM_ID_ASC
@@ -5286,116 +5243,134 @@ enum ArtistsOrderBy {
   SONGS_VARIANCE_POPULATION_CREATED_AT_DESC
   SONGS_VARIANCE_POPULATION_UPDATED_AT_ASC
   SONGS_VARIANCE_POPULATION_UPDATED_AT_DESC
-  ALBUMS_COUNT_ASC
-  ALBUMS_COUNT_DESC
-  ALBUMS_SUM_ID_ASC
-  ALBUMS_SUM_ID_DESC
-  ALBUMS_SUM_NAME_ASC
-  ALBUMS_SUM_NAME_DESC
-  ALBUMS_SUM_SPOTIFY_ID_ASC
-  ALBUMS_SUM_SPOTIFY_ID_DESC
-  ALBUMS_SUM_ARTIST_ID_ASC
-  ALBUMS_SUM_ARTIST_ID_DESC
-  ALBUMS_SUM_CREATED_AT_ASC
-  ALBUMS_SUM_CREATED_AT_DESC
-  ALBUMS_SUM_UPDATED_AT_ASC
-  ALBUMS_SUM_UPDATED_AT_DESC
-  ALBUMS_DISTINCT_COUNT_ID_ASC
-  ALBUMS_DISTINCT_COUNT_ID_DESC
-  ALBUMS_DISTINCT_COUNT_NAME_ASC
-  ALBUMS_DISTINCT_COUNT_NAME_DESC
-  ALBUMS_DISTINCT_COUNT_SPOTIFY_ID_ASC
-  ALBUMS_DISTINCT_COUNT_SPOTIFY_ID_DESC
-  ALBUMS_DISTINCT_COUNT_ARTIST_ID_ASC
-  ALBUMS_DISTINCT_COUNT_ARTIST_ID_DESC
-  ALBUMS_DISTINCT_COUNT_CREATED_AT_ASC
-  ALBUMS_DISTINCT_COUNT_CREATED_AT_DESC
-  ALBUMS_DISTINCT_COUNT_UPDATED_AT_ASC
-  ALBUMS_DISTINCT_COUNT_UPDATED_AT_DESC
-  ALBUMS_MIN_ID_ASC
-  ALBUMS_MIN_ID_DESC
-  ALBUMS_MIN_NAME_ASC
-  ALBUMS_MIN_NAME_DESC
-  ALBUMS_MIN_SPOTIFY_ID_ASC
-  ALBUMS_MIN_SPOTIFY_ID_DESC
-  ALBUMS_MIN_ARTIST_ID_ASC
-  ALBUMS_MIN_ARTIST_ID_DESC
-  ALBUMS_MIN_CREATED_AT_ASC
-  ALBUMS_MIN_CREATED_AT_DESC
-  ALBUMS_MIN_UPDATED_AT_ASC
-  ALBUMS_MIN_UPDATED_AT_DESC
-  ALBUMS_MAX_ID_ASC
-  ALBUMS_MAX_ID_DESC
-  ALBUMS_MAX_NAME_ASC
-  ALBUMS_MAX_NAME_DESC
-  ALBUMS_MAX_SPOTIFY_ID_ASC
-  ALBUMS_MAX_SPOTIFY_ID_DESC
-  ALBUMS_MAX_ARTIST_ID_ASC
-  ALBUMS_MAX_ARTIST_ID_DESC
-  ALBUMS_MAX_CREATED_AT_ASC
-  ALBUMS_MAX_CREATED_AT_DESC
-  ALBUMS_MAX_UPDATED_AT_ASC
-  ALBUMS_MAX_UPDATED_AT_DESC
-  ALBUMS_AVERAGE_ID_ASC
-  ALBUMS_AVERAGE_ID_DESC
-  ALBUMS_AVERAGE_NAME_ASC
-  ALBUMS_AVERAGE_NAME_DESC
-  ALBUMS_AVERAGE_SPOTIFY_ID_ASC
-  ALBUMS_AVERAGE_SPOTIFY_ID_DESC
-  ALBUMS_AVERAGE_ARTIST_ID_ASC
-  ALBUMS_AVERAGE_ARTIST_ID_DESC
-  ALBUMS_AVERAGE_CREATED_AT_ASC
-  ALBUMS_AVERAGE_CREATED_AT_DESC
-  ALBUMS_AVERAGE_UPDATED_AT_ASC
-  ALBUMS_AVERAGE_UPDATED_AT_DESC
-  ALBUMS_STDDEV_SAMPLE_ID_ASC
-  ALBUMS_STDDEV_SAMPLE_ID_DESC
-  ALBUMS_STDDEV_SAMPLE_NAME_ASC
-  ALBUMS_STDDEV_SAMPLE_NAME_DESC
-  ALBUMS_STDDEV_SAMPLE_SPOTIFY_ID_ASC
-  ALBUMS_STDDEV_SAMPLE_SPOTIFY_ID_DESC
-  ALBUMS_STDDEV_SAMPLE_ARTIST_ID_ASC
-  ALBUMS_STDDEV_SAMPLE_ARTIST_ID_DESC
-  ALBUMS_STDDEV_SAMPLE_CREATED_AT_ASC
-  ALBUMS_STDDEV_SAMPLE_CREATED_AT_DESC
-  ALBUMS_STDDEV_SAMPLE_UPDATED_AT_ASC
-  ALBUMS_STDDEV_SAMPLE_UPDATED_AT_DESC
-  ALBUMS_STDDEV_POPULATION_ID_ASC
-  ALBUMS_STDDEV_POPULATION_ID_DESC
-  ALBUMS_STDDEV_POPULATION_NAME_ASC
-  ALBUMS_STDDEV_POPULATION_NAME_DESC
-  ALBUMS_STDDEV_POPULATION_SPOTIFY_ID_ASC
-  ALBUMS_STDDEV_POPULATION_SPOTIFY_ID_DESC
-  ALBUMS_STDDEV_POPULATION_ARTIST_ID_ASC
-  ALBUMS_STDDEV_POPULATION_ARTIST_ID_DESC
-  ALBUMS_STDDEV_POPULATION_CREATED_AT_ASC
-  ALBUMS_STDDEV_POPULATION_CREATED_AT_DESC
-  ALBUMS_STDDEV_POPULATION_UPDATED_AT_ASC
-  ALBUMS_STDDEV_POPULATION_UPDATED_AT_DESC
-  ALBUMS_VARIANCE_SAMPLE_ID_ASC
-  ALBUMS_VARIANCE_SAMPLE_ID_DESC
-  ALBUMS_VARIANCE_SAMPLE_NAME_ASC
-  ALBUMS_VARIANCE_SAMPLE_NAME_DESC
-  ALBUMS_VARIANCE_SAMPLE_SPOTIFY_ID_ASC
-  ALBUMS_VARIANCE_SAMPLE_SPOTIFY_ID_DESC
-  ALBUMS_VARIANCE_SAMPLE_ARTIST_ID_ASC
-  ALBUMS_VARIANCE_SAMPLE_ARTIST_ID_DESC
-  ALBUMS_VARIANCE_SAMPLE_CREATED_AT_ASC
-  ALBUMS_VARIANCE_SAMPLE_CREATED_AT_DESC
-  ALBUMS_VARIANCE_SAMPLE_UPDATED_AT_ASC
-  ALBUMS_VARIANCE_SAMPLE_UPDATED_AT_DESC
-  ALBUMS_VARIANCE_POPULATION_ID_ASC
-  ALBUMS_VARIANCE_POPULATION_ID_DESC
-  ALBUMS_VARIANCE_POPULATION_NAME_ASC
-  ALBUMS_VARIANCE_POPULATION_NAME_DESC
-  ALBUMS_VARIANCE_POPULATION_SPOTIFY_ID_ASC
-  ALBUMS_VARIANCE_POPULATION_SPOTIFY_ID_DESC
-  ALBUMS_VARIANCE_POPULATION_ARTIST_ID_ASC
-  ALBUMS_VARIANCE_POPULATION_ARTIST_ID_DESC
-  ALBUMS_VARIANCE_POPULATION_CREATED_AT_ASC
-  ALBUMS_VARIANCE_POPULATION_CREATED_AT_DESC
-  ALBUMS_VARIANCE_POPULATION_UPDATED_AT_ASC
-  ALBUMS_VARIANCE_POPULATION_UPDATED_AT_DESC
+  TOP_ARTIST_DATA_COUNT_ASC
+  TOP_ARTIST_DATA_COUNT_DESC
+  TOP_ARTIST_DATA_SUM_ID_ASC
+  TOP_ARTIST_DATA_SUM_ID_DESC
+  TOP_ARTIST_DATA_SUM_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_SUM_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_SUM_TOP_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_SUM_TOP_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_SUM_TIME_PERIOD_ASC
+  TOP_ARTIST_DATA_SUM_TIME_PERIOD_DESC
+  TOP_ARTIST_DATA_SUM_ORDER_ASC
+  TOP_ARTIST_DATA_SUM_ORDER_DESC
+  TOP_ARTIST_DATA_SUM_CREATED_AT_ASC
+  TOP_ARTIST_DATA_SUM_CREATED_AT_DESC
+  TOP_ARTIST_DATA_SUM_UPDATED_AT_ASC
+  TOP_ARTIST_DATA_SUM_UPDATED_AT_DESC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_ID_ASC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_ID_DESC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_TOP_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_TOP_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_TIME_PERIOD_ASC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_TIME_PERIOD_DESC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_ORDER_ASC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_ORDER_DESC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_CREATED_AT_ASC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_CREATED_AT_DESC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_UPDATED_AT_ASC
+  TOP_ARTIST_DATA_DISTINCT_COUNT_UPDATED_AT_DESC
+  TOP_ARTIST_DATA_MIN_ID_ASC
+  TOP_ARTIST_DATA_MIN_ID_DESC
+  TOP_ARTIST_DATA_MIN_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_MIN_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_MIN_TOP_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_MIN_TOP_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_MIN_TIME_PERIOD_ASC
+  TOP_ARTIST_DATA_MIN_TIME_PERIOD_DESC
+  TOP_ARTIST_DATA_MIN_ORDER_ASC
+  TOP_ARTIST_DATA_MIN_ORDER_DESC
+  TOP_ARTIST_DATA_MIN_CREATED_AT_ASC
+  TOP_ARTIST_DATA_MIN_CREATED_AT_DESC
+  TOP_ARTIST_DATA_MIN_UPDATED_AT_ASC
+  TOP_ARTIST_DATA_MIN_UPDATED_AT_DESC
+  TOP_ARTIST_DATA_MAX_ID_ASC
+  TOP_ARTIST_DATA_MAX_ID_DESC
+  TOP_ARTIST_DATA_MAX_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_MAX_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_MAX_TOP_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_MAX_TOP_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_MAX_TIME_PERIOD_ASC
+  TOP_ARTIST_DATA_MAX_TIME_PERIOD_DESC
+  TOP_ARTIST_DATA_MAX_ORDER_ASC
+  TOP_ARTIST_DATA_MAX_ORDER_DESC
+  TOP_ARTIST_DATA_MAX_CREATED_AT_ASC
+  TOP_ARTIST_DATA_MAX_CREATED_AT_DESC
+  TOP_ARTIST_DATA_MAX_UPDATED_AT_ASC
+  TOP_ARTIST_DATA_MAX_UPDATED_AT_DESC
+  TOP_ARTIST_DATA_AVERAGE_ID_ASC
+  TOP_ARTIST_DATA_AVERAGE_ID_DESC
+  TOP_ARTIST_DATA_AVERAGE_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_AVERAGE_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_AVERAGE_TOP_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_AVERAGE_TOP_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_AVERAGE_TIME_PERIOD_ASC
+  TOP_ARTIST_DATA_AVERAGE_TIME_PERIOD_DESC
+  TOP_ARTIST_DATA_AVERAGE_ORDER_ASC
+  TOP_ARTIST_DATA_AVERAGE_ORDER_DESC
+  TOP_ARTIST_DATA_AVERAGE_CREATED_AT_ASC
+  TOP_ARTIST_DATA_AVERAGE_CREATED_AT_DESC
+  TOP_ARTIST_DATA_AVERAGE_UPDATED_AT_ASC
+  TOP_ARTIST_DATA_AVERAGE_UPDATED_AT_DESC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_ID_ASC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_ID_DESC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_TOP_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_TOP_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_TIME_PERIOD_ASC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_TIME_PERIOD_DESC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_ORDER_ASC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_ORDER_DESC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_CREATED_AT_ASC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_CREATED_AT_DESC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_UPDATED_AT_ASC
+  TOP_ARTIST_DATA_STDDEV_SAMPLE_UPDATED_AT_DESC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_ID_ASC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_ID_DESC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_TOP_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_TOP_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_TIME_PERIOD_ASC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_TIME_PERIOD_DESC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_ORDER_ASC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_ORDER_DESC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_CREATED_AT_ASC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_CREATED_AT_DESC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_UPDATED_AT_ASC
+  TOP_ARTIST_DATA_STDDEV_POPULATION_UPDATED_AT_DESC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ID_ASC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ID_DESC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_TOP_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_TOP_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_TIME_PERIOD_ASC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_TIME_PERIOD_DESC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ORDER_ASC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_ORDER_DESC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_CREATED_AT_ASC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_CREATED_AT_DESC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_UPDATED_AT_ASC
+  TOP_ARTIST_DATA_VARIANCE_SAMPLE_UPDATED_AT_DESC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_ID_ASC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_ID_DESC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_TOP_ARTIST_ID_ASC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_TOP_ARTIST_ID_DESC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_TIME_PERIOD_ASC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_TIME_PERIOD_DESC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_ORDER_ASC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_ORDER_DESC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_CREATED_AT_ASC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_CREATED_AT_DESC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_UPDATED_AT_ASC
+  TOP_ARTIST_DATA_VARIANCE_POPULATION_UPDATED_AT_DESC
 }
 
 """
@@ -5579,154 +5554,6 @@ enum UsersOrderBy {
   UPDATED_AT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
-  TOP_SONGS_COUNT_ASC
-  TOP_SONGS_COUNT_DESC
-  TOP_SONGS_SUM_ID_ASC
-  TOP_SONGS_SUM_ID_DESC
-  TOP_SONGS_SUM_USER_ID_ASC
-  TOP_SONGS_SUM_USER_ID_DESC
-  TOP_SONGS_SUM_CREATED_AT_ASC
-  TOP_SONGS_SUM_CREATED_AT_DESC
-  TOP_SONGS_SUM_UPDATED_AT_ASC
-  TOP_SONGS_SUM_UPDATED_AT_DESC
-  TOP_SONGS_DISTINCT_COUNT_ID_ASC
-  TOP_SONGS_DISTINCT_COUNT_ID_DESC
-  TOP_SONGS_DISTINCT_COUNT_USER_ID_ASC
-  TOP_SONGS_DISTINCT_COUNT_USER_ID_DESC
-  TOP_SONGS_DISTINCT_COUNT_CREATED_AT_ASC
-  TOP_SONGS_DISTINCT_COUNT_CREATED_AT_DESC
-  TOP_SONGS_DISTINCT_COUNT_UPDATED_AT_ASC
-  TOP_SONGS_DISTINCT_COUNT_UPDATED_AT_DESC
-  TOP_SONGS_MIN_ID_ASC
-  TOP_SONGS_MIN_ID_DESC
-  TOP_SONGS_MIN_USER_ID_ASC
-  TOP_SONGS_MIN_USER_ID_DESC
-  TOP_SONGS_MIN_CREATED_AT_ASC
-  TOP_SONGS_MIN_CREATED_AT_DESC
-  TOP_SONGS_MIN_UPDATED_AT_ASC
-  TOP_SONGS_MIN_UPDATED_AT_DESC
-  TOP_SONGS_MAX_ID_ASC
-  TOP_SONGS_MAX_ID_DESC
-  TOP_SONGS_MAX_USER_ID_ASC
-  TOP_SONGS_MAX_USER_ID_DESC
-  TOP_SONGS_MAX_CREATED_AT_ASC
-  TOP_SONGS_MAX_CREATED_AT_DESC
-  TOP_SONGS_MAX_UPDATED_AT_ASC
-  TOP_SONGS_MAX_UPDATED_AT_DESC
-  TOP_SONGS_AVERAGE_ID_ASC
-  TOP_SONGS_AVERAGE_ID_DESC
-  TOP_SONGS_AVERAGE_USER_ID_ASC
-  TOP_SONGS_AVERAGE_USER_ID_DESC
-  TOP_SONGS_AVERAGE_CREATED_AT_ASC
-  TOP_SONGS_AVERAGE_CREATED_AT_DESC
-  TOP_SONGS_AVERAGE_UPDATED_AT_ASC
-  TOP_SONGS_AVERAGE_UPDATED_AT_DESC
-  TOP_SONGS_STDDEV_SAMPLE_ID_ASC
-  TOP_SONGS_STDDEV_SAMPLE_ID_DESC
-  TOP_SONGS_STDDEV_SAMPLE_USER_ID_ASC
-  TOP_SONGS_STDDEV_SAMPLE_USER_ID_DESC
-  TOP_SONGS_STDDEV_SAMPLE_CREATED_AT_ASC
-  TOP_SONGS_STDDEV_SAMPLE_CREATED_AT_DESC
-  TOP_SONGS_STDDEV_SAMPLE_UPDATED_AT_ASC
-  TOP_SONGS_STDDEV_SAMPLE_UPDATED_AT_DESC
-  TOP_SONGS_STDDEV_POPULATION_ID_ASC
-  TOP_SONGS_STDDEV_POPULATION_ID_DESC
-  TOP_SONGS_STDDEV_POPULATION_USER_ID_ASC
-  TOP_SONGS_STDDEV_POPULATION_USER_ID_DESC
-  TOP_SONGS_STDDEV_POPULATION_CREATED_AT_ASC
-  TOP_SONGS_STDDEV_POPULATION_CREATED_AT_DESC
-  TOP_SONGS_STDDEV_POPULATION_UPDATED_AT_ASC
-  TOP_SONGS_STDDEV_POPULATION_UPDATED_AT_DESC
-  TOP_SONGS_VARIANCE_SAMPLE_ID_ASC
-  TOP_SONGS_VARIANCE_SAMPLE_ID_DESC
-  TOP_SONGS_VARIANCE_SAMPLE_USER_ID_ASC
-  TOP_SONGS_VARIANCE_SAMPLE_USER_ID_DESC
-  TOP_SONGS_VARIANCE_SAMPLE_CREATED_AT_ASC
-  TOP_SONGS_VARIANCE_SAMPLE_CREATED_AT_DESC
-  TOP_SONGS_VARIANCE_SAMPLE_UPDATED_AT_ASC
-  TOP_SONGS_VARIANCE_SAMPLE_UPDATED_AT_DESC
-  TOP_SONGS_VARIANCE_POPULATION_ID_ASC
-  TOP_SONGS_VARIANCE_POPULATION_ID_DESC
-  TOP_SONGS_VARIANCE_POPULATION_USER_ID_ASC
-  TOP_SONGS_VARIANCE_POPULATION_USER_ID_DESC
-  TOP_SONGS_VARIANCE_POPULATION_CREATED_AT_ASC
-  TOP_SONGS_VARIANCE_POPULATION_CREATED_AT_DESC
-  TOP_SONGS_VARIANCE_POPULATION_UPDATED_AT_ASC
-  TOP_SONGS_VARIANCE_POPULATION_UPDATED_AT_DESC
-  TOP_ARTISTS_COUNT_ASC
-  TOP_ARTISTS_COUNT_DESC
-  TOP_ARTISTS_SUM_ID_ASC
-  TOP_ARTISTS_SUM_ID_DESC
-  TOP_ARTISTS_SUM_USER_ID_ASC
-  TOP_ARTISTS_SUM_USER_ID_DESC
-  TOP_ARTISTS_SUM_CREATED_AT_ASC
-  TOP_ARTISTS_SUM_CREATED_AT_DESC
-  TOP_ARTISTS_SUM_UPDATED_AT_ASC
-  TOP_ARTISTS_SUM_UPDATED_AT_DESC
-  TOP_ARTISTS_DISTINCT_COUNT_ID_ASC
-  TOP_ARTISTS_DISTINCT_COUNT_ID_DESC
-  TOP_ARTISTS_DISTINCT_COUNT_USER_ID_ASC
-  TOP_ARTISTS_DISTINCT_COUNT_USER_ID_DESC
-  TOP_ARTISTS_DISTINCT_COUNT_CREATED_AT_ASC
-  TOP_ARTISTS_DISTINCT_COUNT_CREATED_AT_DESC
-  TOP_ARTISTS_DISTINCT_COUNT_UPDATED_AT_ASC
-  TOP_ARTISTS_DISTINCT_COUNT_UPDATED_AT_DESC
-  TOP_ARTISTS_MIN_ID_ASC
-  TOP_ARTISTS_MIN_ID_DESC
-  TOP_ARTISTS_MIN_USER_ID_ASC
-  TOP_ARTISTS_MIN_USER_ID_DESC
-  TOP_ARTISTS_MIN_CREATED_AT_ASC
-  TOP_ARTISTS_MIN_CREATED_AT_DESC
-  TOP_ARTISTS_MIN_UPDATED_AT_ASC
-  TOP_ARTISTS_MIN_UPDATED_AT_DESC
-  TOP_ARTISTS_MAX_ID_ASC
-  TOP_ARTISTS_MAX_ID_DESC
-  TOP_ARTISTS_MAX_USER_ID_ASC
-  TOP_ARTISTS_MAX_USER_ID_DESC
-  TOP_ARTISTS_MAX_CREATED_AT_ASC
-  TOP_ARTISTS_MAX_CREATED_AT_DESC
-  TOP_ARTISTS_MAX_UPDATED_AT_ASC
-  TOP_ARTISTS_MAX_UPDATED_AT_DESC
-  TOP_ARTISTS_AVERAGE_ID_ASC
-  TOP_ARTISTS_AVERAGE_ID_DESC
-  TOP_ARTISTS_AVERAGE_USER_ID_ASC
-  TOP_ARTISTS_AVERAGE_USER_ID_DESC
-  TOP_ARTISTS_AVERAGE_CREATED_AT_ASC
-  TOP_ARTISTS_AVERAGE_CREATED_AT_DESC
-  TOP_ARTISTS_AVERAGE_UPDATED_AT_ASC
-  TOP_ARTISTS_AVERAGE_UPDATED_AT_DESC
-  TOP_ARTISTS_STDDEV_SAMPLE_ID_ASC
-  TOP_ARTISTS_STDDEV_SAMPLE_ID_DESC
-  TOP_ARTISTS_STDDEV_SAMPLE_USER_ID_ASC
-  TOP_ARTISTS_STDDEV_SAMPLE_USER_ID_DESC
-  TOP_ARTISTS_STDDEV_SAMPLE_CREATED_AT_ASC
-  TOP_ARTISTS_STDDEV_SAMPLE_CREATED_AT_DESC
-  TOP_ARTISTS_STDDEV_SAMPLE_UPDATED_AT_ASC
-  TOP_ARTISTS_STDDEV_SAMPLE_UPDATED_AT_DESC
-  TOP_ARTISTS_STDDEV_POPULATION_ID_ASC
-  TOP_ARTISTS_STDDEV_POPULATION_ID_DESC
-  TOP_ARTISTS_STDDEV_POPULATION_USER_ID_ASC
-  TOP_ARTISTS_STDDEV_POPULATION_USER_ID_DESC
-  TOP_ARTISTS_STDDEV_POPULATION_CREATED_AT_ASC
-  TOP_ARTISTS_STDDEV_POPULATION_CREATED_AT_DESC
-  TOP_ARTISTS_STDDEV_POPULATION_UPDATED_AT_ASC
-  TOP_ARTISTS_STDDEV_POPULATION_UPDATED_AT_DESC
-  TOP_ARTISTS_VARIANCE_SAMPLE_ID_ASC
-  TOP_ARTISTS_VARIANCE_SAMPLE_ID_DESC
-  TOP_ARTISTS_VARIANCE_SAMPLE_USER_ID_ASC
-  TOP_ARTISTS_VARIANCE_SAMPLE_USER_ID_DESC
-  TOP_ARTISTS_VARIANCE_SAMPLE_CREATED_AT_ASC
-  TOP_ARTISTS_VARIANCE_SAMPLE_CREATED_AT_DESC
-  TOP_ARTISTS_VARIANCE_SAMPLE_UPDATED_AT_ASC
-  TOP_ARTISTS_VARIANCE_SAMPLE_UPDATED_AT_DESC
-  TOP_ARTISTS_VARIANCE_POPULATION_ID_ASC
-  TOP_ARTISTS_VARIANCE_POPULATION_ID_DESC
-  TOP_ARTISTS_VARIANCE_POPULATION_USER_ID_ASC
-  TOP_ARTISTS_VARIANCE_POPULATION_USER_ID_DESC
-  TOP_ARTISTS_VARIANCE_POPULATION_CREATED_AT_ASC
-  TOP_ARTISTS_VARIANCE_POPULATION_CREATED_AT_DESC
-  TOP_ARTISTS_VARIANCE_POPULATION_UPDATED_AT_ASC
-  TOP_ARTISTS_VARIANCE_POPULATION_UPDATED_AT_DESC
   RECENT_LISTENS_COUNT_ASC
   RECENT_LISTENS_COUNT_DESC
   RECENT_LISTENS_SUM_ID_ASC
@@ -5837,6 +5664,154 @@ enum UsersOrderBy {
   RECENT_LISTENS_VARIANCE_POPULATION_CREATED_AT_DESC
   RECENT_LISTENS_VARIANCE_POPULATION_UPDATED_AT_ASC
   RECENT_LISTENS_VARIANCE_POPULATION_UPDATED_AT_DESC
+  TOP_ARTISTS_COUNT_ASC
+  TOP_ARTISTS_COUNT_DESC
+  TOP_ARTISTS_SUM_ID_ASC
+  TOP_ARTISTS_SUM_ID_DESC
+  TOP_ARTISTS_SUM_USER_ID_ASC
+  TOP_ARTISTS_SUM_USER_ID_DESC
+  TOP_ARTISTS_SUM_CREATED_AT_ASC
+  TOP_ARTISTS_SUM_CREATED_AT_DESC
+  TOP_ARTISTS_SUM_UPDATED_AT_ASC
+  TOP_ARTISTS_SUM_UPDATED_AT_DESC
+  TOP_ARTISTS_DISTINCT_COUNT_ID_ASC
+  TOP_ARTISTS_DISTINCT_COUNT_ID_DESC
+  TOP_ARTISTS_DISTINCT_COUNT_USER_ID_ASC
+  TOP_ARTISTS_DISTINCT_COUNT_USER_ID_DESC
+  TOP_ARTISTS_DISTINCT_COUNT_CREATED_AT_ASC
+  TOP_ARTISTS_DISTINCT_COUNT_CREATED_AT_DESC
+  TOP_ARTISTS_DISTINCT_COUNT_UPDATED_AT_ASC
+  TOP_ARTISTS_DISTINCT_COUNT_UPDATED_AT_DESC
+  TOP_ARTISTS_MIN_ID_ASC
+  TOP_ARTISTS_MIN_ID_DESC
+  TOP_ARTISTS_MIN_USER_ID_ASC
+  TOP_ARTISTS_MIN_USER_ID_DESC
+  TOP_ARTISTS_MIN_CREATED_AT_ASC
+  TOP_ARTISTS_MIN_CREATED_AT_DESC
+  TOP_ARTISTS_MIN_UPDATED_AT_ASC
+  TOP_ARTISTS_MIN_UPDATED_AT_DESC
+  TOP_ARTISTS_MAX_ID_ASC
+  TOP_ARTISTS_MAX_ID_DESC
+  TOP_ARTISTS_MAX_USER_ID_ASC
+  TOP_ARTISTS_MAX_USER_ID_DESC
+  TOP_ARTISTS_MAX_CREATED_AT_ASC
+  TOP_ARTISTS_MAX_CREATED_AT_DESC
+  TOP_ARTISTS_MAX_UPDATED_AT_ASC
+  TOP_ARTISTS_MAX_UPDATED_AT_DESC
+  TOP_ARTISTS_AVERAGE_ID_ASC
+  TOP_ARTISTS_AVERAGE_ID_DESC
+  TOP_ARTISTS_AVERAGE_USER_ID_ASC
+  TOP_ARTISTS_AVERAGE_USER_ID_DESC
+  TOP_ARTISTS_AVERAGE_CREATED_AT_ASC
+  TOP_ARTISTS_AVERAGE_CREATED_AT_DESC
+  TOP_ARTISTS_AVERAGE_UPDATED_AT_ASC
+  TOP_ARTISTS_AVERAGE_UPDATED_AT_DESC
+  TOP_ARTISTS_STDDEV_SAMPLE_ID_ASC
+  TOP_ARTISTS_STDDEV_SAMPLE_ID_DESC
+  TOP_ARTISTS_STDDEV_SAMPLE_USER_ID_ASC
+  TOP_ARTISTS_STDDEV_SAMPLE_USER_ID_DESC
+  TOP_ARTISTS_STDDEV_SAMPLE_CREATED_AT_ASC
+  TOP_ARTISTS_STDDEV_SAMPLE_CREATED_AT_DESC
+  TOP_ARTISTS_STDDEV_SAMPLE_UPDATED_AT_ASC
+  TOP_ARTISTS_STDDEV_SAMPLE_UPDATED_AT_DESC
+  TOP_ARTISTS_STDDEV_POPULATION_ID_ASC
+  TOP_ARTISTS_STDDEV_POPULATION_ID_DESC
+  TOP_ARTISTS_STDDEV_POPULATION_USER_ID_ASC
+  TOP_ARTISTS_STDDEV_POPULATION_USER_ID_DESC
+  TOP_ARTISTS_STDDEV_POPULATION_CREATED_AT_ASC
+  TOP_ARTISTS_STDDEV_POPULATION_CREATED_AT_DESC
+  TOP_ARTISTS_STDDEV_POPULATION_UPDATED_AT_ASC
+  TOP_ARTISTS_STDDEV_POPULATION_UPDATED_AT_DESC
+  TOP_ARTISTS_VARIANCE_SAMPLE_ID_ASC
+  TOP_ARTISTS_VARIANCE_SAMPLE_ID_DESC
+  TOP_ARTISTS_VARIANCE_SAMPLE_USER_ID_ASC
+  TOP_ARTISTS_VARIANCE_SAMPLE_USER_ID_DESC
+  TOP_ARTISTS_VARIANCE_SAMPLE_CREATED_AT_ASC
+  TOP_ARTISTS_VARIANCE_SAMPLE_CREATED_AT_DESC
+  TOP_ARTISTS_VARIANCE_SAMPLE_UPDATED_AT_ASC
+  TOP_ARTISTS_VARIANCE_SAMPLE_UPDATED_AT_DESC
+  TOP_ARTISTS_VARIANCE_POPULATION_ID_ASC
+  TOP_ARTISTS_VARIANCE_POPULATION_ID_DESC
+  TOP_ARTISTS_VARIANCE_POPULATION_USER_ID_ASC
+  TOP_ARTISTS_VARIANCE_POPULATION_USER_ID_DESC
+  TOP_ARTISTS_VARIANCE_POPULATION_CREATED_AT_ASC
+  TOP_ARTISTS_VARIANCE_POPULATION_CREATED_AT_DESC
+  TOP_ARTISTS_VARIANCE_POPULATION_UPDATED_AT_ASC
+  TOP_ARTISTS_VARIANCE_POPULATION_UPDATED_AT_DESC
+  TOP_SONGS_COUNT_ASC
+  TOP_SONGS_COUNT_DESC
+  TOP_SONGS_SUM_ID_ASC
+  TOP_SONGS_SUM_ID_DESC
+  TOP_SONGS_SUM_USER_ID_ASC
+  TOP_SONGS_SUM_USER_ID_DESC
+  TOP_SONGS_SUM_CREATED_AT_ASC
+  TOP_SONGS_SUM_CREATED_AT_DESC
+  TOP_SONGS_SUM_UPDATED_AT_ASC
+  TOP_SONGS_SUM_UPDATED_AT_DESC
+  TOP_SONGS_DISTINCT_COUNT_ID_ASC
+  TOP_SONGS_DISTINCT_COUNT_ID_DESC
+  TOP_SONGS_DISTINCT_COUNT_USER_ID_ASC
+  TOP_SONGS_DISTINCT_COUNT_USER_ID_DESC
+  TOP_SONGS_DISTINCT_COUNT_CREATED_AT_ASC
+  TOP_SONGS_DISTINCT_COUNT_CREATED_AT_DESC
+  TOP_SONGS_DISTINCT_COUNT_UPDATED_AT_ASC
+  TOP_SONGS_DISTINCT_COUNT_UPDATED_AT_DESC
+  TOP_SONGS_MIN_ID_ASC
+  TOP_SONGS_MIN_ID_DESC
+  TOP_SONGS_MIN_USER_ID_ASC
+  TOP_SONGS_MIN_USER_ID_DESC
+  TOP_SONGS_MIN_CREATED_AT_ASC
+  TOP_SONGS_MIN_CREATED_AT_DESC
+  TOP_SONGS_MIN_UPDATED_AT_ASC
+  TOP_SONGS_MIN_UPDATED_AT_DESC
+  TOP_SONGS_MAX_ID_ASC
+  TOP_SONGS_MAX_ID_DESC
+  TOP_SONGS_MAX_USER_ID_ASC
+  TOP_SONGS_MAX_USER_ID_DESC
+  TOP_SONGS_MAX_CREATED_AT_ASC
+  TOP_SONGS_MAX_CREATED_AT_DESC
+  TOP_SONGS_MAX_UPDATED_AT_ASC
+  TOP_SONGS_MAX_UPDATED_AT_DESC
+  TOP_SONGS_AVERAGE_ID_ASC
+  TOP_SONGS_AVERAGE_ID_DESC
+  TOP_SONGS_AVERAGE_USER_ID_ASC
+  TOP_SONGS_AVERAGE_USER_ID_DESC
+  TOP_SONGS_AVERAGE_CREATED_AT_ASC
+  TOP_SONGS_AVERAGE_CREATED_AT_DESC
+  TOP_SONGS_AVERAGE_UPDATED_AT_ASC
+  TOP_SONGS_AVERAGE_UPDATED_AT_DESC
+  TOP_SONGS_STDDEV_SAMPLE_ID_ASC
+  TOP_SONGS_STDDEV_SAMPLE_ID_DESC
+  TOP_SONGS_STDDEV_SAMPLE_USER_ID_ASC
+  TOP_SONGS_STDDEV_SAMPLE_USER_ID_DESC
+  TOP_SONGS_STDDEV_SAMPLE_CREATED_AT_ASC
+  TOP_SONGS_STDDEV_SAMPLE_CREATED_AT_DESC
+  TOP_SONGS_STDDEV_SAMPLE_UPDATED_AT_ASC
+  TOP_SONGS_STDDEV_SAMPLE_UPDATED_AT_DESC
+  TOP_SONGS_STDDEV_POPULATION_ID_ASC
+  TOP_SONGS_STDDEV_POPULATION_ID_DESC
+  TOP_SONGS_STDDEV_POPULATION_USER_ID_ASC
+  TOP_SONGS_STDDEV_POPULATION_USER_ID_DESC
+  TOP_SONGS_STDDEV_POPULATION_CREATED_AT_ASC
+  TOP_SONGS_STDDEV_POPULATION_CREATED_AT_DESC
+  TOP_SONGS_STDDEV_POPULATION_UPDATED_AT_ASC
+  TOP_SONGS_STDDEV_POPULATION_UPDATED_AT_DESC
+  TOP_SONGS_VARIANCE_SAMPLE_ID_ASC
+  TOP_SONGS_VARIANCE_SAMPLE_ID_DESC
+  TOP_SONGS_VARIANCE_SAMPLE_USER_ID_ASC
+  TOP_SONGS_VARIANCE_SAMPLE_USER_ID_DESC
+  TOP_SONGS_VARIANCE_SAMPLE_CREATED_AT_ASC
+  TOP_SONGS_VARIANCE_SAMPLE_CREATED_AT_DESC
+  TOP_SONGS_VARIANCE_SAMPLE_UPDATED_AT_ASC
+  TOP_SONGS_VARIANCE_SAMPLE_UPDATED_AT_DESC
+  TOP_SONGS_VARIANCE_POPULATION_ID_ASC
+  TOP_SONGS_VARIANCE_POPULATION_ID_DESC
+  TOP_SONGS_VARIANCE_POPULATION_USER_ID_ASC
+  TOP_SONGS_VARIANCE_POPULATION_USER_ID_DESC
+  TOP_SONGS_VARIANCE_POPULATION_CREATED_AT_ASC
+  TOP_SONGS_VARIANCE_POPULATION_CREATED_AT_DESC
+  TOP_SONGS_VARIANCE_POPULATION_UPDATED_AT_ASC
+  TOP_SONGS_VARIANCE_POPULATION_UPDATED_AT_DESC
 }
 
 """
@@ -5861,11 +5836,6 @@ input UserCondition {
   """Checks for equality with the object’s `updatedAt` field."""
   updatedAt: Datetime
 }
-
-"""
-The exact time of day, does not include the date. May or may not have a timezone offset.
-"""
-scalar Time
 
 """
 The root mutation type which contains root level fields which mutate data.
