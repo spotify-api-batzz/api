@@ -1,6 +1,5 @@
 import express from "express";
 import allowList from "./allowList";
-import Joi from "joi";
 import myzod from "myzod";
 import { ForbiddenQueryError, ValidationError } from "../errors";
 

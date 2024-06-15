@@ -26,6 +26,8 @@ if (corsDomain) {
   );
 }
 
+app.use(cors());
+
 const dbIp = mustGetEnv("DB_IP");
 const dbTable = mustGetEnv("DB_TABLE");
 const dbPass = mustGetEnv("DB_PASS");
@@ -64,7 +66,7 @@ const run = async () => {
     res.send("ok");
   });
 
-  app.listen(3000s, "0.0.0.0");
+  app.listen(3000, "0.0.0.0");
 };
 
 run();
