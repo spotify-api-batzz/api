@@ -27,16 +27,9 @@ class AggregateHandler {
         "rl.id",
         "song_id",
         "songs.name",
-        // fn.count<number>("id").as("count"),
       ])
       .where("rl.user_id", "=", userId)
       .where("thumbnails.width", "=", 300);
-    // .groupBy("song_id")
-    // .limit(300);
-
-    console.log(query.compile());
-    // .groupBy(["day"])
-    // .andWhere(sql`DATE(timestamp) = CURRENT_DATE`)
 
     if (before) {
       query = query.where("rl.played_at", "<", before);
@@ -47,11 +40,8 @@ class AggregateHandler {
     }
 
     const songs = await query.execute();
-    // .execute();
-
     const data = ramda.groupBy((song) => song.day, songs);
-    // console.log(data);
-    // return data;
+
     return Object.keys(data).map((day) => {
       const d = ramda.groupBy((dayData) => dayData.song_id, data[day]);
       const songIds = Object.keys(d);
@@ -101,7 +91,6 @@ class AggregateHandler {
     }
 
     const songs = await query.execute();
-    // .execute();
 
     const data = ramda.groupBy((song) => song.day, songs);
     return Object.keys(data).reduce(

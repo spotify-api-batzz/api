@@ -14,12 +14,10 @@ const extractVars = (reqVars: string | undefined) => {
   return variables;
 };
 
-const graphqlSchema = myzod
-  .object({
-    variables: myzod.string().optional(),
-    operationName: myzod.string(),
-  })
-  .allowUnknownKeys();
+const graphqlSchema = myzod.object({
+  variables: myzod.string().optional(),
+  operationName: myzod.string(),
+});
 
 const createPostgraphileRouter = () => {
   const postgraphileRouter = express.Router();

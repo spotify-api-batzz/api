@@ -13,6 +13,7 @@ import errorMiddleware from "./middleware/errors";
 import createIngestRouter from "./ingest";
 import { Kysely, PostgresDialect } from "kysely";
 import { DB } from "./kydb";
+import stripMiddleware from "./middleware/stripper";
 
 const app = express();
 const corsDomain = getEnv("CORS", null);
@@ -25,8 +26,6 @@ if (corsDomain) {
     })
   );
 }
-
-app.use(cors());
 
 const dbIp = mustGetEnv("DB_IP");
 const dbTable = mustGetEnv("DB_TABLE");
@@ -52,8 +51,10 @@ const run = async () => {
   });
 
   app.use(cacheMiddleware);
+
   const postGraphile = postgraphile(pool, "public", postGraphileOptions);
 
+  app.use(stripMiddleware);
   app.use("/aggregate", createAggregateRouter(db));
   app.use(createPostgraphileRouter());
   app.use(createIngestRouter());
@@ -66,7 +67,7 @@ const run = async () => {
     res.send("ok");
   });
 
-  app.listen(3000, "0.0.0.0");
+  app.listen(3001, "0.0.0.0");
 };
 
 run();
