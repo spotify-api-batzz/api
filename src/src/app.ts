@@ -67,7 +67,7 @@ const run = async () => {
     res.send("ok");
   });
 
-  app.listen(3001, "0.0.0.0");
+  app.listen(3000, "0.0.0.0");
 };
 
 run();

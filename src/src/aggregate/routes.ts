@@ -23,7 +23,6 @@ const createAggregateRouter = (db: KyDatabase) => {
         req.query
       );
 
-      console.log(before);
       const data = await aggregateHandler.getAverageSongsPerDay(
         userId,
         new Date(Number(before)),
@@ -42,7 +41,6 @@ const createAggregateRouter = (db: KyDatabase) => {
         req.query
       );
 
-      console.log(before, after);
       const data = await aggregateHandler.getTimeOfDay(
         userId,
         new Date(Number(before)),

@@ -14,7 +14,6 @@ class AggregateHandler {
     before?: Date,
     after?: Date
   ) => {
-    console.log(userId);
     let query = this.db
       .selectFrom("recent_listens as rl")
       .leftJoin("songs", "songs.id", "rl.song_id")
@@ -103,7 +102,6 @@ class AggregateHandler {
   };
 
   getTimeOfDay = async (userId: string, before?: Date, after?: Date) => {
-    console.log(userId);
     let query = this.db
       .selectFrom("recent_listens as rl")
       .leftJoin("songs", "songs.id", "rl.song_id")
