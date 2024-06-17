@@ -28,7 +28,8 @@ class AggregateHandler {
         "songs.name",
       ])
       .where("rl.user_id", "=", userId)
-      .where("thumbnails.width", "=", 300);
+      .where("thumbnails.width", "=", 300)
+      .orderBy("rl.played_at asc");
 
     if (before) {
       query = query.where("rl.played_at", "<", before);
@@ -42,17 +43,20 @@ class AggregateHandler {
     const data = ramda.groupBy((song) => song.day, songs);
 
     return Object.keys(data).map((day) => {
-      const d = ramda.groupBy((dayData) => dayData.song_id, data[day]);
-      const songIds = Object.keys(d);
+      const groupedBySongId = ramda.groupBy(
+        (dayData) => dayData.song_id,
+        data[day]
+      );
+      const songIds = Object.keys(groupedBySongId);
       return {
         day,
         count: data[day].length,
         data: songIds.map((id) => {
-          const songData = d[id][0];
+          const songData = groupedBySongId[id][0];
           return {
             thumbnail: songData.url,
             name: songData.name,
-            count: d[id].length,
+            count: groupedBySongId[id].length,
           };
         }),
       };
@@ -116,7 +120,8 @@ class AggregateHandler {
         "songs.name",
       ])
       .where("rl.user_id", "=", userId)
-      .where("thumbnails.width", "=", 300);
+      .where("thumbnails.width", "=", 300)
+      .orderBy("hour asc");
 
     if (before) {
       query = query.where("rl.played_at", "<", before);
@@ -312,7 +317,7 @@ const topSongsQuery = async (
     .where("rl.user_id", "=", userId)
     .groupBy(["rl.song_id", "songs.name", "image_url"])
     .orderBy("count desc")
-    .limit(3)
+    .limit(5)
     .execute();
 };
 
@@ -342,7 +347,7 @@ const topAlbumsQuery = async (
     .where("rl.user_id", "=", userId)
     .groupBy(["songs.album_id", "albums.id", "albums.name", "image_url"])
     .orderBy("count desc")
-    .limit(3)
+    .limit(5)
     .execute();
 };
 
