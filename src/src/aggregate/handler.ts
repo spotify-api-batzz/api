@@ -54,6 +54,7 @@ class AggregateHandler {
         data: songIds.map((id) => {
           const songData = groupedBySongId[id][0];
           return {
+            date: songData.day,
             thumbnail: songData.url,
             name: songData.name,
             count: groupedBySongId[id].length,
